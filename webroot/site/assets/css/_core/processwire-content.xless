@@ -1,0 +1,23 @@
+.align_left{
+float:left;
+margin: 0 1rem 1rem 0;
+}
+
+.align_right{
+float:right;
+margin: 0 0 1rem 1rem;
+}
+
+img.align_right, img.align_left{
+	max-width: ~"calc(100% - 1rem)";
+}
+
+////
+
+@media(max-width:480px){
+	.align_right, .align_left{
+		float:none;
+		margin:1rem;
+		max-width: ~"calc(100% - 2rem)" !important;
+	}
+}

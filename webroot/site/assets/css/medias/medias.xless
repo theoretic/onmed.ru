@@ -1,0 +1,15 @@
+@_mediaWidth:24rem;
+
+.media{
+width:@_mediaWidth;
+}
+
+.media-image{
+	//width:@_mediaWidth;
+	//height:@_mediaWidth;
+
+	img{
+		border-top-left-radius:@cornerRadius;
+		border-top-right-radius:@cornerRadius;
+		}
+	}

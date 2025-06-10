@@ -1,0 +1,27 @@
+#image-offers{
+	flex:1;
+	}
+
+#texts{
+	flex:3;
+	}
+
+#qualification-skills>div{
+	flex:1;
+	}
+
+#image{
+	img{
+		min-width:16rem;
+		max-width:36rem;
+		border-top-left-radius:@cornerRadius;
+		}
+	}
+
+////
+
+@media(max-width:480px){
+	#image img{
+		max-width:100%;
+	}
+}

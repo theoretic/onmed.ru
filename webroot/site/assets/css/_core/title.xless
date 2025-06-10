@@ -1,0 +1,13 @@
+#title{
+	h1{
+		padding:0;
+		}
+	}
+
+////
+
+@media(max-width:480px){
+	#title, #title *{
+		text-align:center;
+	}
+}

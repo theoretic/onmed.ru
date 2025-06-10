@@ -1,0 +1,9 @@
+//basic prev and next styles are in slider-nav.xless
+
+[role=slider]{
+	.current{
+		z-index:1;
+		.opacity(1);
+		}
+	}
+

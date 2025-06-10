@@ -1,0 +1,85 @@
+.modal{
+	//position is handled by js and should be set via .fixed or .absolute classes
+	//position:fixed;
+	//position:absolute;
+	//display:inline-block;
+	box-sizing:border-box;
+	top:0%;
+	left:0%;
+	z-index:1000000;
+	width:100%;
+	min-height:4rem;
+	background:@white;
+	.shadow(0,0,1rem,rgba(0,0,0,.9));
+	//.opacity(1);
+//	.transition(2.5s);
+//	.transition(1s);
+	.transition(.5s);
+	:hover{
+		.shadow(0,0,1rem,rgba(0,0,0,.9));
+		//.opacity(1);
+	}
+
+	*{
+		//color:@white;
+		}
+	input{
+		//border:2px solid transparent;
+		color:@black;
+	}
+
+	.close{
+		display: inline-block;
+		position:absolute;
+		right:1rem;
+		top:10px;
+		font-size:24px;
+		color:~"rgb(var(--color))";
+		.opacity(.5);
+		.transition();
+		//.gradient(~"rgb(var(--color))",@green,45deg);
+		:hover{
+			cursor:pointer;
+			.opacity(1);
+		}
+	}
+
+	&.hidden{
+		//top:-100%;
+		top:-20%;
+		left:50%;
+		width:0px;
+		height:0px;
+		overflow:hidden;
+		//z-index:-1000 !important;
+		.opacity(0);
+	}
+
+	&.transparent{
+		background:none;
+		.no-shadow();
+	}
+
+	&.dimmed{
+		//background:rgba(255,255,255,.5);
+		background:rgba(0,0,0,.5);
+		.no-shadow();
+	}
+
+	&.positive{
+		color:@white;
+		background:@green;
+		*{
+			color:inherit;
+		}
+	}
+
+	&.negative{
+		color:@white;
+		background:@red;
+		*{
+			color:inherit;
+		}
+	}
+
+}

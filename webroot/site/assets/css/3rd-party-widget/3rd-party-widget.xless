@@ -1,0 +1,8 @@
+#app{
+	.header{
+		background:@white !important;
+	}
+	.title{
+		display:none !important;
+	}
+}

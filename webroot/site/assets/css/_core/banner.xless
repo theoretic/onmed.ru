@@ -1,0 +1,12 @@
+.banner{
+	.rounded(1rem);
+	background-size:cover;
+	background-position:50% 50%;
+	*{
+		color:@white;
+	}
+
+	img{
+		.rounded(1rem);
+	}
+}

@@ -1,0 +1,11 @@
+body{
+	 min-height:100vh;
+	 .transition();
+}
+
+.body{
+	img{
+		.rounded(.4rem);
+		max-width:100%;
+	}
+}

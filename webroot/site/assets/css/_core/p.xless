@@ -1,0 +1,6 @@
+p{
+text-align:justify;
+.hyphenate();
+//padding-bottom: @whitespace;
+padding-bottom: 1rem;
+}

@@ -1,0 +1,9 @@
+[role=specializations]{
+	column-width:12rem;
+	gap:1rem;
+	a,b{
+		display:inline-block;
+		width:100%;
+		padding:.5rem;
+		}
+	}

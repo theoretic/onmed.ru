@@ -1,0 +1,29 @@
+.XS, .XS *{
+font-size:.8rem !important;
+}
+
+.S, .S *{
+font-size:.9rem !important;
+}
+
+.ML, .ML *{
+font-size:1.2rem;
+}
+
+.L, .L *{
+font-size:1.4rem;
+}
+
+.XL, .XL *{
+font-size:1.6rem;
+font-weight:300;
+}
+
+.X2L, .X2L *{
+font-size:2rem;
+}
+
+.X3L, .X3L *{
+font-size:2.4rem;
+}
+

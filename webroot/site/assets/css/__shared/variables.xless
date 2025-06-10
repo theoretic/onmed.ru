@@ -1,0 +1,16 @@
+@whitespace:1.4rem;
+@gap:1rem;
+@cornerRadius:.4rem;
+@path: "/site/assets";
+
+//sizes
+
+@sizeHD:1920px;
+@sizePad:1280px;
+@sizePhoneVertical:960px; //1920/2
+@sizePhone:540px; //1080/2
+@sizeIphone:320px;
+
+//breakpoints
+
+@header2MenuBreakpoint: 1600px;

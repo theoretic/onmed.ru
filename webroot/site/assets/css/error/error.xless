@@ -1,0 +1,7 @@
+#image{
+	height:50vh;
+	max-height:24rem;
+	min-height:12rem;
+	margin: auto;
+	.rounded(1rem);
+	}

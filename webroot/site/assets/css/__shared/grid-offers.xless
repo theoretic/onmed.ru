@@ -1,0 +1,71 @@
+//@offerGridStep:12rem;
+
+.grid-offer{
+	//width:@offerGridStep * 2;
+	//height:20rem;
+	//margin:1rem;
+	.transition();
+}
+
+
+//
+.grid-offer-inner{
+	.card{
+		height:12rem
+	}
+}
+
+.grid-offer-image{
+	//width:@offerGridStep;
+	//height:@offerGridStep;
+	img{
+		border-top-left-radius:@cornerRadius;
+		border-top-right-radius:@cornerRadius;
+	}
+}
+
+.grid-offer-text{
+	height:6rem;
+}
+
+////sizes
+
+.grid-offer-1{
+width:10%;
+}
+
+.grid-offer-2{
+width:20%;
+}
+
+.grid-offer-3{
+width:30%;
+}
+
+.grid-offer-4{
+width:40%;
+}
+
+.grid-offer-5{
+width:50%;
+}
+
+.grid-offer-6{
+width:60%;
+}
+
+.grid-offer-7{
+width:70%;
+}
+
+.grid-offer-8{
+width:80%;
+}
+
+.grid-offer-9{
+width:90%;
+}
+
+.grid-offer-10{
+width:100%;
+}

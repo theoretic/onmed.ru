@@ -1,0 +1,27 @@
+#image-details{
+	flex:1;
+	min-width:24rem;
+	}
+
+#texts{
+	flex:2;
+	}
+
+#image{
+	img{
+		width:100%;
+		border-top-left-radius:@cornerRadius;
+		object-fit:contain;
+		}
+	}
+
+/////
+
+
+@media(max-width:730px){
+
+	#image img{
+		border-top-right-radius:@cornerRadius;
+		}
+
+	}

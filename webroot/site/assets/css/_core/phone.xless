@@ -1,0 +1,4 @@
+.phone{
+	//font-family: 'Days One';
+	white-space:nowrap;
+	}

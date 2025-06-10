@@ -1,0 +1,22 @@
+.aside-banner{
+	width:20rem;
+	img{
+		max-width:100%;
+		}
+	}
+
+.aside-banner-inner{
+	overflow:hidden;
+	}
+
+.aside-banner-label{
+	background: ~"rgb(var(--color))";
+	color:@white;
+	left:-2rem;
+	top:-2rem;
+	padding:3rem 2rem 1rem 3rem;
+	.rounded(10rem);
+	&:hover{
+		color:@white;
+		}
+	}

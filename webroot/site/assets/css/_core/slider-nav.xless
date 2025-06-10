@@ -1,0 +1,102 @@
+//nav element styles for sliders
+
+.prev, .next{
+	z-index:2500;
+	width:6rem;
+	height:100%;
+	.opacity(0);
+
+	.transition();
+
+	svg>use{
+		fill:none;
+		stroke:@white;
+		stroke-width:.6rem;
+		//stroke-linecap:round;
+		//.shadow(0,0,.5rem,rgba(0,0,0,.5));
+		.transition();
+		}
+
+	:hover{
+		.opacity(1);
+		svg>use{
+			stroke:~"rgb(var(--color))";
+			stroke-width:1rem;
+			}
+		}
+	}
+
+.prev{
+	left:-2rem;
+	}
+
+.next{
+	right:-2rem;
+	svg>use{
+		transform: rotate(180deg);
+		}
+	}
+
+.dots{
+	left:0px;
+	bottom:0px;
+	width:100%;
+	z-index:1000;
+	text-align:center;
+	padding:.5rem;
+	}
+
+.dot{
+	display:inline-block;
+	width:1.6rem;
+	height:1.6rem;
+	margin:.2rem;
+	background:@white;
+	//.opacity(.5);
+	.transition();
+	.rounded(100%);
+	.shadow();
+	&.current, &:hover{
+		cursor:hand;
+		background:~"rgb(var(--color))";
+		}
+	}
+
+[role=slider]:hover{
+	.prev, .next{
+		.opacity(1);
+		}
+	.prev{
+		left:1rem;
+		}
+	.next{
+		right:1rem;
+		}
+	}
+
+
+
+/////
+
+@media(max-width:900px){
+	.prev, .next{
+		width:4rem;
+		&:hover{
+			svg>use{
+				stroke-width:.6rem;
+				}
+			}
+		}
+
+	[role=slider]:hover{
+		.prev, .next{
+			.opacity(1);
+			}
+		.prev{
+			left:2rem;
+			}
+		.next{
+			right:2rem;
+			}
+		}
+	}

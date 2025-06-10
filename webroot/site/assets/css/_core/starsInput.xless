@@ -1,0 +1,33 @@
+.starsInput{
+
+	.star{
+		width:auto;
+		padding:0;
+		margin:0;
+		&:before{
+			content:'★';
+			font-size:2rem;
+			//padding:.1rem;
+			color:@mediumgrey;
+			.transition();
+		}
+		&.selected:before{
+			color:@gold;
+		}
+
+		&:hover{
+			cursor:pointer;
+			&:before{
+				//padding:0;
+				//font-size:2.4rem;
+				//transform:scale(2);
+			}
+		}
+
+		input[type=radio]{
+			display:none;
+		}
+
+	}
+
+}

@@ -1,0 +1,6 @@
+.adaptive{
+width:100%;
+max-width:100%;
+object-fit:contain;
+//background:#f0f0f0;
+}

@@ -1,0 +1,27 @@
+@offerSize:20rem;
+.offer{
+	width:@offerSize;
+	//height:20rem;
+	.transition();
+	[role=title]{
+		font-size:1.6rem;
+		line-height:1.6rem;
+		}
+	}
+
+.offer-image{
+	width:@offerSize;
+	//height:@offerSize;
+	img{
+		border-top-left-radius:@cornerRadius;
+		border-top-right-radius:@cornerRadius;
+		}
+	}
+
+.offer-text{
+	height:6rem;
+	}
+
+.current.offer .card{
+	.shadow( 0, 0, 1rem, rgba(0,0,0,.5) );
+	}

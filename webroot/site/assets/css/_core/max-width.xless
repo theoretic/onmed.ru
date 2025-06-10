@@ -1,0 +1,7 @@
+.max-w-20r{
+max-width:20rem;
+}
+
+.max-w-24r{
+max-width:24rem;
+}

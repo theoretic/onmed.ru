@@ -1,0 +1,19 @@
+.loading{
+	animation-name: loading;
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes loading{
+	from{
+		opacity:100%
+	}
+
+	50%{
+		opacity:10%
+	}
+
+	from{
+		opacity:100%
+	}
+}

@@ -1,0 +1,19 @@
+.block{
+	//display:inline-block;
+	display:block;
+	vertical-align:top;
+	.border-box();
+	}
+
+
+.v-middle .block{
+vertical-align:middle;
+}
+
+.v-top .block{
+vertical-align:top;
+}
+
+.v-bottom .block{
+vertical-align:top;
+}

@@ -1,0 +1,12 @@
+.thin{
+font-weight:100;
+}
+
+.light{
+font-weight:300;
+}
+
+.strong, strong{
+font-weight:800;
+}
+

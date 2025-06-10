@@ -1,0 +1,43 @@
+[role=specialist]{
+	&>.flex>div{
+		min-width:28rem;
+	}
+}
+
+#image-offers{
+	flex:1;
+	}
+
+#texts{
+	flex:1;
+	}
+
+#qualification-skills>div{
+	flex:1;
+	}
+
+#qualification, #skills{
+	min-width:20rem;
+	}
+
+#image{
+	min-width:24rem;
+	img{
+		width:100%;
+		//max-height:24rem;
+		border-top-left-radius:@cornerRadius;
+		object-fit:contain;
+		}
+	}
+
+/////
+
+@media(max-width:900px){
+	#image-offers{
+		width:100%;
+		}
+	#image img{
+		max-height:32rem;
+		border-top-right-radius:@cornerRadius;
+		}
+	}

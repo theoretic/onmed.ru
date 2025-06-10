@@ -1,0 +1,11 @@
+.centered:not(td, td *){
+text-align:center !important;
+}
+
+.left-aligned{
+text-align:left;
+}
+
+.right-aligned{
+text-align:right;
+}

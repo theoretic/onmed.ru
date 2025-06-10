@@ -1,0 +1,13 @@
+#Since version 3.0.135 Processwire denies execution of any php file inside /site and /site/assets , so we need to allow execution of index.php here
+<FilesMatch "index\.php$">
+	<IfModule mod_authz_core.c>
+		Require all granted
+	</IfModule>
+	<IfModule !mod_authz_core.c>
+		Allow from all
+	</IfModule>
+</FilesMatch>
+
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteRule ^(.+)$ index.php?request=$1 [QSA,L]

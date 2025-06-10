@@ -1,0 +1,66 @@
+@font-face {
+	font-family: 'Stem';
+	src: url('/site/assets/fonts/Stem/Stem-Light.eot');
+	src:
+		url('/site/assets/fonts/Stem/Stem-Light.eot?#iefix') format('embedded-opentype'),
+		url('/site/assets/fonts/Stem/Stem-Light.woff2') format('woff2'),
+		url('/site/assets/fonts/Stem/Stem-Light.woff') format('woff'),
+	font-weight: 300;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Stem';
+	src: url('/site/assets/fonts/Stem/Stem-Medium.eot');
+	src:
+		url('/site/assets/fonts/Stem/Stem-Medium.eot?#iefix') format('embedded-opentype'),
+		url('/site/assets/fonts/Stem/Stem-Medium.woff2') format('woff2'),
+		url('/site/assets/fonts/Stem/Stem-Medium.woff') format('woff'),
+	font-weight: 500;
+	font-style: normal;
+}
+/*
+
+@font-face {
+	font-family: 'Stem';
+	src: url('/site/assets/fonts/Stem/Stem-Bold.eot');
+	src:
+		url('/site/assets/fonts/Stem/Stem-Bold.eot?#iefix') format('embedded-opentype'),
+		url('/site/assets/fonts/Stem/Stem-Bold.woff2') format('woff2'),
+		url('/site/assets/fonts/Stem/Stem-Bold.woff') format('woff'),
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Stem';
+	src: url('/site/assets/fonts/Stem/Stem-ExtraLight.eot');
+	src:
+		url('/site/assets/fonts/Stem/Stem-ExtraLight.eot?#iefix') format('embedded-opentype'),
+		url('/site/assets/fonts/Stem/Stem-ExtraLight.woff2') format('woff2'),
+		url('/site/assets/fonts/Stem/Stem-ExtraLight.woff') format('woff'),
+	font-weight: 200;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Stem';
+	src: url('/site/assets/fonts/Stem/Stem-Thin.eot');
+	src:
+		url('/site/assets/fonts/Stem/Stem-Thin.eot?#iefix') format('embedded-opentype'),
+		url('/site/assets/fonts/Stem/Stem-Thin.woff2') format('woff2'),
+		url('/site/assets/fonts/Stem/Stem-Thin.woff') format('woff'),
+	font-weight: 100;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Stem';
+	src: url('/site/assets/fonts/Stem/Stem-Regular.eot');
+	src:
+		url('/site/assets/fonts/Stem/Stem-Regular.eot?#iefix') format('embedded-opentype'),
+		url('/site/assets/fonts/Stem/Stem-Regular.woff2') format('woff2'),
+		url('/site/assets/fonts/Stem/Stem-Regular.woff') format('woff'),
+	font-weight: bold;
+	font-style: normal;
+}
+*/

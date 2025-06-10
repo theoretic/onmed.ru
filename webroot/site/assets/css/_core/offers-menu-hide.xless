@@ -1,0 +1,13 @@
+#offers-menu-hide{
+	display:none;
+}
+
+////
+
+@media(max-width:1280px){
+
+	#offers-menu-hide{
+		display:block;
+	}
+
+}

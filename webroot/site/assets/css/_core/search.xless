@@ -1,0 +1,29 @@
+#search{
+	input{
+		//width:12rem;
+		//.transition();
+	}
+	svg{
+		.transition();
+	}
+	&:hover{
+		#search-icon{
+			color:~"rgb(var(--color))";
+		}
+	}
+}
+
+#search-icon{
+	color:@white;
+	margin-left: -2rem;
+}
+
+#search-results{
+	z-index:1000;
+	margin-top:2.8rem;
+
+	a{
+		display:block;
+		padding:.5rem;
+	}
+}

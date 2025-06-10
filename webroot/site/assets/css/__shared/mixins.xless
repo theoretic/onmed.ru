@@ -1,0 +1,96 @@
+// mixins 
+
+.opacity(@opacity: .5){
+-!ie- opacity: @opacity;
+//-ff- -moz-opacity: @opacity;
+//-ie- filter: alpha(opacity=@opacity*100);
+//-ie- filter: alpha(opacity=percentage(@opacity));
+//-ie- -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=.5)";
+-ie- -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+-ie- filter: alpha(opacity=.5);
+}
+
+.rounded(@radius:1rem){
+border-radius: @radius;
+-wk- -webkit-border-radius: @radius;
+//-ff- -moz-border-radius: @radius;
+}
+
+.shadow(@x:0px,@y:0px,@blur:1rem,@color:rgba(0,0,0,.1)){
+box-shadow: @x @y @blur @color;
+//-wk- -webkit-box-shadow: @x @y @blur @color;
+//-ff- -moz-box-shadow: @x @y @blur @color;
+}
+
+.no-shadow(){
+box-shadow: none;
+-wk- -webkit-box-shadow: none;
+-ff- -moz-box-shadow:none;
+}
+
+.gradient(@start,@end,@angle:0deg){
+background: linear-gradient(@angle,@start,@end);
+-wk- background: -webkit-linear-gradient(@angle,@start,@end);
+-ff- background: -moz-linear-gradient(@angle,@start,@end);
+-op- background: -o-linear-gradient(@angle,@start,@end);
+}
+
+.transition(@duration:.25s,@method:ease-out,@property:all){
+transition: @property @duration @method;
+-wk- -webkit-transition: @property @duration @method;
+-ff- -moz-transition: @property @duration @method;
+-op- -o-transition: @property @duration @method;
+-ie- -ms-transition: @property @duration @method;
+}
+
+.hyphenate(){
+hyphens: auto;
+-moz-hyphens: auto;
+-webkit-hyphens: auto;
+-ms-hyphens: auto;
+}
+
+.clip(@path){
+clip-path: @path;
+-webkit-clip-path: @path;
+}
+
+.calc(@args){
+-moz-calc(@args);
+-webkit-calc(@args);
+}
+
+//columns
+//AT
+//14.03.18
+////w3bits.com/css-masonry/
+
+.columns(@columns){
+columns:@columns;
+-ff- -moz-columns:@columns;
+-wk- -webkit-columns:@columns;
+}
+
+.column-count(@count){
+column-count:@count;
+-ff- -moz-column-count:@count;
+-wk- -webkit-column-count:@count;
+}
+
+.column-width(@width){
+column-width:@width;
+-ff- -moz-column-width:@width;
+-wk- -webkit-column-width:@width;
+}
+
+.column-gap(@gap){
+column-gap:@gap;
+-ff- -moz-column-gap:@gap;
+-wk- -webkit-column-gap:@gap;
+}
+
+.column-rule(@rule){
+column-rule:@rule;
+-ff- -moz-column-rule:@rule;
+-wk- -webkit-column-rule:@rule;
+}

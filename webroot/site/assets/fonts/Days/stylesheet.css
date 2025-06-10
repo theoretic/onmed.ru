@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Days';
+    src: url('Days.woff2') format('woff2'),
+        url('Days.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+

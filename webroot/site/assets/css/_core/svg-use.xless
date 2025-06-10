@@ -1,0 +1,6 @@
+svg>use {
+	//display: inline-block;
+	all: inherit;
+	stroke-width: 0;
+	fill: currentColor;
+	}

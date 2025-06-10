@@ -1,0 +1,22 @@
+.badge{
+	display:inline-block;
+	padding:.2rem .8rem;
+	margin:.2rem;
+	.rounded(1rem);
+	color:@white;
+	//font-size:.8rem !important;
+	//font-weight:300 !important;
+
+	&.grey{
+		background:#bbb;
+		}
+
+	&.green{
+		background:@green;
+		}
+
+	&.blue{
+		background:@blue;
+		}
+
+	}

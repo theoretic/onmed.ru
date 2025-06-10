@@ -1,0 +1,14 @@
+.guttered{
+	padding: 0 @whitespace/2;
+	>.block{
+		padding: @whitespace/2;
+		}
+	}
+
+.h-guttered{
+	padding: 0 @whitespace/2;
+	>.block{
+		padding: 0 @whitespace/2;
+		padding-bottom: @whitespace/2;
+		}
+	}

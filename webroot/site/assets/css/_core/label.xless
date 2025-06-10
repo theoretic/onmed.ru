@@ -1,0 +1,30 @@
+label{
+	display:inline-block;
+	width:100%;
+	padding:.5rem;
+	padding-left:0px;
+	font-size:.9rem;
+	//color:@grey;
+	&:hover{
+		cursor:hand;
+	}
+
+	span{
+		display:inline !important;
+		all:inherit;
+		//padding:0 .5rem;
+
+		&.success{
+			color:@green;
+		}
+
+		&.error{
+			color:@red;
+		}
+
+		&.hint{
+			color:@lightgrey;
+		}
+	}
+
+}

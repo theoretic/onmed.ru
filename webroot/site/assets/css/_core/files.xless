@@ -1,0 +1,9 @@
+.file{
+	width:24rem;
+}
+
+.fileTitle{
+	max-width:12rem;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}

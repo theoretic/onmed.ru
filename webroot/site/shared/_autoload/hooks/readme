@@ -1,0 +1,1 @@
+These hooks are loaded just at the beginning of any template. They have nothing in common with hooks loaded via /site/ready.php (that hooks are loaded otherwise).

@@ -1,0 +1,45 @@
+.offer{
+	min-width:16rem;
+	max-width:24rem;
+	//height:16rem;
+
+/*
+	.scrollable{
+		height:12rem;
+		overflow:scroll;
+		container: offerScrollable / size;
+	}
+*/
+
+	h2{
+		font-size:1.6rem;
+		line-height:1;
+		padding:0;
+		padding-bottom:1rem;
+	}
+	h3{
+		font-size:1rem;
+		line-height:1;
+		//font-weight:400;
+		padding:.25rem 0;
+	}
+}
+
+/*
+@container offerScrollable (min-height:12rem){
+	.scrollable .inner{
+		padding:.5rem;
+		.rounded(.5rem);
+		background:#f9f9f9;
+	}
+}
+*/
+
+////
+
+@media(max-width:570px){
+	.offer, .scrollable{
+		height:auto !important;
+		//overflow: unset !important;
+	}
+}

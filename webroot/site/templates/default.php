@@ -1,0 +1,47 @@
+<?
+/*
+Default template
+AT
+20.11.24
+*/
+
+//$css[] = '/site/assets/css/default.css';
+
+?>
+
+<? include '_shared/_prolog.php' ?>
+<? include '_shared/layout-sidebars/prolog.php' ?>
+<? include '_shared/banner.php' ?>
+<? include $page->background->url? 'default/banner.php' : '_shared/title.php' ?>
+
+<section class="padded container" >
+	<div class="padded card" >
+
+		<? if( $page->summary ): ?>
+			<p class="XL">
+				<?=$page->summary?>
+			</p>
+		<? endif ?>
+
+	<?/*
+		<div class="padded centered">
+			<? $regButtonConfig=(Object)['css'=>'simple L margin-l button']; include '_shared/buttons/reg-button.php' ?>
+		</div>
+	*/?>
+
+		<? if( $page->body ): ?>
+			<div class="body">
+				<?=$page->body?>
+			</div>
+		<? endif ?>
+
+		<? if($page->images) { $images = $page->images; include '_shared/thumbs.php'; } ?>
+		<? if($page->files) { include '_shared/files.php'; } ?>
+
+		<? include '_shared/sections.php' ?>
+
+	</div>
+</section>
+
+<? include '_shared/layout-sidebars/epilog.php' ?>
+<? include '_shared/_epilog.php' ?>

@@ -1,0 +1,11 @@
+.field{
+	padding:.5rem;
+	flex:1;
+	min-width:18rem;
+
+	&.required{
+		label{
+			font-weight:800;
+		}
+	}
+}

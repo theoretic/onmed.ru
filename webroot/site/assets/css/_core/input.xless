@@ -1,0 +1,62 @@
+@inputBorderWidth:2px;
+
+input,textarea,select,input[type="select"]{
+	font-family: inherit;
+	font-size:1rem;
+	display:inline-block;
+	width:100%;
+	margin:.2rem 0;
+	padding:.5rem;
+	color:#333;
+	//background:rgba(255,255,255,.8);
+	//border:@inputBorderWidth solid @grey;
+	//border:none;
+	background:@white;
+	border:@inputBorderWidth solid @mediumgrey;
+	outline: none;
+	//.shadow(0, 0, .2rem, @grey);
+	.rounded(.2rem);
+	.border-box();
+	//.opacity(.8);
+	.transition();
+
+	&:focus{
+		outline: 4px solid #eee;
+	}
+
+	&.invalid{
+		border:@inputBorderWidth solid @red;
+		//.shadow(0, 0, .4rem, ~"rgb(var(--color))");
+		//.shadow(0, 0, .4rem, @red);
+	}
+	&.valid{
+		border:@inputBorderWidth solid @green;
+		//.shadow(0, 0, .4rem, @green);
+	}
+	&.special{
+		display:none;
+	}
+	&.opaque{
+		border: @inputBorderWidth transparent;
+		background:rgba(255,255,255,.5);
+		&:hover{
+			background:rgba(255,255,255,.9);
+		}
+	}
+
+
+	&:hover{
+		//.opacity(1);
+		//.shadow(0, 0, .4rem, @grey);
+	}
+}
+
+input[type="checkbox"], input[type="radio"]{
+width:1rem;
+//height:1rem;
+padding:0px;
+}
+
+::placeholder{
+	.opacity(.3);
+	}

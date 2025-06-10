@@ -1,0 +1,11 @@
+.margin-xs{
+	margin:.2rem !important;
+}
+
+.margin-s{
+	margin:.4rem !important;
+}
+
+.margin{
+	margin:.8rem !important;
+}

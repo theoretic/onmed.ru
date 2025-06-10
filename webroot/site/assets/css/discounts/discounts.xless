@@ -1,0 +1,7 @@
+[role=discounts] {
+	//flex:1;
+	}
+
+.discount{
+	//margin-bottom:4rem;
+	}

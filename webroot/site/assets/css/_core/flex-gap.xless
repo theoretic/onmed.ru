@@ -1,0 +1,29 @@
+.flex-gap{
+	column-gap: @gap;
+	row-gap: @gap;
+}
+
+.flex-gap-S{
+	column-gap: @gap / 2;
+	row-gap: @gap / 2;
+}
+
+.flex-gap-L{
+	column-gap: @gap * 1.4;
+	row-gap: @gap * 1.4;
+}
+
+.flex-gap-XL{
+	column-gap: @gap * 2;
+	row-gap: @gap * 2;
+}
+
+.flex-gap-X2L{
+	column-gap: @gap * 3.2;
+	row-gap: @gap * 3.2;
+}
+
+.flex-gap-X3L{
+	column-gap: @gap * 4;
+	row-gap: @gap * 4;
+}

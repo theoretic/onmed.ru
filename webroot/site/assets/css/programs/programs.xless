@@ -1,0 +1,41 @@
+.program{
+flex:1;
+min-width:20rem;
+max-width:32rem;
+//height:24rem;
+}
+
+.program-image{
+	img{
+		width:100%;
+		height:16rem;
+		object-fit:cover;
+		border-top-left-radius:@cornerRadius;
+		border-top-right-radius:@cornerRadius;
+		}
+	}
+
+.program-texts{
+	min-height:6rem;
+	}
+
+.program-details{
+	min-height:6rem;
+	}
+
+/////
+
+@media(max-width:@sizePhoneVertical){
+	.program.flex{
+		flex-flow: column wrap;
+		text-align:center;
+		}
+	.program-image{
+		width:100%;
+		}
+	.program-image img{
+		width:100%;
+		border-bottom-left-radius:0;
+		border-top-right-radius:@cornerRadius;
+		}
+	}

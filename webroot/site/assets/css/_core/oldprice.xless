@@ -1,0 +1,7 @@
+.oldprice{
+	//font-size:.8;
+	font-weight:300;
+	text-decoration:line-through;
+	padding: 0 .4rem;
+	.opacity(.5);
+}

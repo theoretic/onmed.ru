@@ -1,0 +1,29 @@
+@red:			#c90030;
+//@cherry:		#a91064;
+//@blue:		#931368;
+@orange:		#ff6900;
+@orangered:		#ff3600;
+@lightorange:	#ffbb8c;
+@gold:			#fa0;
+@yellow:		#ffff00;
+//@teal:			#00bbb9;
+//@green:			#129800;
+//@green:			#038e00;
+@green:			#0e8a35;
+//@lightgreen:	#bad29f;
+//@cyan:			#00baff;
+//@blue:			#005ad2;
+@blue:			#0085FF;
+//@navy:			#00568f;
+//@darkblue:		#000544;
+//@lightblue:		#2096ff;
+
+//@grey:			#bbb;
+//@grey:			#a0a0a0;
+@grey:			#999;
+@darkgrey:		#666;
+@mediumgrey:	#ccc;
+@lightgrey:		#f0f0f0;
+
+@white:			#fff;
+@black:			#333;

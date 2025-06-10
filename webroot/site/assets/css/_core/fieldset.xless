@@ -1,0 +1,8 @@
+fieldset{
+border:none;
+border-top:1px solid @lightgrey;
+.rounded(@cornerRadius);
+//.shadow(0,0,.5rem,rgba(0,0,0,.2));
+margin-bottom:.5rem;
+//.transition;
+}

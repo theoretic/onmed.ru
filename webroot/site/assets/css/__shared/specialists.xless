@@ -1,0 +1,58 @@
+.specialist{
+	width:16rem;
+	height:44rem;
+	//padding:@whitespace/2;
+	}
+
+.specialist-title{
+	padding:.8rem;
+	font-size:1.5rem;
+	line-height:.9;
+	}
+
+.specialist-specializations{
+	padding:.5rem;
+	//color:@grey;
+	}
+
+.specialist-image{
+	img{
+		height:21.333333rem;
+		max-width:100%;
+		object-fit:cover;
+		border-top-left-radius:@cornerRadius;
+		border-top-right-radius:@cornerRadius;
+		}
+	}
+
+.specialist-bottom{
+	//height:6rem;
+	margin-top:auto;
+}
+
+.specialist-description{
+	height:4rem;
+	//overflow-y: scroll;
+}
+
+/*
+.current.specialist .card{
+	.shadow( 0, 0, 1rem, @blue );
+}
+*/
+
+/////
+/*
+@media(max-width:900px){
+	.specialist .card{
+		width:16rem;
+		height:30rem;
+		}
+	.specialist-image{
+		//width:12rem;
+		}
+	.current.specialist .card{
+		.shadow( 0, 0, .5rem, @blue );
+		}
+	}
+*/

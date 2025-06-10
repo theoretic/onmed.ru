@@ -1,0 +1,4 @@
+.comment{
+font-size:.8rem;
+.opacity(.5);
+}

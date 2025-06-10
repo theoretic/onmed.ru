@@ -1,0 +1,43 @@
+.message{
+	text-align:center;
+	margin:.5rem;
+	padding:1rem;
+	.rounded(@cornerRadius);
+
+	&.fullscreen{
+		margin:0;
+		border:0 !important;
+		.rounded(0);
+	}
+
+	&.success{
+		color: @green;
+		background:fade(@green,20);
+		border-left:.2rem solid @green;
+	}
+
+	&.error{
+		color: @red;
+		background:fade(@red,20);
+		border-left:.2rem solid @red;
+	}
+
+	&.warning, &.notification{
+		color:@orange;
+		background:fade(@orange,20);
+		border-left:.2rem solid @orange;
+	}
+
+	&.default{
+		background:fade(@grey,20);
+		border-left:.2rem solid @grey;
+	}
+
+	//
+	.close{
+		top:.5rem;
+		right:.5rem;
+		font-size:1.4rem;
+		color:inherit;
+	}
+}

@@ -1,0 +1,13 @@
+@mixin table-scaffolding {
+  th {
+    text-align: center;
+    font-weight: 500;
+  }
+  td,
+  th {
+    padding: 2px;
+    &.numeric {
+      text-align: right;
+    }
+  }
+}

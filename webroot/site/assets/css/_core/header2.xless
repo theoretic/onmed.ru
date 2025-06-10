@@ -1,0 +1,12 @@
+#header2{
+	 padding:.5rem;
+	 background:~"rgba(var(--color),.6)";
+}
+
+//
+
+@media(max-width:600px){
+	#header2-flex{
+		justify-content:right;
+	}
+}

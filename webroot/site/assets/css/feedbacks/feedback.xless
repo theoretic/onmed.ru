@@ -1,0 +1,16 @@
+@feedbackSpecialistAvatarSize:3.2rem;
+
+.feedback-date{
+	.opacity(.5);
+}
+
+.feedback-author{
+	.opacity(.5);
+}
+
+.feedback-specialist-avatar{
+	width:@feedbackSpecialistAvatarSize;
+	height:@feedbackSpecialistAvatarSize;
+	border-radius:@feedbackSpecialistAvatarSize;
+	margin:.5rem;
+}

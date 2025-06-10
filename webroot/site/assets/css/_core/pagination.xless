@@ -1,0 +1,23 @@
+.pagination{
+	.page{
+		display:inline-block;
+		text-align:center;
+		padding:.4rem .8rem;
+		margin: .8rem .4rem;
+		font-size:1.2rem;
+		.rounded(.4rem);
+		.transition();
+	}
+
+	a{
+		outline: 1px solid @mediumgrey;
+		&:hover, &.current{
+			//margin:0 .4rem;
+			//font-size:2.4rem;
+			outline: 1px solid @blue;
+			background:@blue;
+			color:@white;
+		}
+	}
+
+}

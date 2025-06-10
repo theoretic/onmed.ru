@@ -1,0 +1,85 @@
+.icon{
+	width: 1rem;
+	height: 1rem;
+	//margin: 0 .2rem;
+
+	&.padded{
+		padding:0 .4rem;
+		}
+//sizes
+
+	&.XS{
+		width: .7rem;
+		height: .7rem;
+	}
+
+	&.S{
+		width: .8rem;
+		height: .8rem;
+		}
+
+	&.L{
+		width: 1.4rem;
+		height: 1.4rem;
+		}
+
+	&.XL{
+		width: 2rem;
+		height: 2rem;
+		}
+
+	&.X2L{
+		width: 2.4rem;
+		height: 2.4rem;
+		}
+
+	&.X3L{
+		width: 3.2rem;
+		height: 3.2rem;
+		}
+
+	&.X4L{
+		width: 4rem;
+		height: 4rem;
+		}
+
+//colors
+
+	&.white{
+		color:@white;
+		}
+
+	}
+
+
+/////
+
+/*
+@media(max-width:600px){
+	.L.icon{
+		width: 1.2rem;
+		height: 1.2rem;
+		}
+
+	.XL.icon{
+		width: 1.6rem;
+		height: 1.6rem;
+		}
+
+	.X2L.icon{
+		width: 2.0rem;
+		height: 2.0rem;
+		}
+
+	.X3L.icon{
+		width: 2.6rem;
+		height: 2.6rem;
+		}
+
+	.X4L.icon{
+		width: 3.2rem;
+		height: 3.2rem;
+		}
+
+	}
+*/

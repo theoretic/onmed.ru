@@ -1,0 +1,5 @@
+legend{
+//font-size:.7em;
+color:@grey;
+padding:10px;
+}

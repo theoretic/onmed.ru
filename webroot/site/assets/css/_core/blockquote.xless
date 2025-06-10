@@ -1,0 +1,8 @@
+blockquote{
+	padding:1rem;
+	background: fade( @lightgrey, 50 );
+	border-left:.2rem solid ~"rgb(var(--color))";
+	.rounded();
+	margin-bottom:1rem;
+}
+

@@ -1,0 +1,83 @@
+#branches{
+	//moved to header.xless
+	//margin: -1.8rem 0 0 5rem;
+
+	a{
+		font-family: 'Days One';
+		font-size:1.1rem;
+		//padding: .3rem 2rem .4rem 2rem;
+		padding: .4rem 2.6rem;
+		//margin-left:-1.8rem;
+		position:absolute;
+		z-index:1;
+		.rounded(5rem);
+
+		&.current{
+			z-index:900 !important;
+			margin-top:-.15rem;
+			padding-top:.5rem;
+			padding-bottom:.5rem;
+			background:@white !important;
+			color:~"rgb(var(--color))" !important;
+			}
+
+		&.home{
+			z-index:300;
+			left:0;
+			background: ~"rgb(var(--colorHome))";
+			}
+
+		&.deti{
+			z-index:200;
+			left:9.6rem;
+			//padding-left: 3rem;
+			background: ~"rgb(var(--colorDeti))";
+			&.current{
+				padding-left: 2rem;
+				}
+			}
+
+		&.dent{
+			z-index:100;
+			left:15.6rem;
+			//padding-left: 3rem;
+			background: ~"rgb(var(--colorDent))";
+			}
+
+		&:hover{
+			z-index:1000 !important;
+			padding-left: 3.2rem !important;
+			padding-right: 3.2rem !important;
+			}
+
+		}
+
+	}
+
+////
+
+@media(max-width:500px){
+	#branches{
+		a{
+			font-size:1rem;
+			padding: .2rem 1.4rem .5rem 1.4rem;
+
+			&.deti{
+				left:6.8rem;
+				padding-left: 2rem;
+				}
+
+			&.dent{
+				z-index:100;
+				left:11.6rem;
+				padding-left: 2rem;
+				}
+
+			&:hover{
+				padding-left: 2rem;
+				padding-right: 2rem;
+				}
+
+			}
+		}
+	}

@@ -1,0 +1,66 @@
+#header2-menu{
+	a{
+		//font-family: 'Days One', sans-serif;
+		font-size:1.2rem;
+		//font-weight:500;
+		//text-transform:uppercase;
+		text-decoration:none;
+		padding: .4rem 1rem;
+		margin: 0 .2rem;
+		color:@white;
+		.rounded(5rem);
+		//.rounded(@cornerRadius);
+		//.gradient(lighten(@green,10%),darken(@green,10%),-90deg);
+		.transition();
+		&.current,&:hover{
+			//.gradient(@yellow,@red);
+			//.gradient(@yellow,lighten(@red,30%),-90deg);
+			color:@white;
+			background:~"rgb(var(--color))";
+			}
+		&.current:hover{
+			cursor:default;
+			}
+
+		}
+	}
+
+html.menu-visible{
+
+	#header2-menu{
+		top:0px;
+		display:flex;
+		.border-box();
+		flex-flow: row wrap;
+		z-index:1000;
+		width:100%;
+		//min-height:8rem;
+		padding:1rem;
+		padding-right:6rem;
+		//.shadow(0,0,1rem,rgba(0,0,0,.5));
+		background:~"rgb(var(--color))";
+		//.shadow(0,0,1rem,~"rgb(var(--color))");
+		.shadow(0,0,1rem,rgba(0,0,0,.5));
+
+		a{
+			color:@white;
+			&:hover{
+				color:~"rgb(var(--color))";
+				background:@white;
+			}
+		}
+	}
+
+}
+
+//
+
+@media(max-width:@header2MenuBreakpoint){
+	#header2-menu{
+		position:absolute;
+		top:-16rem;
+		left:0;
+		//z-index:-1;
+		.transition();
+	}
+}

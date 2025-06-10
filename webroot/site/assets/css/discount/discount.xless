@@ -1,0 +1,36 @@
+[role=discount]{
+.opacity(.5);
+}
+
+[role=discount].actual{
+.opacity(1);
+}
+
+/*
+#discount-image{
+	height:20rem;
+	border-top-left-radius:@cornerRadius;
+	border-top-right-radius:@cornerRadius;
+	background-position: 50% 50%;
+	background-size:cover;
+	}
+*/
+
+#discount-intro{
+	min-height:20rem;
+	background-position: 50% 50%;
+	background-size:cover;
+	border-top-left-radius:@cornerRadius;
+	border-top-right-radius:@cornerRadius;
+
+	*{
+		color:@white !important;
+		text-shadow: 0 0 .5rem rgba(0,0,0,.75) !important;
+	}
+}
+
+#discount-amount{
+font-size:6rem;
+font-weight:800;
+color:~"rgb(var(--color))";
+}

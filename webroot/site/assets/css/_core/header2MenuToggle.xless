@@ -1,0 +1,45 @@
+#header2MenuToggle{
+position:absolute;
+z-index:1000;
+right:0;
+top:0;
+padding:1rem;
+line-height:0px;
+}
+
+////
+
+@media(max-width:@header2MenuBreakpoint){
+
+	#header2MenuToggle{
+		display:block;
+		//top:2.2rem;
+		//top:1rem;
+		}
+
+	html.menu-visible{
+		#header2MenuToggle{
+			display:block;
+			}
+
+		.hamburger .hamburger-inner:after,
+		.hamburger .hamburger-inner:before {
+			background-color: @white;
+			}
+
+		}
+	}
+
+@media(max-width:400px){
+	#header2MenuToggle{
+		top:2.4rem;
+	}
+}
+
+//
+
+@media(min-width:@header2MenuBreakpoint){
+	#header2MenuToggle{
+		display:none;
+	}
+}

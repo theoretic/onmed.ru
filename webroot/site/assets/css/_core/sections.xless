@@ -1,0 +1,25 @@
+section.narrative{
+	.section-image{
+		width:50%;
+		max-width:24rem;
+		.rounded();
+		&.left-floated{
+			margin: 0 2rem 2rem 0;
+		}
+		&.right-floated{
+			margin: 0 0 2rem 2rem;
+		}
+	}
+}
+
+//
+
+@media(max-width:480px){
+	section.narrative{
+		.section-image{
+			width:100%;
+			max-width:100%;
+		}
+	}
+
+}

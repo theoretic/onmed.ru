@@ -1,0 +1,39 @@
+//html used here to prevent svg icons from inheriting the color attribute
+html{
+	font-size:15px;
+	-wk- font-display: swap;//prevents FOIT
+	//font-family: Montserrat, sans-serif;
+	//font-family: 'PT Sans', sans-serif;
+	//font-family: 'Roboto', sans-serif;
+	//font-family: 'Open Sans', sans-serif;
+	//font-family: 'Noto Sans', sans-serif;
+	font-family: 'Stem', sans-serif;
+	font-weight:100;
+	color:@black;
+}
+
+////
+
+@media(max-width:440px){
+	html{
+		font-size:12px;
+	}
+}
+
+@media (min-width:440px){
+	html{
+		font-size:13px;
+	}
+}
+
+@media (min-width:600px){
+	html{
+		font-size:14px;
+	}
+}
+
+@media(min-width:1280px){
+	html{
+		font-size:16px;
+	}
+}

@@ -1,0 +1,1 @@
+<? require_once "{$_SERVER['DOCUMENT_ROOT']}/site/shared/classes/Wolfcast/BrowserDetection.php";

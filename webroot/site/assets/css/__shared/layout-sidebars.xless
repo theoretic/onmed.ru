@@ -1,0 +1,6 @@
+[role=primary]{
+	padding: @whitespace;
+	&>.sticky{
+		padding: @whitespace 0;
+	}
+}

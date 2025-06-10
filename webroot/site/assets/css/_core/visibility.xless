@@ -1,0 +1,15 @@
+.hidden{
+display:none;
+}
+
+.visible{
+display:initial;
+}
+
+.invisible{
+visibility:hidden;
+}
+
+.visible{
+visibility:visible;
+}

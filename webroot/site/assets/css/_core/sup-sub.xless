@@ -1,0 +1,10 @@
+sup, sub, sup *, sub *{
+	white-space:nowrap;
+	font-size:.8em;
+}
+sup, sup *{
+	vertical-align:top;
+}
+sub, sub *{
+	vertical-align:bottom;
+}

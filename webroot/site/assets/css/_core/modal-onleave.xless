@@ -1,0 +1,29 @@
+#modal-onleave{
+
+	img{
+		max-height:20rem;
+	}
+
+	.card{
+		//background-repeat:no-repeat;
+		//background-position: 50% 50%;
+		background-size:cover;
+	}
+}
+
+////
+
+@media(max-width:900px){
+
+	#modal-onleave{
+
+		img{
+			align-self:end;
+		}
+
+		.card{
+			align-self:start;
+		}
+	}
+
+}

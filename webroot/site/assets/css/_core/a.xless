@@ -1,0 +1,17 @@
+a{
+	color:~"rgb(var(--color))";
+	font-size:inherit;
+	text-decoration:none;
+	.transition();
+	&:hover{
+		color:@grey;
+		cursor:pointer;
+		//.opacity(.7);
+		}
+	}
+
+
+a *, a:visited *, a:hover *{
+color:inherit;
+text-decoration:inherit;
+}
