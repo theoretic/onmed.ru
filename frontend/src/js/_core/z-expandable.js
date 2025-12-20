@@ -1,12 +1,12 @@
 /*
 AT
-27.11.19
+01.09.25
 */
 
 $(function(){
-	$("#offers-menu .expander").on("click",function(e){
+	$(".expander").on("click",function(e){
 		//console.log(e.target);
-		var
+		let
 			expander = $(e.target),
 			li = expander.parent("li"),
 			expanderText

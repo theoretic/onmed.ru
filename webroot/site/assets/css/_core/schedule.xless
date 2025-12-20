@@ -1,0 +1,5 @@
+table.schedule{
+	td:last-child{
+		text-align:center !important;
+	}
+}

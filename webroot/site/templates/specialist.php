@@ -2,7 +2,7 @@
 /*
 Specialist template
 AT
-13.03.25
+04.09.25
 */
 
 include_once '_shared/functions/Field.php';
@@ -47,27 +47,29 @@ $js[] = '/site/assets/js/form.js';
 				<img data-src="<?=$image?>">
 			</div>
 			<div id="offers" class="padded centered">
-				<div class="padded">
-					<? if($page->summary): ?>
-						<h6 class="half-padded">
-							<?=$page->summary?>
-						</h6>
-					<? endif ?>
-					<? if($page->year_since): ?>
-						<p class="strong centered">
-							Стаж с 
-							<?=$page->year_since?> г.
-						</p>
-					<? endif ?>
-					<? if( count($page->files)>0 ) include '_shared/files.php' ?>
-					<!--
-					<? if($page->specializations): ?>
-						<p>
-							<?=$specializations?>
-						</p>
-					<? endif ?>
-					-->
-				</div>
+
+				<? if($page->summary): ?>
+					<h6 class="half-padded">
+						<?=$page->summary?>
+					</h6>
+				<? endif ?>
+
+				<? if($page->year_since): ?>
+					<p class="strong centered">
+						Стаж с 
+						<?=$page->year_since?> г.
+					</p>
+				<? endif ?>
+
+				<? if( count($page->files)>0 ) include '_shared/files.php' ?>
+
+				<!--
+				<? if($page->specializations): ?>
+					<p>
+						<?=$specializations?>
+					</p>
+				<? endif ?>
+				-->
 
 				<? if($page->price): ?>
 					<div class="w100 half-padded XL">
@@ -75,7 +77,11 @@ $js[] = '/site/assets/js/form.js';
 						<? include 'specialist/prices.php' ?>
 					</div>
 				<? endif ?>
-
+<?/*
+				<div class="w100 half-padded centered">
+					<?=$settings->contacts->schedule?>
+				</div>
+*/?>
 				<br>
 				<a href="<?=$page->archimedURL?>" target=_blank class="XL button">
 					Запись на приём
@@ -83,22 +89,30 @@ $js[] = '/site/assets/js/form.js';
 
 			</div>
 		</div>
+
 		<div id="texts">
-			<div id="qualification-skills" class="flex flex-top">
-				<? if($page->qualification): ?>
-					<div id="qualification" class="padded">
+			<div id="education-skills" class="padded flex flex-top">
+				<? if($page->education): ?>
+					<div id="education" class="h-padded">
 						<h2>Квалификация и опыт работы</h2>
-						<?=$page->qualification?>
+						<?=$page->education?>
 					</div>
 				<? endif ?>
 				<? if($page->skills): ?>
-					<div id="skills" class="padded">
+					<div id="skills" class="h-padded">
 						<h2>Профессиональные навыки</h2>
 						<?=$page->skills?>
 					</div>
 				<? endif ?>
+				<? if( count($page->accreditations)): ?>
+					<div id="accreditations" class="h-padded">
+						<h2>Аккредитации</h2>
+						<? include 'specialist/accreditations.php' ?>
+					</div>
+				<? endif ?>
 			</div>
 		</div>
+
 		<? if($page->images) { $images = $page->images; include '_shared/thumbs.php'; } ?>
 		<? include '_shared/sections.php' ?>
 	</div>

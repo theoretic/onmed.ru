@@ -13,10 +13,11 @@ Yandex YML offer
 Также для корректной обработки фида нужно убрать из специальностей слово «детский». Информацию о том, с какой возрастной категорией работает врач, нужно передавать в офферах в 1 или обоих тегах: param name="Взрослый врач" и param name="Детский врач", которые принимают значения true или false.
 
 AT
-16.05.25
+04.08.25
 */
 
-$maxAllowedFeedbacks = 250;
+//$maxAllowedFeedbacks = 250;
+$maxAllowedFeedbacks = false;
 
 //specializations
 $acceptsChildren = $specialistPage->parent("/deti")->id? 'true' : 'false';
@@ -234,7 +235,8 @@ $feedbacksCounter = 0;
 	<!--Семпл отзывов. Не более $maxAllowedFeedbacks штук-->
 	<? foreach( $feedbackPages as $feedbackPage ): ?>
 		<?
-		if( ++$feedbacksCounter > $maxAllowedFeedbacks ) break;
+		++$feedbacksCounter;
+		//if( $maxAllowedFeedbacks && $feedbacksCounter > $maxAllowedFeedbacks ) break;
 		?>
 		<param name="Отзыв - <?=$feedbacksCounter?>" unit="Автор">
 			<?=$feedbackPage->author?>

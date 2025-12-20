@@ -6,7 +6,7 @@ AT
 ?>
 
 <div class="absolute hidden modal" id="modal-map">
-	<a class=close>✕</a>
+	<a class="close" data-modal-close>✕</a>
 	<div class="double-padded container">
 		<div id="map">
 			<?=$settings->contacts->map_html?>

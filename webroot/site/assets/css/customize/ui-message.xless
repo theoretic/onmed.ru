@@ -1,0 +1,26 @@
+#ui-message{
+left:0;
+top:0;
+z-index:1000;
+width:100%;
+height:100%;
+background:rgba(255,255,255,.95);
+}
+
+#ui-message-close{
+float:right;
+margin-top:-2rem;
+}
+
+#ui-message-inner{
+	margin:0 auto;
+	//width: 60%;
+	max-width:48rem;
+	min-width:12rem;}
+
+#ui-message-text{
+	text-align:center;
+	padding:1.5rem;
+}
+
+

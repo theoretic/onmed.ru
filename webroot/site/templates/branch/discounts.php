@@ -74,11 +74,11 @@ $discountPages = $discountPages? : $pages->find("template=discount,date_start<$n
 </div>
 
 <a class="absolute prev flex flex-middle">
-	<? $svgSymbol='arrow'; include '_shared/svg-sprite.php' ?>
+	<? $svgSprite=(Object)['symbol'=>'arrow']; include '_shared/svg-sprite.php' ?>
 </a>
 
 <a class="absolute next flex flex-middle">
-	<? $svgSymbol='arrow'; include '_shared/svg-sprite.php' ?>
+	<? $svgSprite=(Object)['symbol'=>'arrow']; include '_shared/svg-sprite.php' ?>
 </a>
 
 <? $i=0 ?>

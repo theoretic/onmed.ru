@@ -6,6 +6,6 @@
 
 @media(max-width:@header2MenuBreakpoint){
 	#offers-menu-show{
-		display:block;
+		display:flex;
 	}
 }

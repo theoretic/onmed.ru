@@ -1,10 +1,18 @@
 <?
 /*
 AT
-25.04.18
+01.09.25
 */
+?>
 
+<div id="submenu" class="flex">
+<?
 echo renderNavTree(
 	$page->rootParent,
-	[ 'maxDepth' => 1 ]
+	[
+		'maxDepth'			=> 1,
+	]
 	);
+?>
+
+</div>

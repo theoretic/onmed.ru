@@ -4,18 +4,17 @@ Yandex YML template
 https://yandex.ru/support/webmaster/search-appearance/doctors.html
 https://cachev2-m9-12.cdn.yandex.net/download.cdn.yandex.net/from/yandex.ru/support/ru/webmaster/files/doctors.xml?lid=221
 AT
-30.05.25
+07.10.25
 */
 
 namespace ProcessWire;
 
-/*
-//finding specialists in all branches
 $branchPages = $pages->find("template=branch");
 $specialistsSelector = "template=specialist,price!=,oldprice!=,specializations.count>0,offers.count>0,specializations.off_yml=";
 $specializationPages = new PageArray();
 $specialistPages = new PageArray();
 
+/*
 foreach( $branchPages as $branchPage ){
 	if( strstr($branchPage->name, 'dent') ) continue;
 	$doctorsPage = $branchPage->get("name=doctors");
@@ -26,24 +25,7 @@ foreach( $branchPages as $branchPage ){
 }
 */
 
-//finding specialists in main branch only
-$specialistPages = $pages->get("/doctors")->find("template=specialist,specializations.count>0,offers.count>0,price!=,oldprice!=,specializations.off_yml=");
-
-//getting specialists and specializations from non-main branches
-foreach( $specialistPages as $i=>$specialistPage ){
-	//looking for the same specialist from non-main branch
-	$otherBranchesSpecialistPages = $pages->find("id!={$specialistPage->id},title={$specialistPage->title},firstname={$specialistPage->firstname},patronymic={$specialistPage->patronymic}");
-	if( count($otherBranchesSpecialistPages)==0 ) continue;
-
-	//temporary modifying the specialist page
-	foreach( $otherBranchesSpecialistPages as $otherBranchesSpecialistPage ){
-		$specialistPage->specializations->add($otherBranchesSpecialistPage->specializations);
-	}
-
-//	$specialistPages->add($otherBranchesSpecialistPages);
-
-}
-
+$specialistPages = $pages->get('/doctors')->find($specialistsSelector);
 $specialistPages = $specialistPages->unique();//
 
 //foreach( $specialistPages as $specialistPage ) echo "specialist: {$specialistPage->title} {$specialistPage->firstname} {$specialistPage->id} <br>\n";//

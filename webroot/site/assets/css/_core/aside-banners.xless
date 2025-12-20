@@ -10,7 +10,7 @@
 	}
 
 .aside-banner-label{
-	background: ~"rgb(var(--color))";
+	background: ~"rgb(var(--color),.7)";
 	color:@white;
 	left:-2rem;
 	top:-2rem;

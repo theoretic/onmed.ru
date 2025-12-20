@@ -14,12 +14,13 @@ html{
 
 ////
 
+/*
 @media(max-width:440px){
 	html{
 		font-size:12px;
 	}
 }
-
+*/
 @media (min-width:440px){
 	html{
 		font-size:13px;

@@ -2,7 +2,7 @@
 /*
 header
 AT
-07.12.23
+03.09.25
 */
 
 $isHome = $page->url == $homePage->url;
@@ -53,14 +53,15 @@ $homeUnhref = ($isHome)? '' : '</a>';
 <? include '_shared/header/warning.php' ?>
 
 <header id="header2">
-	<div id="header2-flex" class="flex flex-middle container">
+	<div id="header2-flex" class="flex flex-middle">
 		<? if( $page!=$offersPage): ?>
-			<button id="offers-menu-show" class="flex flex-center flex-middle" data-toggle-class='{ "html":"offers-menu-visible" }'>
-				<? //$svgSymbol='first-aid-kit'; $svgClass='XL padded icon'; include '_shared/svg-sprite.php' ?>
-				Наши услуги
+			<button id="offers-menu-show" class="flex flex-middle margin-xs" data-toggle-class='{ "html":"offers-menu-visible" }'>
+				<? $svgSprite=(Object)[ 'symbol'=>'medkit', 'title'=>'наши услуги', 'css'=>'L margin-xs icon' ]; include '_shared/svg-sprite.php' ?>
+				наши услуги
 			</button>
 		<? endif ?>
 		<? include '_shared/header/header2-menu.php' ?>
+		<? include '_shared/buttons/bvi-button.php' ?>
 		<div id="header1-search" class="flex">
 			<div id="search">
 				<form class="flex flex-middle">

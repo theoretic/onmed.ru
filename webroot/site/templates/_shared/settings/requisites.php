@@ -2,7 +2,7 @@
 /*
 Requisites
 AT
-24.11.23
+09.09.25
  */
 
 namespace ProcessWire;
@@ -12,17 +12,42 @@ return [
 		'name' => 'company_name',
 		'label' => 'Название организации',
 		'type' => 'InputfieldText',
-		'columnWidth' => 50,
+		'columnWidth' => 33,
 		//'useLanguages' => true,
 		//'required' => true,
 		//'value' => '',
 	],
 	[
 		'name' => 'company_fullname',
-		'label' => 'Длинное название организации',
+		'label' => 'Полное название организации',
 		'type' => 'InputfieldText',
-		'columnWidth' => 50,
+		'columnWidth' => 33,
 		//'useLanguages' => true,
+		//'required' => true,
+		//'value' => '',
+	],
+	[
+		'name' => 'registration_date',
+		'label' => 'Дата гос. регистрации',
+		'type' => 'InputfieldText',
+		'columnWidth' => 34,
+		//'useLanguages' => true,
+		//'required' => true,
+		//'value' => '',
+	],
+	[
+		'name' => 'founders',
+		'label' => 'Учредители',
+		'type' => 'InputfieldText',
+		//'columnWidth' => 25,
+		//'required' => true,
+		//'value' => '',
+	],
+	[
+		'name' => 'legal_address',
+		'label' => 'Юр. адрес',
+		'type' => 'InputfieldText',
+		//'columnWidth' => 25,
 		//'required' => true,
 		//'value' => '',
 	],
@@ -83,5 +108,4 @@ return [
 		//'required' => true,
 		//'value' => '',
 	],
-
 ];

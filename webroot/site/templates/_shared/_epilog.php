@@ -16,12 +16,13 @@ AT
 			</div>
 		</div>
 
+		<? if(!$pageHasFeedbackForm) include '_shared/modals/modal-feedback.php' ?>
 		<? include '_shared/modals/modal-map.php' ?>
 		<? include '_shared/modals/modal-onleave.php' ?>
 
 
-	<? include '_shared/body/3rd-party-end.php' ?>
-
+		<? if( !$_COOKIE['cookieConcentAccepted'] ) include '_shared/modals/modal-cookie-consent.php' ?>
+		<? include '_shared/body/3rd-party-end.php' ?>
 	</body>
 
 	<? if(IS_WINTER_HOLIDAYS) include '_shared/snow.php' ?>

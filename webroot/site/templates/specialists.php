@@ -2,7 +2,7 @@
 /*
 Specialists template
 AT
-03.11.24
+22.09.25
 */
 
 //include_once '_shared/functions/Field.php';
@@ -37,7 +37,8 @@ if( $input->urlSegments[1] ){
 }
 
 //$specialistsSelector[] = "include=all";
-$specialistsSelector[] = "sort=title";
+//$specialistsSelector[] = "sort=title";
+$specialistsSelector[] = "sort=sort";
 $specialistsSelector = implode( ',', $specialistsSelector );
 
 //echo '$branchPage: ', var_dump($branchPage);//

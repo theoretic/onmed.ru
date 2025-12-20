@@ -3,7 +3,7 @@ modals handler
 strict mode
 handles elements from both original and javasciprt-updated DOM
 AT
-25.03.20
+28.08.25
 */
 
 $(function() {
@@ -18,7 +18,7 @@ $(function() {
 		adaptBacks('.modal [data-back]', 'data-back')
 		})
 
-	$('body').on( "click", ".modal a.close", function(event){
+	$('body').on( "click", "[data-modal-close]", function(event){
 		let selector_ = '#' + $(this).parents(".modal").eq(0).attr('id')
 		Modal.hide(selector_)
 		})

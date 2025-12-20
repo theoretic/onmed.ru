@@ -2,12 +2,12 @@
 /*
 Appointment modal
 AT
-12.11.24
+03.09.25
 */
 ?>
 
 <div class="absolute hidden modal" id="modal-appointment">
-	<a class=close>✕</a>
+	<a class="close" data-modal-close>✕</a>
 	<div class="narrow padded container">
 		<form
 			id="appointment-form"
@@ -86,9 +86,7 @@ AT
 
 			<div class="flex flex-middle">
 				<div>
-					<p class="no-padding comment">
-					Отсылая эту форму, я соглашаюсь на <a href="/personal-data">обработку персональных данных</a>.
-					</p>
+					<? include '_shared/personal-data/consent.php' ?>
 				</div>
 				<div class="flex-end">
 					<button class="L">Записаться</button>

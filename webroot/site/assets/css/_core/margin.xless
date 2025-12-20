@@ -9,3 +9,7 @@
 .margin{
 	margin:.8rem !important;
 }
+
+.margin-auto{
+margin: auto !important;
+}

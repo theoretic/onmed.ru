@@ -1,27 +1,17 @@
 <?php
-/**
- * Given a group of pages, render a <ul> navigation tree
- *
- * This is here to demonstrate an example of a more intermediate level
- * shared function and usage is completely optional. This is very similar to
- * the renderNav() function above except that it can output more than one
- * level of navigation (recursively) and can include other fields in the output.
- *
- * @param array|PageArray $items
- * @param int $maxDepth How many levels of navigation below current should it go?
- * @param string $fieldNames Any extra field names to display (separate multiple fields with a space)
- * @param string $class CSS class name for containing <ul>
- * @return string
- *
-
+/*
+renderNavTree
 mod by AT
-07.11.23
+01.09.25
  */
 
 
 function renderNavTree($root, $params) {
 
-	$params['_initialDepth'] = $params['_initialDepth']? : count($root->parents);
+//echo '$root: ', var_dump($root);//
+
+	//$params['_initialDepth'] = $params['_initialDepth']? : count($root->parents);
+	if( $root->parents ) $params['_initialDepth'] = count($root->parents);
 	$params['maxDepth'] = $params['maxDepth']? : 0;
 
 	extract($params);

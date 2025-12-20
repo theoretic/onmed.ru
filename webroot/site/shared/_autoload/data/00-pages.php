@@ -6,6 +6,7 @@ AT
 */
 
 $homePage = $pages->get('/');
+//echo '$homePage: ', var_dump($homePage);
 $aboutPage = $pages->get('name=o-nas');
 $discountsPage = $pages->get('template=discounts');
 $branchPages = $pages->find('template=branch');
@@ -23,4 +24,3 @@ $offerPages = $pages->find("template=offer,sort=title");
 $specialistPages = $pages->find("template=specialist,sort=title");
 
 $warningPage = $pages->get("template=warning,status!=unpublished");
-//echo '$warningPage: ', var_dump($warningPage);

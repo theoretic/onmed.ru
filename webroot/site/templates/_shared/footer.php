@@ -2,7 +2,7 @@
 /*
 footer
 AT
-21.11.23
+01.09.25
 */
 
 ?>
@@ -10,8 +10,12 @@ AT
 <footer>
 	<div id="footer-flex" class="flex flex-middle container">
 
-		<div id="footer-first" class="padded">
+		<div id="footer-first" class="half-padded">
 			<div>
+				<strong class="L">
+					<?=$settings->requisites->company_name?>
+				</strong>
+				<br>
 				<?=$settings->contacts->address?>
 			</div>
 			<div id="footer-map-button" class="half-v-padded flex">
@@ -20,14 +24,21 @@ AT
 		</div>
 
 		<div id="footer-center" class="padded centered">
-			<p class="padded">
-				<?=$settings->general->organization_name?>
+			<? if(!$pageHasFeedbackForm) include '_shared/buttons/feedback-button.php' ?>
+			<p class="padded centered">
+				<a href="/sitemap">
+					Карта сайта
+				</a>
 			</p>
+<!--
 			<div class="flatmenu flex flex-center">
+				<br>
+				<br>
 				<? foreach($aboutPage->children as $child): ?>
 					<a href="<?=$child->url?>"><?=$child->title?></a>
 				<? endforeach ?>
 			</div>
+-->
 
 <!--
 			<div id="footer-paycards" class="centered padded flex flex-center">
@@ -52,11 +63,11 @@ AT
 				</div>
 				<? include '_shared/icons-links.php' ?>
 			</div>
-			<div id="footer-email-vendor" class="half-v-padded flex">
+			<div id="footer-email-vendor" class="half-padded flex">
 <?/*
 				<div id="footer-email" class="half-padded flex flex-middle">
 					<a href="mailto:<?=$settings->email?>" class="flex flex-middle">
-						<? $svgSymbol='mail'; $svgClass='XL padded icon'; include '_shared/svg-sprite.php' ?>
+						<? $svgSprite=(Object)['symbol'=>'mail', 'css'=>'XL padded icon']; include '_shared/svg-sprite.php' ?>
 						<span role="caption">
 							<?=$settings->email?>
 						</span>

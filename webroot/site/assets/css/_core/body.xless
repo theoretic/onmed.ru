@@ -1,4 +1,5 @@
 body{
+	//position:relative; //for absolute modals
 	 min-height:100vh;
 	 .transition();
 }

@@ -2,7 +2,7 @@
 /*
 Feedback form
 AT
-12.02.25
+03.09.25
 */
 ?>
 
@@ -91,9 +91,7 @@ AT
 
 	<div class="half-padded flex flex-middle">
 		<div>
-			<p class="comment">
-			Отсылая эту форму, я соглашаюсь на <a href="/personal-data/">обработку персональных данных</a>.
-			</p>
+			<? include '_shared/personal-data-consent.php' ?>
 		</div>
 		<div class="right-aligned flex-end">
 			<button class="L">Отправить</button>
@@ -115,3 +113,5 @@ AT
 		Попробуйте обновить страницу и отправить эту форму ещё раз. Если не поможет -- свяжитесь с нами любым другим удобным для Вас способом. И да, простите за неудобство!
 	</p>
 </div>
+
+<? $pageHasFeedbackForm=true ?>

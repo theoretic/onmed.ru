@@ -1,0 +1,4 @@
+#modal-cookie-consent{
+top:unset;
+bottom:0;
+}

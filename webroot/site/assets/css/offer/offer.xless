@@ -1,27 +1,15 @@
-#image-details{
+#offer-top div{
 	flex:1;
 	min-width:24rem;
-	}
+}
 
-#texts{
-	flex:2;
-	}
-
-#image{
+#offer-top-image{
+	padding:@whitespace;
 	img{
 		width:100%;
-		border-top-left-radius:@cornerRadius;
-		object-fit:contain;
-		}
-	}
-
-/////
-
-
-@media(max-width:730px){
-
-	#image img{
-		border-top-right-radius:@cornerRadius;
-		}
+		//border-top-left-radius:@cornerRadius;
+		//border-top-right-radius:@cornerRadius;
+		.rounded(@cornerRadius);
 
 	}
+}

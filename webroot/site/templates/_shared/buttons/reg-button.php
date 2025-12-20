@@ -2,7 +2,7 @@
 /*
 reg button
 AT
-10.11.23
+28.08.25
 */
 
 $regButtonConfig = $regButtonConfig? : (Object)[
@@ -12,7 +12,7 @@ $regButtonConfig = $regButtonConfig? : (Object)[
 ?>
 
 <a href="//reg.onmed.ru/" target=_blank class="<?=$regButtonConfig->css?>" >
-	<? //$svgSymbol='reception'; $svgClass='XL padded icon'; include '_shared/svg-sprite.php' ?>
+	<? //$svgSprite=(Object)['symbol'=>'reception', 'css'=>'XL padded icon']; include '_shared/svg-sprite.php' ?>
 	Запись на приём
 </a>
 

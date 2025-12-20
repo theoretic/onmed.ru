@@ -1,0 +1,8 @@
+#ui-top {
+left:0;
+top: 0;
+z-index:200;
+width: 100%;
+background:rgba(255,255,255,.5);
+box-shadow: 0 0 2rem rgba(0,0,0,.1);
+}

@@ -6,7 +6,7 @@
 Contacts
 
 AT
-23.11.23
+08.09.25
  */
 
 namespace ProcessWire;
@@ -53,18 +53,37 @@ return [
 		//'value' => '',
 	],
 	[
-		'name' => 'schedule',
-		'label' => 'Режим работы',
+		'name' => 'address',
+		'label' => 'Адрес',
 		'type' => 'InputfieldTextarea',
+		'columnWidth' => 100,
 		//'useLanguages' => true,
 		//'required' => true,
 		//'value' => '',
 	],
 	[
-		'name' => 'address',
-		'label' => 'Адрес',
-		'type' => 'InputfieldTextarea',
-		'columnWidth' => 50,
+		'name' => 'city',
+		'label' => 'Город',
+		'type' => 'InputfieldText',
+		'columnWidth' => 33,
+		//'useLanguages' => true,
+		//'required' => true,
+		//'value' => '',
+	],
+	[
+		'name' => 'region',
+		'label' => 'Регион',
+		'type' => 'InputfieldText',
+		'columnWidth' => 33,
+		//'useLanguages' => true,
+		//'required' => true,
+		//'value' => '',
+	],
+	[
+		'name' => 'postal_code',
+		'label' => 'Почтовый индекс',
+		'type' => 'InputfieldText',
+		'columnWidth' => 34,
 		//'useLanguages' => true,
 		//'required' => true,
 		//'value' => '',
@@ -72,7 +91,7 @@ return [
 	[
 		'name' => 'metro',
 		'label' => 'Метро',
-		'type' => 'InputfieldTextarea',
+		'type' => 'InputfieldText',
 		'columnWidth' => 50,
 		//'useLanguages' => true,
 		//'required' => true,
@@ -91,6 +110,14 @@ return [
 		'name' => 'map_html',
 		'label' => 'HTML-код Яндекс.Карты',
 		'type' => 'InputfieldTextarea',
+		//'required' => true,
+		//'value' => '',
+	],
+	[
+		'name' => 'schedule',
+		'label' => 'Режим работы',
+		'type' => 'InputfieldTextarea',
+		//'useLanguages' => true,
 		//'required' => true,
 		//'value' => '',
 	],

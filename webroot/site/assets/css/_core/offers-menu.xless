@@ -9,57 +9,5 @@
 	&:hover{
 		border:.2rem solid transparent;
 		.shadow(0,0,.5rem,~"rgba( var(--color),.5 )");
-		}
-
-	ul{
-		list-style:none;
-		margin-left:2.4rem;
-		padding:.5rem;
-		max-width:16rem;
-
-		&.l1{
-			margin-left:1rem;
-		}
-
-/*
-		&.l1 > li > a{
-			//display:inline-block;
-			//width:100%;
-			//font-family: 'Days One', sans-serif;
-			//padding:.5rem 1rem;
-			//.rounded(2rem);
-			//.transition();
-			&:hover{
-				color:@white;
-				background:~"rgb(var(--color))";
-				}
-			}
-*/
-		}
-
-	li{
-		//margin:.1rem;
-		}
-
-	li.expandable{
-		//max-height:0;
-		margin-left: -2.4rem;
-		&>ul{
-			display:none;
-			}
-		&.expanded>ul{
-			//max-height:1000rem;
-			display:block;
-			}
-		}
-
-	li.current > a{
-		color:@black;
 	}
-
-	a.expander{
-		float:left;
-		padding: .4rem !important;
-		margin: -.4rem 0 0 1rem;
-		}
-	}
+}

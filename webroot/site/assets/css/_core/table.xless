@@ -40,7 +40,7 @@ tr{
 td,th{
 	padding:.7rem;
 	//vertical-align:middle;
-	//vertical-align:top;
+	vertical-align:top;
 
 	&:first-child{
 		border-top-left-radius:@cornerRadius;

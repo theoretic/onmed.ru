@@ -1,20 +1,33 @@
 #submenu{
+	ul{
+		display:flex;
+		flex-wrap:wrap;
+		align-items:center;
+		justify-content:middle;
+	}
+
 	li{
-		margin:3px 0;
+		list-style:none;
+		margin:.2rem;
 		}
 	a{
-		display:block;
-		padding:5px 10px;
-		.rounded(20px);
+		//display:block;
+		white-space:nowrap;
+		padding:.4rem 1.2rem;
+		.rounded();
+		outline: 1px solid rgba(0,0,0,.2);
 		:hover{
 			color:#fff;
 			//.gradient(@yellow,lighten(@red,30%));
-			.gradient(lighten(@green,10%),darken(@green,10%));
+			//.gradient(lighten(@green,10%),darken(@green,10%));
+			background:@blue;
+			outline: 1px solid @blue;
 			}
 		}
-	a.current{
+	li.current a{
 		color:#fff;
-		.gradient(lighten(@grey,10%),darken(@grey,10%));
+		//.gradient(lighten(@grey,10%),darken(@grey,10%));
+		background:@grey;
 		:hover{
 			cursor:default;
 			}

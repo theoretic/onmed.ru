@@ -2,7 +2,7 @@
 /*
 Offer: single offer
 AT
-29.05.25
+27.11.25
 
 $now = time();
 //$discountPage = $pages->findOne("template=discount, date_start<$now, date_end>$now, offers.id={$page->id}, discount>0, sort=-discount");
@@ -23,20 +23,26 @@ if( "$feedbackPages" )
 ?>
 
 <section role="offer" class="padded container block">
-	<div class="flex flex-top card">
+	<div class="card">
 		<? if( !$page->hasImagesInBody && $page->image ): ?>
-			<div id="image-details">
+			<div id="offer-top" class="flex flex-middle">
 				<? if($page->image): ?>
-					<div id="image">
+					<div id="offer-top-image">
 						<img data-src="<?=$page->image->url?>">
 					</div>
+				<? endif ?>
+				<? if($page->summary): ?>
+					<div id="offer-top-summary" class="XL padded">
+						<?=$page->summary?>
+					</div>
+				<? $summaryIsDisplayed=1 ?>
 				<? endif ?>
 			</div>
 		<? endif ?>
 
 		<div id="texts">
 
-			<? if($page->summary): ?>
+			<? if(!$summaryIsDisplayed && $page->summary): ?>
 				<p class="XL padded">
 					<?=$page->summary?>
 				</p>

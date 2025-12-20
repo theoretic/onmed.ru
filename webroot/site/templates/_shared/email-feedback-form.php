@@ -2,7 +2,7 @@
 /*
 Feedback form
 AT
-02.12.21
+03.09.25
 */
 ?>
 
@@ -44,9 +44,7 @@ AT
 	</div>
 	<div class="flex">
 		<div>
-			<p class="comment">
-			Отсылая эту форму, я соглашаюсь на <a href="/personal-data">обработку персональных данных</a>.
-			</p>
+			<? include '_shared/personal-data-consent.php' ?>
 		</div>
 		<div class="right-aligned flex-end">
 			<button class="L">Отправить</button>

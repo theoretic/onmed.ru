@@ -51,7 +51,7 @@ $config->debug = false;
 
 //$config->dbHost = 'localhost';
 //openserver6
-$config->dbHost = 'MariaDB-11.7';
+$config->dbHost = 'MariaDB-11.8';
 $config->dbPort = '3306';
 
 $config->dbUser = 'mysql';

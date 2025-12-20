@@ -2,7 +2,7 @@
 /*
 branch banners slider
 AT
-26.05.25
+28.08.25
 */
 
 namespace ProcessWire;
@@ -49,11 +49,11 @@ $bannerPages->add( $pages->find("template=discount,date_start<$now,date_end>$now
 </div>
 
 <a class="absolute prev flex flex-middle">
-	<? $svgSymbol='arrow'; include '_shared/svg-sprite.php' ?>
+	<? $svgSprite=(Object)['symbol'=>'arrow']; include '_shared/svg-sprite.php' ?>
 </a>
 
 <a class="absolute next flex flex-middle">
-	<? $svgSymbol='arrow'; include '_shared/svg-sprite.php' ?>
+	<? $svgSprite=(Object)['symbol'=>'arrow']; include '_shared/svg-sprite.php' ?>
 </a>
 
 <? $i=0 ?>

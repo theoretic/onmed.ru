@@ -1,5 +1,5 @@
 #header2{
-	 padding:.5rem;
+	 //padding:.5rem;
 	 background:~"rgba(var(--color),.6)";
 }
 

@@ -3,7 +3,7 @@ Form helper
 dependences:
 	cash or jquery
 AT
-02.12.24
+04.09.25
 */
 
 class FormHelper{
@@ -62,10 +62,11 @@ class FormHelper{
 		let
 			self = this,
 			form = _field.parents('form'),
-			validatorUrl = form.data('validator')
+			validatorUrl = form.data('validator'),
+			value = encodeURIComponent( _field.val() ).substring(0,199)
 
 		//truncate is needed to keep the resulting URL not too long
-		validatorUrl += '?mode=field&name='+_field.attr('name')+'&value=' + _field.val().substring(0,50)
+		validatorUrl += '?mode=field&name='+_field.attr('name')+'&value=' + value
 
 		_field.addClass('loading')
 

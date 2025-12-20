@@ -2,7 +2,7 @@
 /*
 Header menu
 AT
-07.11.24
+28.08.25
 */
 
 $branchSpecificTemplates = [
@@ -35,7 +35,7 @@ $menuPages = $homePage->children($selector);
 
 ?>
 
-<nav id="header2-menu" class="flex flex-middle">
+<nav id="header2-menu" class="w100 flex flex-middle flex-between">
 	<? foreach($menuPages as $menuPage): ?>
 		<?
 		//$rootParent = $menuPage->rootParent;

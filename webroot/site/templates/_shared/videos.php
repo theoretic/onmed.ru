@@ -2,7 +2,7 @@
 /*
 videos
 AT
-12.04.19
+28.08.25
 */
 
 $videos = $videos? : $page->videos;
@@ -38,7 +38,7 @@ $videos = $videos? : $page->videos;
 	?>
 	<a data-src="<?=$video->link?>" data-sub-html="<?=$video->title?>" class="flex flex-center flex-middle" style="background: url(<?=$videoThumb?>)" >
 		<div class="centered play">
-			<? $svgSymbol = 'play'; $svgClass = 'X3L icon'; include '_shared/svg-sprite.php' ?>
+			<? $svgSprite=(Object)['symbol'=>'play', 'css'=>'X3L icon']; include '_shared/svg-sprite.php' ?>
 		</div>
 		<?//=$video->title?>
 	</a>

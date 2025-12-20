@@ -2,22 +2,23 @@
 /*
 api: products search
 AT
-17.10.23
+22.09.25
 */
 
 $skipCSRF = 1;
 
 $search = $input->get->search;
 
-if( !$matches = $pages->find("title|longtitle|summary*=$search,sort=title") )
+if( !$matches = $pages->find("title|longtitle|summary*=$search,template!=feedback,sort=title") )
 	return [];
 
 foreach($matches as $match)
 	{
 	$results[] = [
-		'title' => $match->title,
-		'url' => $match->url,
-		//'image' => $match->images->first()->url,
+		'title'			=> $match->title,
+		'url'			=> $match->url,
+		'template'		=> $match->template,
+		//'image'		=> $match->images->first()->url,
 		];
 	}
 

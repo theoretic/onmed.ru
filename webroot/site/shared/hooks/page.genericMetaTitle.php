@@ -8,7 +8,7 @@ http://reg.onmed.ru/?mode=offline&spec=5&service=&doc=242
 В Title после ФИО добавить &mdash; [Перечисление специальностей]
 
 AT
-24.02.25
+04.09.25
 */
 
 namespace ProcessWire;
@@ -33,23 +33,26 @@ wire()->addHookProperty('Page::genericMetaTitle', function($event) {
 		break;
 	}
 
-	$append = 'ОНМЕД';
+	$append = '';
+	$append2 = 'Медицинский центр ОНМЕД в Москве, ВАО метро Первомайская, метро Измайловская, ул. Нижняя Первомайская';
 
+/*
 	//parent template-dependent logic
 	switch( $page->parent->template->name ){
 		case 'news':
-			$append = 'Новости клиники ОНМЕД';
+			$append = 'Новости';
 		break;
 	}
+*/
 
 	//template-dependent logic
 	switch( $page->template->name ){
 		case 'discount':
-			$append = 'Акции и пакетные предложения клиники ОНМЕД';
+			$append = 'Акции и пакетные предложения';
 		break;
 
 		case 'offer':
-			$append = 'Медицинский центр ОНМЕД в Москве, ВАО м. Первомайская и м. Измайловская';
+			//$append = 'Медицинский центр ОНМЕД в Москве, ВАО м. Первомайская и м. Измайловская, ул. Нижняя Первомайская';
 		break;
 
 		case 'specialist':
@@ -61,6 +64,7 @@ wire()->addHookProperty('Page::genericMetaTitle', function($event) {
 				$specializations[] = $specializationPage->title;
 			$specializations = implode( ', ', $specializations );
 			$genericMetaTitle .= $specializations;
+			
 		break;
 
 		case 'specialists':
@@ -79,7 +83,8 @@ wire()->addHookProperty('Page::genericMetaTitle', function($event) {
 		$genericMetaTitle .= " , страница $pageCandidate";
 	}
 
-	$genericMetaTitle .= ' - ' . $append;
+	if( $append ) $genericMetaTitle .= ' - ' . $append;
+	if( $append2 ) $genericMetaTitle .= ' - ' . $append2;
 
 	$event->return = $genericMetaTitle;
 });

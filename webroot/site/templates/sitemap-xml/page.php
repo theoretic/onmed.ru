@@ -1,8 +1,8 @@
 <?
 /*
-sitemap page
+sitemap xml page
 AT
-02.02.22
+01.09.25
 */
 ?>
 <url>

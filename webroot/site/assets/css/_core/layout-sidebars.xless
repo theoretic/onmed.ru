@@ -32,6 +32,11 @@
 			}
 		}
 
+	}
+
+
+@media(max-width:@header2MenuBreakpoint){
+
 	#offers-menu{
 		display:none;
 		min-height:100vh;

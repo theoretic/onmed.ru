@@ -3,7 +3,7 @@
 metas
 OpenGraph
 AT
-19.12.23
+08.09.25
 */
 ?>
 
@@ -31,4 +31,7 @@ AT
 	<meta property="og:image" content="<?=$page->image->url? : '/site/assets/files/images/favicons/android-icon-192x192.png' ?>">
 	<meta property="og:type" content="article"/>
 	<meta property="og:url" content= "<?=$page->url?>" />
+
+	<? @include "{$page->template}/json-ld.php" ?>
+
 </no-typo>

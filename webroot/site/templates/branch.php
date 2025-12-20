@@ -2,7 +2,7 @@
 /*
 Branch template
 AT
-21.11.23
+01.09.25
 */
 
 include '_shared/seo-url.php';
@@ -24,17 +24,28 @@ $css[] = '/site/assets/css/branch.css';
 
 <? include '_shared/layout-sidebars/prolog.php' ?>
 
+<section id="intro" class="padded">
+	<div class="L light top-padded">
+		<?=$page->summary?>
+	</div>
+</section>
 
-		<section id="intro" class="padded">
-			<div class="L light top-padded">
-				<?=$page->summary?>
-			</div>
-		</section>
+<section id="sections" class="padded">
+	<? include '_shared/sections.php' ?>
+</section>
+<br><br>
 
-		<section id="sections" class="padded">
-			<? include '_shared/sections.php' ?>
-		</section>
-		<br><br>
+<div class="card">
+	<? include 'contacts/details.php' ?>
+</div>
+<br><br>
+
+<? include 'contacts/map.php' ?>
+<br><br>
+
+<? $settingName = 'requisites'; include '_shared/settings-table.php' ?>
+
+<br><br>
 
 <?/*
 <section id="offers" class="container">

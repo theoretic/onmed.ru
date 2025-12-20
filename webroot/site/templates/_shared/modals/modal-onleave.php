@@ -2,7 +2,7 @@
 /*
 onLeaveModal modal
 AT
-02.12.24
+03.09.25
 */
 
 $onLeavePage = $pages->get("name=modal-onleave");
@@ -28,7 +28,7 @@ $onLeavePage = $pages->get("name=modal-onleave");
 */?>
 		>
 
-			<a class=close>✕</a>
+			<a class="close" data-modal-close>✕</a>
 			<h2>
 				<?=$onLeavePage->longtitle?>
 			</h2>
@@ -66,9 +66,7 @@ $onLeavePage = $pages->get("name=modal-onleave");
 
 				<div class="flex flex-middle">
 					<div>
-						<p class="comment">
-						Отсылая эту форму, я соглашаюсь на <a href="/personal-data">обработку персональных данных</a>.
-						</p>
+						<? include '_shared/personal-data-consent.php' ?>
 					</div>
 					<div class="right-aligned flex-end">
 						<button class="L">Перезвоните мне!</button>

@@ -1,4 +1,6 @@
 #header2-menu{
+	padding:.4rem;
+	background:~"rgba(var(--color),.4)";
 	a{
 		//font-family: 'Days One', sans-serif;
 		font-size:1.2rem;
