@@ -1,0 +1,15 @@
+.beforeafter{
+	.specialist, .specialist *{
+		height:unset;
+	}
+}
+
+@media(max-width:600px){
+
+	.beforeafter{
+		.before{ order: 1 }
+		.after{ order: 2 }
+		.performer{ order: 3 }
+	}
+
+}

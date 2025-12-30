@@ -57,6 +57,10 @@ if( "$feedbackPages" )
 			<? include '_shared/sections.php' ?>
 			<? if( $page->images !== null ) { $images = $page->images; include '_shared/thumbs.php'; } ?>
 
+			<? if( count($page->images_before) && count($page->images_after) && $page->specialist ): ?>
+				<? include 'offer/before-after.php' ?>
+			<? endif ?>
+
 			<? if( count($specialistPages)>0 ): ?>
 				<div id="specialists">
 					<? include 'specialists/specialists.php' ?>
