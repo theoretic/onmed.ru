@@ -1,0 +1,49 @@
+@comparatorMinHeight:24rem;
+
+.comparatorContainer{
+	min-height: @comparatorMinHeight;
+}
+
+.comparator{
+	overflow: hidden;
+	//--handleSize: 2rem;
+	min-height: @comparatorMinHeight;
+	.rounded();
+
+	.comparatorLeft, .comparatorRight{
+		top: 0;
+		left: 0;
+		width: 100%;
+		min-height: @comparatorMinHeight;
+		//background-size:100%;
+		background-size:cover;
+		background-position: 50% 50%;
+		//will-change: transform;
+		//.transition(.5s);
+	}
+
+	.comparatorLeft{
+		z-index: 20;
+	}
+
+	.comparatorRight{
+		z-index: 10;
+	}
+
+	input[type=range]{
+		appearance: none;
+		-webkit-appearance: none;
+		-webkit-tap-highlight-color: transparent;
+		position: absolute;
+		//left: ~"calc(var(--handleSize) / -2)";
+		z-index: 50;
+		left:0;
+		top: 0;
+		//width: ~"calc(100% + var(--handleSize))";
+		width:100%;
+		height: 100%;
+		opacity: 0;
+		cursor: col-resize;
+		background-color: transparent;
+	}
+}

@@ -1,0 +1,18 @@
+/*
+https://muffinman.io/blog/image-comparison-slider/
+AT
+22.01.26
+*/
+
+$(function(){
+
+		$(".comparator input[type=range]").on('input', function(e){
+
+			let
+				targetEl=$(e.target),
+				comparatorEl = targetEl.parents(".comparator").first()
+
+			comparatorEl.css( '--maskWidth', targetEl.val()+'%' )
+		})
+
+})

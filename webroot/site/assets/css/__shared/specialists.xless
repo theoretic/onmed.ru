@@ -25,6 +25,14 @@
 		}
 	}
 
+.specialist-avatar{
+	img{
+		height:6rem;
+		object-fit:cover;
+		.rounded(100%);
+		}
+}
+
 .specialist-bottom{
 	//height:6rem;
 	margin-top:auto;
