@@ -8,7 +8,9 @@
 .comparator{
 	overflow: hidden;
 	//--handleSize: 2rem;
+	max-width:48rem;
 	min-height: @comparatorMinHeight;
+	margin: 0 auto;
 	.rounded();
 
 	.comparatorLeft, .comparatorRight{
