@@ -1,5 +1,5 @@
 //@comparatorMinHeight:24rem;
-@comparatorMinHeight:33vw;
+@comparatorMinHeight:25vw;
 
 .comparatorContainer{
 	min-height: @comparatorMinHeight;
@@ -8,7 +8,7 @@
 .comparator{
 	overflow: hidden;
 	//--handleSize: 2rem;
-	max-width:48rem;
+	max-width:40rem;
 	min-height: @comparatorMinHeight;
 	margin: 0 auto;
 	.rounded();
