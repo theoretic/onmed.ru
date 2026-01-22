@@ -1,4 +1,5 @@
-@comparatorMinHeight:24rem;
+//@comparatorMinHeight:24rem;
+@comparatorMinHeight:33vw;
 
 .comparatorContainer{
 	min-height: @comparatorMinHeight;
