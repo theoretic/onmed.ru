@@ -2,7 +2,7 @@
 /*
 onLeaveModal modal
 AT
-03.09.25
+10.03.26
 */
 
 $onLeavePage = $pages->get("name=modal-onleave");
@@ -72,6 +72,7 @@ $onLeavePage = $pages->get("name=modal-onleave");
 						<button class="L">Перезвоните мне!</button>
 					</div>
 				</div>
+				<input type="checkbox "class="special" name="consent" value="1"/>
 			</form>
 
 	</div>

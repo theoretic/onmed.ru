@@ -10,13 +10,14 @@
  * do so after you have installed the site, as the installer is not informed
  * of any changes made in this file. 
  * 
- * ProcessWire 3.x, Copyright 2016 by Ryan Cramer
+ * ProcessWire 3.x, Copyright 2026 by Ryan Cramer
  * https://processwire.com
  *
- * @version 3.0
+ * @version 3.0.2
  *
  * Index Versions
  * ==============
+ * 302 Updated for PHP 8.4 deprecation notices, upgrade not necessary w/prior PHP versions.
  * 300 Moved much of this file to a ProcessWire::buildConfig() method.
  * 252 Extract all fuel to local API vars when in external or cli mode.
  * 251 Add $config->debugIf option.
@@ -24,12 +25,12 @@
  *
  */
 
-if(!defined("PROCESSWIRE")) define("PROCESSWIRE", 300); // index version
+if(!defined("PROCESSWIRE")) define("PROCESSWIRE", 302); // index version
 $rootPath = __DIR__;
 if(DIRECTORY_SEPARATOR != '/') $rootPath = str_replace(DIRECTORY_SEPARATOR, '/', $rootPath);
 $composerAutoloader = $rootPath . '/vendor/autoload.php'; // composer autoloader
 if(file_exists($composerAutoloader)) require_once($composerAutoloader);
-if(!class_exists("ProcessWire", false)) require_once("$rootPath/wire/core/ProcessWire.php");
+if(!class_exists("ProcessWire\\ProcessWire", false)) require_once("$rootPath/wire/core/ProcessWire.php");
 $config = ProcessWire::buildConfig($rootPath);
 
 if(!$config->dbName) {
@@ -50,17 +51,14 @@ $wire = null;
 try { 
 	// Bootstrap ProcessWire's core and make the API available with $wire
 	$wire = new ProcessWire($config);
-	$process = $wire->modules->get('ProcessPageView');
+	$process = $wire->modules->get('ProcessPageView'); /** @var ProcessPageView $process */
 	$wire->wire('process', $process); 
 	echo $process->execute($config->internal);
 	$config->internal ? $process->finished() : extract($wire->wire('all')->getArray());
 	
-} catch(\Exception $e) {
-	// Formulate error message and send to the error handler
-	if($process) $process->failed($e);
+} catch(\Throwable $e) {
 	$wire ? $wire->trackException($e) : $config->trackException($e);
-	$errorMessage = "Exception: " . $e->getMessage() . " (in " . $e->getFile() . " line " . $e->getLine() . ")";
-	if($config->debug || ($wire && $wire->user && $wire->user->isSuperuser())) $errorMessage .= "\n\n" . $e->getTraceAsString();
-	trigger_error($errorMessage, E_USER_ERROR);
+	if($process && $e instanceof \Exception) $process->finished();
+	$shutdown = $wire ? $wire->shutdown : null;
+	if($shutdown) $shutdown->setFatalError($e);
 }
-

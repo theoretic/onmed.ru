@@ -1,5 +1,6 @@
 /*
 https://muffinman.io/blog/image-comparison-slider/
+https://jsfiddle.net/Twisty/jzeo4xsm/82/
 AT
 22.01.26
 */

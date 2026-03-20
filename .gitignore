@@ -44,3 +44,5 @@ webroot/vendor
 webroot/wire
 webroot/tools
 webroot/site/templates/.hash
+.osp/project.ini
+.osp/project.ini

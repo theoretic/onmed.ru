@@ -2,10 +2,21 @@
 /*
 Callback
 AT
-02.12.24
+10.03.26
 */
 
 namespace ProcessWire;
+
+//robot / spam protection
+if( $input->post->consent == 1){
+	return [ 'success' => 'Большое спасибо!! Мы постараемся перезвонить как можно скорее.', ];
+	die();
+}
+
+if( !$referer->page->id || $referer->page->id === null ){
+	return [ 'success' => 'Большое спасибо!!! Мы постараемся перезвонить как можно скорее.', ];
+	die();
+}
 
 //echo '$input->post: ', var_dump($input->post);
 
