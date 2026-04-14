@@ -2,7 +2,7 @@
 /*
 Offer: single offer
 AT
-20.01.26
+14.04.26
 
 $now = time();
 //$discountPage = $pages->findOne("template=discount, date_start<$now, date_end>$now, offers.id={$page->id}, discount>0, sort=-discount");
@@ -57,7 +57,7 @@ if( "$feedbackPages" )
 			<? include '_shared/sections.php' ?>
 			<? if( $page->images !== null ) { $images = $page->images; include '_shared/thumbs.php'; } ?>
 
-			<? if( count($page->offer_effects) ): ?>
+			<? if( $page->if('offer_effects') ): ?>
 				<h2 class="centered">Наши результаты</h2>
 				<? include 'offer/offer_effects.php' ?>
 			<? endif ?>
