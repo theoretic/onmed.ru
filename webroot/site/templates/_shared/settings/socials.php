@@ -4,9 +4,8 @@
  * the tabs in an inputfield wrapper
 
 Socials
-
 AT
-17.10.23
+20.03.26
  */
 
 namespace ProcessWire;
@@ -29,8 +28,8 @@ return [
 		//'value' => '',
 	],
 	[
-		'name' => 'vk',
-		'label' => 'VK',
+		'name' => 'max',
+		'label' => 'Max',
 		'type' => 'InputfieldText',
 		'columnWidth' => 25,
 		//'required' => true,

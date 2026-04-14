@@ -1,8 +1,9 @@
 <?
 /*
 socials
+//wa.me/79691512424?text=Здравствуйте,
 AT
-12.11.24
+23.03.26
 */
 
 //echo '$settings->socials->data: ', var_dump($settings->socials->data);//
