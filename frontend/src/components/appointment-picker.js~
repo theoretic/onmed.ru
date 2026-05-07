@@ -1,0 +1,609 @@
+/**
+ * appointment-picker.js
+ * A self-contained web component for scheduling appointments.
+ *
+ * Usage:
+ *   <appointment-picker
+ *     slot-duration="15"
+ *     day-start="09:00"
+ *     day-end="17:00"
+ *     button-label="Book Appointment"
+ *   ></appointment-picker>
+ *
+ *   document.querySelector('appointment-picker').apiConfig = {
+ *     fetchUrl: '/api/appointments',
+ *     postUrl:  '/api/book',
+ *     headers:  { Authorization: 'Bearer ...' }
+ *   };
+ *
+ * CSS custom properties (set on the element or :root):
+ *   --ap-accent      Accent color          (default: #c8a96e)
+ *   --ap-bg          Background            (default: #0c0c0f)
+ *   --ap-surface     Surface cards         (default: #16161a)
+ *   --ap-surface-2   Deeper surface        (default: #1e1e24)
+ *   --ap-border      Border color          (default: #2a2a35)
+ *   --ap-text        Primary text          (default: #ede8df)
+ *   --ap-text-muted  Muted text            (default: #5a5a6e)
+ *   --ap-radius      Border radius         (default: 16px)
+ */
+
+class AppointmentPicker extends HTMLElement {
+
+  static get observedAttributes() {
+    return ['slot-duration', 'day-start', 'day-end', 'locale', 'button-label'];
+  }
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+
+    //  State 
+    // IDLE  LOADING  READY / LOAD_ERROR
+    // READY  DATE_SELECTED  TIME_SELECTED  SUBMITTING  SUCCESS / SUBMIT_ERROR
+    this._state       = 'IDLE';
+    this._occupied    = new Set();   // "YYYY-MM-DD HH:MM" strings
+    this._viewYear    = new Date().getFullYear();
+    this._viewMonth   = new Date().getMonth();
+    this._selDate     = null;        // Date object
+    this._selTime     = null;        // "HH:MM"
+    this._apiConfig   = null;
+    this._message     = '';
+
+    //  Config defaults 
+    this._slotMins    = 15;
+    this._dayStartMin = 9 * 60;      // 09:00
+    this._dayEndMin   = 17 * 60;     // 17:00
+    this._locale      = navigator.language || 'en-US';
+    this._btnLabel    = 'Confirm Appointment';
+  }
+
+  //  Public API 
+
+  set apiConfig(cfg) {
+    this._apiConfig = cfg;
+    if (this.isConnected) this._load();
+  }
+
+  get apiConfig() { return this._apiConfig; }
+
+  connectedCallback() {
+    this._render();
+    if (this._apiConfig && this._state === 'IDLE') this._load();
+  }
+
+  attributeChangedCallback(name, _, val) {
+    switch (name) {
+      case 'slot-duration': this._slotMins    = Math.max(5, parseInt(val) || 15); break;
+      case 'day-start':     this._dayStartMin = this._parseMins(val) ?? 9 * 60;  break;
+      case 'day-end':       this._dayEndMin   = this._parseMins(val) ?? 17 * 60; break;
+      case 'locale':        this._locale      = val || navigator.language;        break;
+      case 'button-label':  this._btnLabel    = val || 'Confirm Appointment';     break;
+    }
+  }
+
+  //  Internal helpers 
+
+  _parseMins(str) {
+    if (!str) return null;
+    const [h = 0, m = 0] = str.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  _dateKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  _slotKey(dateObj, timeStr) {
+    return `${this._dateKey(dateObj)} ${timeStr}`;
+  }
+
+  _formatTime(timeStr) {
+    const [h, m] = timeStr.split(':').map(Number);
+    const d = new Date(); d.setHours(h, m, 0, 0);
+    return d.toLocaleTimeString(this._locale, { hour: '2-digit', minute: '2-digit' });
+  }
+
+  _datesWithAppointments() {
+    const s = new Set();
+    for (const k of this._occupied) s.add(k.split(' ')[0]);
+    return s;
+  }
+
+  _timeSlotsForDate(dateObj) {
+    const slots = [];
+    for (let m = this._dayStartMin; m < this._dayEndMin; m += this._slotMins) {
+      const hh = String(Math.floor(m / 60)).padStart(2, '0');
+      const mm = String(m % 60).padStart(2, '0');
+      const time = `${hh}:${mm}`;
+      slots.push({ time, occupied: this._occupied.has(this._slotKey(dateObj, time)) });
+    }
+    return slots;
+  }
+
+  //  State transitions 
+
+  async _load() {
+    this._state = 'LOADING';
+    this._render();
+    try {
+      const r = await fetch(this._apiConfig.fetchUrl, {
+        headers: this._apiConfig.headers || {}
+      });
+      if (!r.ok) throw new Error(`Server returned ${r.status}`);
+      const raw = await r.json();
+      this._occupied = new Set(raw.map(s => {
+        const d = new Date(s);
+        return `${this._dateKey(d)} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      }));
+      this._state = 'READY';
+    } catch (e) {
+      this._message = e.message;
+      this._state = 'LOAD_ERROR';
+    }
+    this._render();
+  }
+
+  async _submit() {
+    this._state = 'SUBMITTING';
+    this._render();
+    try {
+      const [h, m] = this._selTime.split(':').map(Number);
+      const dt = new Date(this._selDate);
+      dt.setHours(h, m, 0, 0);
+      const r = await fetch(this._apiConfig.postUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(this._apiConfig.headers || {}) },
+        body: JSON.stringify({ dateTime: dt.toISOString() })
+      });
+      if (!r.ok) throw new Error(`Server returned ${r.status}`);
+      this._state = 'SUCCESS';
+      this._message = dt.toLocaleString(this._locale, { dateStyle: 'full', timeStyle: 'short' });
+    } catch (e) {
+      this._message = e.message;
+      this._state = 'SUBMIT_ERROR';
+    }
+    this._render();
+  }
+
+  _prevMonth() {
+    if (this._viewMonth === 0) { this._viewMonth = 11; this._viewYear--; }
+    else this._viewMonth--;
+    this._render();
+  }
+
+  _nextMonth() {
+    if (this._viewMonth === 11) { this._viewMonth = 0; this._viewYear++; }
+    else this._viewMonth++;
+    this._render();
+  }
+
+  _selectDate(d) {
+    this._selDate = d;
+    this._selTime = null;
+    this._state   = 'DATE_SELECTED';
+    this._render();
+    requestAnimationFrame(() => {
+      this.shadowRoot.querySelector('.timepicker')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+
+  _selectTime(t) {
+    this._selTime = t;
+    this._state   = 'TIME_SELECTED';
+    this._render();
+  }
+
+  //  Rendering 
+
+  _render() {
+    const prevScroll = this.shadowRoot.querySelector('.slot-list')?.scrollTop ?? 0;
+    const s = this._state;
+    const showMain = ['READY','DATE_SELECTED','TIME_SELECTED','SUBMITTING','SUBMIT_ERROR'].includes(s);
+
+    this.shadowRoot.innerHTML = `
+      <style>${this._css()}</style>
+      <div class="shell" role="region" aria-label="Appointment scheduler">
+        ${s === 'LOADING'    ? this._tplLoading()   : ''}
+        ${s === 'LOAD_ERROR' ? this._tplLoadError() : ''}
+        ${s === 'SUCCESS'    ? this._tplSuccess()   : ''}
+        ${showMain           ? this._tplMain()      : ''}
+      </div>`;
+
+    if (prevScroll) {
+      const list = this.shadowRoot.querySelector('.slot-list');
+      if (list) list.scrollTop = prevScroll;
+    }
+    this._bindEvents();
+  }
+
+  //  Templates 
+
+  _tplLoading() {
+    return `
+      <div class="status-panel">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Loading availability…</p>
+      </div>`;
+  }
+
+  _tplLoadError() {
+    return `
+      <div class="status-panel">
+        <div class="icon-ring err" aria-hidden="true"></div>
+        <p class="status-title">Could not load appointments</p>
+        <small class="mono">${this._escHtml(this._message)}</small>
+        <button class="ghost-btn" data-action="retry">Try again</button>
+      </div>`;
+  }
+
+  _tplSuccess() {
+    return `
+      <div class="status-panel">
+        <div class="icon-ring ok" aria-hidden="true"></div>
+        <p class="status-title">Appointment confirmed</p>
+        <p class="status-sub">${this._escHtml(this._message)}</p>
+      </div>`;
+  }
+
+  _tplMain() {
+    const s = this._state;
+    const showTime   = ['DATE_SELECTED','TIME_SELECTED','SUBMITTING','SUBMIT_ERROR'].includes(s);
+    const showBtn    = ['TIME_SELECTED','SUBMITTING','SUBMIT_ERROR'].includes(s);
+    const showErrMsg = s === 'SUBMIT_ERROR';
+
+    return `
+      <div class="main">
+        ${this._tplCalendar()}
+        ${showTime   ? this._tplTimepicker() : ''}
+        ${showBtn    ? this._tplButton()     : ''}
+        ${showErrMsg ? `<p class="submit-err" role="alert"> ${this._escHtml(this._message)}</p>` : ''}
+      </div>`;
+  }
+
+  _tplCalendar() {
+    const { _viewYear: yr, _viewMonth: mo } = this;
+    const today        = new Date(); today.setHours(0, 0, 0, 0);
+    const datesWithApt = this._datesWithAppointments();
+    const firstDow     = new Date(yr, mo, 1).getDay();
+    const daysInMonth  = new Date(yr, mo + 1, 0).getDate();
+    const monthLabel   = new Date(yr, mo).toLocaleString(this._locale, { month: 'long', year: 'numeric' });
+    const dowNames     = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+    let cells = '';
+    for (let i = 0; i < firstDow; i++) cells += `<div class="cell" aria-hidden="true"></div>`;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date  = new Date(yr, mo, d);
+      const key   = this._dateKey(date);
+      const past  = date < today;
+      const hasA  = datesWithApt.has(key);
+      const isSel = this._selDate && this._dateKey(this._selDate) === key;
+      const isTod = date.getTime() === today.getTime();
+
+      const cls = ['cell day',
+        past  ? 'past'     : 'active',
+        hasA  ? 'has-appt' : '',
+        isSel ? 'selected' : '',
+        isTod ? 'today'    : '',
+      ].filter(Boolean).join(' ');
+
+      cells += `<div class="${cls}"
+        ${!past ? `data-date="${key}" role="button" tabindex="0" aria-label="${date.toLocaleDateString(this._locale, { dateStyle: 'full' })}${hasA ? ', has appointments' : ''}"` : 'aria-hidden="true"'}
+        ${isSel ? 'aria-pressed="true"' : ''}
+      >${d}</div>`;
+    }
+
+    return `
+      <div class="calendar">
+        <div class="cal-header">
+          <button class="nav-btn" data-action="prev" aria-label="Previous month">&#8249;</button>
+          <span class="month-label">${monthLabel}</span>
+          <button class="nav-btn" data-action="next" aria-label="Next month">&#8250;</button>
+        </div>
+        <div class="dow-row" aria-hidden="true">
+          ${dowNames.map(d => `<div class="dow">${d}</div>`).join('')}
+        </div>
+        <div class="cal-grid" role="grid" aria-label="Calendar">${cells}</div>
+        <div class="legend" aria-label="Legend">
+          <span class="leg-dot" aria-hidden="true"></span>
+          <span>Dates with existing appointments</span>
+        </div>
+      </div>`;
+  }
+
+  _tplTimepicker() {
+    const slots      = this._timeSlotsForDate(this._selDate);
+    const dateLabel  = this._selDate.toLocaleDateString(this._locale, { weekday: 'long', month: 'long', day: 'numeric' });
+
+    const rows = slots.map(({ time, occupied }) => {
+      const isSel  = this._selTime === time;
+      const cls    = ['slot', occupied ? 'occupied' : 'free', isSel ? 'selected' : ''].filter(Boolean).join(' ');
+      const label  = this._formatTime(time);
+      return `
+        <div class="${cls}"
+          ${!occupied ? `data-time="${time}" role="button" tabindex="0" aria-label="${label}${isSel ? ', selected' : ''}"` : 'aria-disabled="true"'}
+          ${isSel ? 'aria-pressed="true"' : ''}
+        >
+          <span class="slot-time">${label}</span>
+          ${occupied ? '<span class="slot-badge">Booked</span>'
+            : isSel  ? '<span class="slot-badge sel">Selected</span>' : ''}
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="timepicker">
+        <p class="tp-label">Times for <em>${this._escHtml(dateLabel)}</em></p>
+        <div class="slot-list" role="listbox" aria-label="Available time slots">${rows}</div>
+      </div>`;
+  }
+
+  _tplButton() {
+    const busy = this._state === 'SUBMITTING';
+    const dl   = this._selDate?.toLocaleDateString(this._locale, { month: 'short', day: 'numeric' }) ?? '';
+    const tl   = this._selTime ? this._formatTime(this._selTime) : '';
+
+    return `
+      <div class="action-row">
+        <button class="action-btn${busy ? ' busy' : ''}"
+          data-action="submit"
+          ${busy ? 'disabled aria-busy="true"' : ''}
+          aria-label="${busy ? 'Booking appointment…' : `${this._btnLabel} on ${dl} at ${tl}`}"
+        >
+          ${busy
+            ? `<span class="btn-spinner" aria-hidden="true"></span><span>Booking…</span>`
+            : `<span>${this._escHtml(this._btnLabel)}</span><span class="btn-meta">${dl} · ${tl}</span>`}
+        </button>
+      </div>`;
+  }
+
+  //  Event binding 
+
+  _bindEvents() {
+    const sr = this.shadowRoot;
+
+    sr.querySelector('[data-action="prev"]')  ?.addEventListener('click', () => this._prevMonth());
+    sr.querySelector('[data-action="next"]')  ?.addEventListener('click', () => this._nextMonth());
+    sr.querySelector('[data-action="submit"]')?.addEventListener('click', () => this._submit());
+    sr.querySelector('[data-action="retry"]') ?.addEventListener('click', () => this._load());
+
+    sr.querySelectorAll('.cell.active[data-date]').forEach(el => {
+      const activate = () => {
+        const [y, m, d] = el.dataset.date.split('-').map(Number);
+        this._selectDate(new Date(y, m - 1, d));
+      };
+      el.addEventListener('click', activate);
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+    });
+
+    sr.querySelectorAll('.slot.free[data-time]').forEach(el => {
+      const activate = () => this._selectTime(el.dataset.time);
+      el.addEventListener('click', activate);
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+    });
+  }
+
+  //  Security 
+
+  _escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  //  Styles 
+
+  _css() {
+    return `
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:host{
+  --ap-accent:    #c8a96e;
+  --ap-accent-a:  rgba(200,169,110,.14);
+  --ap-accent-b:  rgba(200,169,110,.28);
+  --ap-bg:        #0c0c0f;
+  --ap-surface:   #16161a;
+  --ap-surface-2: #1e1e24;
+  --ap-border:    #2a2a35;
+  --ap-text:      #ede8df;
+  --ap-mid:       #888898;
+  --ap-muted:     #4e4e60;
+  --ap-err:       #e06060;
+  --ap-ok:        #6ecfa8;
+  --ap-radius:    16px;
+  --f-display:    'Crimson Pro', Georgia, serif;
+  --f-mono:       'JetBrains Mono', 'Courier New', monospace;
+  display:block;
+  font-family:var(--f-display);
+  color:var(--ap-text);
+}
+
+/*  Shell  */
+.shell{
+  background:var(--ap-bg);
+  border:1px solid var(--ap-border);
+  border-radius:var(--ap-radius);
+  overflow:hidden;
+  min-width:300px;
+}
+
+/*  Status panels  */
+.status-panel{
+  display:flex;flex-direction:column;align-items:center;
+  gap:14px;padding:60px 32px;text-align:center;
+}
+.status-title{font-size:1.15rem;font-weight:600}
+.status-sub{font-size:1rem;color:var(--ap-mid);font-style:italic;line-height:1.5}
+
+.icon-ring{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;line-height:1;
+  border:1px solid var(--ap-border);
+  background:var(--ap-surface);
+}
+.icon-ring.ok{border-color:var(--ap-ok);color:var(--ap-ok)}
+.icon-ring.err{border-color:var(--ap-err);color:var(--ap-err)}
+
+/* spinner */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{
+  display:block;width:30px;height:30px;
+  border:2px solid var(--ap-border);
+  border-top-color:var(--ap-accent);
+  border-radius:50%;
+  animation:spin .75s linear infinite;
+}
+
+.mono{font-family:var(--f-mono);font-size:.72rem;color:var(--ap-muted)}
+.ghost-btn{
+  margin-top:4px;padding:8px 22px;
+  background:transparent;border:1px solid var(--ap-border);
+  border-radius:8px;font-family:var(--f-mono);font-size:.75rem;
+  color:var(--ap-mid);cursor:pointer;
+  transition:border-color .15s,color .15s;
+}
+.ghost-btn:hover{border-color:var(--ap-accent);color:var(--ap-accent)}
+
+/*  Main layout  */
+.main{display:flex;flex-direction:column}
+
+/*  Calendar  */
+.calendar{padding:24px 22px 18px;border-bottom:1px solid var(--ap-border)}
+
+.cal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.month-label{font-size:1.25rem;font-weight:600;letter-spacing:.01em}
+
+.nav-btn{
+  background:none;border:1px solid var(--ap-border);border-radius:7px;
+  color:var(--ap-muted);width:32px;height:32px;font-size:1.2rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s,color .15s,background .15s;
+}
+.nav-btn:hover{border-color:var(--ap-accent);color:var(--ap-accent);background:var(--ap-accent-a)}
+
+.dow-row{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px}
+.dow{
+  text-align:center;font-family:var(--f-mono);font-size:.62rem;
+  letter-spacing:.09em;color:var(--ap-muted);padding:4px 0;text-transform:uppercase;
+}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+
+.cell{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  border-radius:7px;font-size:.95rem;position:relative;
+  user-select:none;cursor:default;transition:background .12s,color .12s;
+}
+.cell.day.active{cursor:pointer;color:var(--ap-text)}
+.cell.day.active:hover{background:var(--ap-surface-2);color:var(--ap-accent)}
+.cell.day.past{color:var(--ap-muted);opacity:.3}
+
+.cell.today{color:var(--ap-accent);font-weight:600}
+.cell.today::before{
+  content:'';position:absolute;inset:2px;border-radius:5px;
+  border:1px solid var(--ap-accent);opacity:.4;pointer-events:none;
+}
+
+.cell.has-appt::after{
+  content:'';position:absolute;bottom:4px;left:50%;
+  transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--ap-accent);
+}
+
+.cell.selected{background:var(--ap-accent)!important;color:#0c0c0f!important;font-weight:600}
+.cell.selected::after{background:#0c0c0f!important;opacity:.55}
+.cell.selected::before{display:none}
+
+.legend{
+  display:flex;align-items:center;gap:7px;margin-top:13px;
+  font-family:var(--f-mono);font-size:.68rem;color:var(--ap-muted);
+}
+.leg-dot{width:6px;height:6px;border-radius:50%;background:var(--ap-accent);flex-shrink:0}
+
+/*  Timepicker  */
+.timepicker{padding:20px 22px;border-bottom:1px solid var(--ap-border)}
+
+.tp-label{font-size:.92rem;color:var(--ap-mid);margin-bottom:13px;line-height:1.4}
+.tp-label em{font-style:italic;color:var(--ap-text)}
+
+.slot-list{
+  max-height:230px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:3px;
+  scrollbar-width:thin;scrollbar-color:var(--ap-border) transparent;
+}
+.slot-list::-webkit-scrollbar{width:4px}
+.slot-list::-webkit-scrollbar-track{background:transparent}
+.slot-list::-webkit-scrollbar-thumb{background:var(--ap-border);border-radius:2px}
+
+.slot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 14px;border-radius:7px;
+  border:1px solid transparent;
+  transition:background .1s,border-color .1s;
+}
+.slot.free{cursor:pointer;background:var(--ap-surface)}
+.slot.free:hover{background:var(--ap-accent-a);border-color:var(--ap-accent-b)}
+.slot.free.selected{background:var(--ap-accent-a);border-color:var(--ap-accent)}
+.slot.occupied{opacity:.35;cursor:not-allowed}
+
+.slot-time{
+  font-family:var(--f-mono);font-size:.86rem;
+  color:var(--ap-text);letter-spacing:.04em;
+}
+.slot.occupied .slot-time{text-decoration:line-through;color:var(--ap-muted)}
+
+.slot-badge{
+  font-family:var(--f-mono);font-size:.62rem;letter-spacing:.07em;
+  text-transform:uppercase;padding:2px 8px;border-radius:4px;
+  background:var(--ap-surface-2);color:var(--ap-muted);
+}
+.slot-badge.sel{
+  background:var(--ap-accent-a);color:var(--ap-accent);
+  border:1px solid var(--ap-accent-b);
+}
+
+/*  Action button  */
+.action-row{padding:18px 22px 22px}
+
+.action-btn{
+  width:100%;padding:13px 18px;
+  background:var(--ap-accent);border:none;border-radius:10px;
+  font-family:var(--f-display);font-size:1.05rem;font-weight:600;
+  color:#0c0c0f;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:opacity .15s,transform .1s;
+  letter-spacing:.005em;
+}
+.action-btn:not([disabled]):hover{opacity:.88;transform:translateY(-1px)}
+.action-btn:not([disabled]):active{transform:translateY(0)}
+.action-btn[disabled]{opacity:.45;cursor:default}
+.action-btn.busy{
+  background:var(--ap-surface-2);color:var(--ap-mid);
+  justify-content:center;gap:10px;
+}
+
+.btn-meta{
+  font-family:var(--f-mono);font-size:.75rem;font-weight:500;
+  opacity:.7;
+}
+
+.btn-spinner{
+  display:inline-block;width:15px;height:15px;
+  border:2px solid var(--ap-border);border-top-color:var(--ap-accent);
+  border-radius:50%;animation:spin .75s linear infinite;
+}
+
+.submit-err{
+  padding:0 22px 16px;font-family:var(--f-mono);font-size:.74rem;
+  color:var(--ap-err);text-align:center;
+}
+`;
+  }
+}
+
+customElements.define('appointment-picker', AppointmentPicker);

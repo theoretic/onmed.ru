@@ -35,10 +35,9 @@ switch($this->model[$fieldname]['format']){
 //checking date and month
 
 if ( !checkdate((int)$month,(int)$day,(int)$year) )
-	return [ 'error' => __('incorrect',I18N_VALIDATOR) ];
 	return [ 'error' => defined('I18N_VALIDATOR')? __('incorrect',I18N_VALIDATOR) : 'некорректная' ];
 
-$valueTimestamp = strtotime("$day.$month.$year");
+$valueTimestamp = mktime(0, 0, 0, (int)$month, (int)$day, (int)$year);
 
 //checking for date in future
 if( $this->model[$fieldname]['max-future-years'] && $valueTimestamp > time()+86400*365*$this->model[$fieldname]['max-future-years'] ) {

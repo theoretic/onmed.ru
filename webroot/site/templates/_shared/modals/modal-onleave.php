@@ -45,9 +45,7 @@ $onLeavePage = $pages->get("name=modal-onleave");
 				data-messaging="html"
 				>
 
-				<div class="messaging-error hidden error message"></div>
-				<div class="messaging-success hidden success message"></div>
-				<div class="messaging-message hidden warning message"></div>
+				<div class="hidden message"></div>
 
 				<fieldset class="flex flex-top flex-wrap">
 					<div class="required field">

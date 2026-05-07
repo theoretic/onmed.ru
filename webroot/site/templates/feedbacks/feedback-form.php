@@ -14,9 +14,9 @@ AT
 	data-messaging="html"
 	>
 
-	<div class="messaging-error hidden error message"></div>
-	<div class="messaging-success hidden success message"></div>
-	<div class="messaging-message hidden warning message"></div>
+	
+	
+	<div class="hidden message"></div>
 
 	<div class="flex">
 		<label class="required field">

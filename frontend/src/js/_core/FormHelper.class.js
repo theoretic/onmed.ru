@@ -3,36 +3,37 @@ Form helper
 dependences:
 	cash or jquery
 AT
-04.09.25
+06.05.26
 */
 
 class FormHelper{
 
 	//messaging
 	updateMessaging(_form,_json){
+
+//console.log('FormHelper.updateMessaging(): _form, _json: ', _form, _json)
+
 		let
 			messaging = _form.data('messaging')
 
 		switch( messaging ){
 			case 'html':
 				let
-					errorEL = _form.find(".messaging-error"),
-					successEL = _form.find(".messaging-success"),
-					messageEL = _form.find(".messaging-message")
+					messageEL = _form.find(".message")
 
-					errorEL.addClass('hidden')
-					successEL.addClass('hidden')
-					messageEL.addClass('hidden')
+//console.log('FormHelper.updateMessaging(): messageEL: ', messageEL)
 
-				if( errorEL && typeof(_json.error) == 'string' ) errorEL.removeClass('hidden').html( _json.error )
-				if( successEL && typeof(_json.success) == 'string' ) successEL.removeClass('hidden').html( _json.success )
-				if( messageEL && typeof(_json.message) == 'string' ) messageEL.removeClass('hidden').html( _json.message )
+				messageEL.addClass('hidden')
+
+				if( _json.error ) messageEL.removeClass('hidden warning success').addClass('error').html( _json.error )
+				if( _json.success ) messageEL.removeClass('hidden error warning').addClass('success').html( _json.success )
+				if( _json.message ) messageEL.removeClass('hidden error warning success').html( _json.message )
 			break
 
 			case 'alert':
+				if( _json.error ) alert( _json.error )
 				if( _json.success ) alert( _json.success )
 				if( _json.message ) alert( _json.message )
-				if( _json.error ) alert( _json.error )
 		}
 	}
 
@@ -108,16 +109,17 @@ class FormHelper{
 			fetch(validatorUrl)
 			.then(function(response) { return response.json() })
 			.then(function(json) {
-				if( json.errors ){
-					for(let fieldname in json.errors){
-						let
-							field = $('[name='+fieldname+']',_form),
-							error = json.errors[fieldname]
-						self.setFieldValidity(field,{error:error})
-					}
+			if( json.errors ){
+				for(let fieldname in json.errors){
+					let
+						field = $('[name='+fieldname+']',_form),
+						error = json.errors[fieldname]
+					self.setFieldValidity(field,{error:error})
 				}
-				self.updateMessaging(_form,json)
-				_form.removeClass('loading')
+			}
+			// skip messaging if form has data-action — final response from ajaxSubmit will handle it
+			if( !_form.data('action') ) self.updateMessaging(_form,json)
+			_form.removeClass('loading')
 				resolve(json)
 			})
 		})

@@ -5,7 +5,7 @@ dependences:
 	debounce
 	cash
 AT
-08.07.24
+06.05.26
 */
 
 $(function(){

@@ -1,0 +1,26 @@
+{
+  "name": "appointment-specialist",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Native Web Component widget for booking medical appointments via Medflex API (proxied)",
+  "scripts": {
+    "dev": "vite",
+    "build:dev": "vite build --mode development",
+    "build": "vite build --mode production",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check src tests",
+    "format": "biome format --write src tests"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.2",
+    "happy-dom": "^15.11.7",
+    "terser": "^5.36.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vitest": "^2.1.8"
+  }
+}

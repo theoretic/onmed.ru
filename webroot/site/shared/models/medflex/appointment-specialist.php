@@ -1,0 +1,39 @@
+<?
+/*
+appointment-specialist model
+AT
+06.05.26
+*/
+
+return [
+	'first_name'=>[
+		'validate-as'=>'nonempty',
+	],
+	'second_name'=>[
+		'validate-as'=>'nonempty',
+	],
+	'last_name'=>[
+		'validate-as'=>'nonempty',
+	],
+	'mobile_phone'=>[
+		'validate-as'=>'phone',
+	],
+/*
+	'email'=>[
+		'validate-if'=>'nonempty',
+		'validate-as'=>'email',
+	],
+*/
+	'birthday'=>[
+		//'validate-if'=>'nonempty',
+		'validate-as'=>'birthdate',
+		//'format'=>'dd.mm.yyyy',
+	],
+	'comment'=>[
+		'validate-if'=>'nonempty',
+		'validate-as'=>'nonempty',
+	],
+	'consent'=>[
+		'validate-as'=>'nonempty',
+	],
+];
