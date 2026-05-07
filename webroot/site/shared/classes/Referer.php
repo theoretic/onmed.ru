@@ -2,7 +2,7 @@
 /*
 Referer
 AT
-14.08.23
+07.09.26
 */
 
 class Referer{
@@ -35,6 +35,9 @@ class Referer{
 		$path = $this->url;
 		$path = str_replace($_SERVER['HTTP_HOST'],'',$path);
 		$path = str_replace( [ 'http://', 'https://' ],'',$path);
+		$path = ltrim($path, 'www.');  // strip www. prefix left over when referer has www. but host does not
+
+		if( $path === '' || $path[0] !== '/' ) $path = '/' . $path;
 
 		$this->path = $path;
 		return $this->path;

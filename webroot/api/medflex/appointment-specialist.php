@@ -81,7 +81,8 @@ if( !$referer->page || $referer->page->template != 'specialist' || !$referer->pa
 $apiKey = $settings->medflex->api_key;
 $apiUrl = "https://api.medflex.ru/direct_appointment/doctor/execute/";
 
-require_once __DIR__ . '/_include/cache.php';
+require_once __DIR__ . '/_include/medflex.php';
+Medflex::corsHeaders();
 
 $payload = [
 	'doctor' => [
@@ -104,7 +105,7 @@ $payload = [
 	],
 ];
 
-$apiResponse = medflex_api_post($apiUrl, $apiKey, $payload);
+$apiResponse = Medflex::apiPost($apiUrl, $apiKey, $payload);
 
 //echo '$payload: ', var_dump($payload);//
 //echo '$apiResponse: ', var_dump($apiResponse);//

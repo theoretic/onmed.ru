@@ -28,7 +28,8 @@ namespace ProcessWire;
 
 $skipCSRF = true; // Disable CSRF protection for this endpoint
 
-require_once __DIR__ . '/_include/cache.php';
+require_once __DIR__ . '/_include/medflex.php';
+Medflex::corsHeaders();
 
 $doctorId = isset($_GET['doctor_id']) ? trim($_GET['doctor_id']) : '';
 if( !$doctorId && $referer->page ) $doctorId = $referer->page->id_medflex;
@@ -38,36 +39,35 @@ $apiKey = $settings->medflex->api_key;
 // --- doctor_id provided: try per-doctor cache first ---
 
 if( $doctorId ) {
-	$doctorCacheKey = "speciality_doctor_{$doctorId}";
-	$cached = medflex_cache_get($doctorCacheKey);
-	if( $cached !== null ) return $cached;
+    $doctorCacheKey = "speciality_doctor_{$doctorId}";
+    $cached = Medflex::cacheGet($doctorCacheKey);
+    if( $cached !== null ) return $cached;
 }
 
 // --- Global speciality list: cache → external API ---
 
 $globalKey = 'speciality_global';
-$globalData = medflex_cache_get($globalKey);
+$globalData = Medflex::cacheGet($globalKey);
 
 if( $globalData === null ) {
-	$warnings = [];
-	$result = medflex_fetch_all_pages('https://api.medflex.ru/models/speciality/', $apiKey, $warnings);
+    $warnings = [];
+    $result = Medflex::fetchAllPages('https://api.medflex.ru/models/speciality/', $apiKey, $warnings);
 
-	if( $result === null ) {
-		$stale = medflex_cache_get_stale($globalKey);
-		if( $stale !== null ) {
-			$globalData = $stale;
-		} else {
-			header("HTTP/1.1 502 Bad Gateway");
-			return [
-				'error' => 'API Error',
-				'message' => 'Failed to fetch specialities from Medflex API'
-			];
-		}
-	} else {
-		// Partial warnings ignored for reference data — partial list still useful
-		medflex_cache_set($globalKey, $result, 12 * 3600);
-		$globalData = $result;
-	}
+    if( $result === null ) {
+        $stale = Medflex::cacheGetStale($globalKey);
+        if( $stale !== null ) {
+            $globalData = $stale;
+        } else {
+            header("HTTP/1.1 502 Bad Gateway");
+            return [
+                'error' => 'API Error',
+                'message' => 'Failed to fetch specialities from Medflex API'
+            ];
+        }
+    } else {
+        Medflex::cacheSet($globalKey, $result, 12 * 3600);
+        $globalData = $result;
+    }
 }
 
 // --- No doctor_id: return global list ---
@@ -76,34 +76,32 @@ if( !$doctorId ) return $globalData;
 
 // --- Resolve doctor data: doctor_{id} cache → doctor_all cache → external API ---
 
-$doctorData = medflex_cache_get("doctor_{$doctorId}");
+$doctorData = Medflex::cacheGet("doctor_{$doctorId}");
 
 if( $doctorData === null ) {
-	// Try extracting from all-doctors cache
-	$allDoctors = medflex_cache_get('doctor_all');
-	if( $allDoctors !== null && !empty($allDoctors['data']) ) {
-		foreach( $allDoctors['data'] as $doc ) {
-			if( (string)($doc['id'] ?? '') === (string)$doctorId ) {
-				$doctorData = ['data' => [$doc]];
-				medflex_cache_set("doctor_{$doctorId}", $doctorData, 12 * 3600);
-				break;
-			}
-		}
-	}
+    $allDoctors = Medflex::cacheGet('doctor_all');
+    if( $allDoctors !== null && !empty($allDoctors['data']) ) {
+        foreach( $allDoctors['data'] as $doc ) {
+            if( (string)($doc['id'] ?? '') === (string)$doctorId ) {
+                $doctorData = ['data' => [$doc]];
+                Medflex::cacheSet("doctor_{$doctorId}", $doctorData, 12 * 3600);
+                break;
+            }
+        }
+    }
 }
 
 if( $doctorData === null ) {
-	// Fallback: fetch single doctor from external API
-	$dWarnings = [];
-	$doctorResult = medflex_fetch_all_pages(
-		"https://api.medflex.ru/models/doctor/?doctor_ids=$doctorId",
-		$apiKey,
-		$dWarnings
-	);
-	if( $doctorResult !== null ) {
-		medflex_cache_set("doctor_{$doctorId}", $doctorResult, 12 * 3600);
-		$doctorData = $doctorResult;
-	}
+    $dWarnings = [];
+    $doctorResult = Medflex::fetchAllPages(
+        "https://api.medflex.ru/models/doctor/?doctor_ids=$doctorId",
+        $apiKey,
+        $dWarnings
+    );
+    if( $doctorResult !== null ) {
+        Medflex::cacheSet("doctor_{$doctorId}", $doctorResult, 12 * 3600);
+        $doctorData = $doctorResult;
+    }
 }
 
 if( $doctorData === null || empty($doctorData['data']) ) {
@@ -123,5 +121,5 @@ $filtered = array_values(array_filter(
 ));
 
 $filteredResult = ['data' => $filtered];
-medflex_cache_set($doctorCacheKey, $filteredResult, 12 * 3600);
+Medflex::cacheSet($doctorCacheKey, $filteredResult, 12 * 3600);
 return $filteredResult;

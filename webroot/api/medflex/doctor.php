@@ -41,31 +41,32 @@ if( !$id_medflex && $referer->page ) {
 
 ////
 
-require_once __DIR__ . '/_include/cache.php';
+require_once __DIR__ . '/_include/medflex.php';
+Medflex::corsHeaders();
 $apiKey = $settings->medflex->api_key;
 
 // --- No id: return all doctors ---
 
 if( !$id_medflex ) {
-	$allKey = 'doctor_all';
-	$cached = medflex_cache_get($allKey);
-	if( $cached !== null ) return $cached;
+    $allKey = 'doctor_all';
+    $cached = Medflex::cacheGet($allKey);
+    if( $cached !== null ) return $cached;
 
-	$warnings = [];
-	$result = medflex_fetch_all_pages('https://api.medflex.ru/models/doctor/', $apiKey, $warnings);
+    $warnings = [];
+    $result = Medflex::fetchAllPages('https://api.medflex.ru/models/doctor/', $apiKey, $warnings);
 
-	if( $result === null ) {
-		$stale = medflex_cache_get_stale($allKey);
-		if( $stale !== null ) return $stale;
-		header("HTTP/1.1 502 Bad Gateway");
-		return [
-			'error' => 'API Error',
-			'message' => 'Failed to fetch all doctors from Medflex API'
-		];
-	}
+    if( $result === null ) {
+        $stale = Medflex::cacheGetStale($allKey);
+        if( $stale !== null ) return $stale;
+        header("HTTP/1.1 502 Bad Gateway");
+        return [
+            'error' => 'API Error',
+            'message' => 'Failed to fetch all doctors from Medflex API'
+        ];
+    }
 
-	medflex_cache_set($allKey, $result, 12 * 3600);
-	return $result;
+    Medflex::cacheSet($allKey, $result, 12 * 3600);
+    return $result;
 }
 
 // --- Id set: single doctor ---
@@ -73,49 +74,49 @@ if( !$id_medflex ) {
 $singleKey = "doctor_{$id_medflex}";
 
 // 1. Single doctor cache
-$cached = medflex_cache_get($singleKey);
+$cached = Medflex::cacheGet($singleKey);
 if( $cached !== null ) return $cached;
 
 // 2. Extract from all-doctors cache
-$allData = medflex_cache_get('doctor_all');
+$allData = Medflex::cacheGet('doctor_all');
 if( $allData !== null && !empty($allData['data']) ) {
-	foreach( $allData['data'] as $doc ) {
-		if( (string)($doc['id'] ?? '') === (string)$id_medflex ) {
-			$extracted = ['data' => [$doc]];
-			medflex_cache_set($singleKey, $extracted, 12 * 3600);
-			return $extracted;
-		}
-	}
+    foreach( $allData['data'] as $doc ) {
+        if( (string)($doc['id'] ?? '') === (string)$id_medflex ) {
+            $extracted = ['data' => [$doc]];
+            Medflex::cacheSet($singleKey, $extracted, 12 * 3600);
+            return $extracted;
+        }
+    }
 }
 
 // 3. Fallback: fetch all doctors, populate doctor_all + doctor_{id} caches
 $warnings = [];
-$allResult = medflex_fetch_all_pages('https://api.medflex.ru/models/doctor/', $apiKey, $warnings);
+$allResult = Medflex::fetchAllPages('https://api.medflex.ru/models/doctor/', $apiKey, $warnings);
 
 if( $allResult === null ) {
-	$stale = medflex_cache_get_stale($singleKey);
-	if( $stale !== null ) return $stale;
-	header("HTTP/1.1 502 Bad Gateway");
-	return [
-		'error' => 'API Error',
-		'message' => 'Failed to fetch doctor data from Medflex API'
-	];
+    $stale = Medflex::cacheGetStale($singleKey);
+    if( $stale !== null ) return $stale;
+    header("HTTP/1.1 502 Bad Gateway");
+    return [
+        'error' => 'API Error',
+        'message' => 'Failed to fetch doctor data from Medflex API'
+    ];
 }
 
-medflex_cache_set('doctor_all', $allResult, 12 * 3600);
+Medflex::cacheSet('doctor_all', $allResult, 12 * 3600);
 
 $extracted = null;
 foreach( $allResult['data'] ?? [] as $doc ) {
-	if( (string)($doc['id'] ?? '') === (string)$id_medflex ) {
-		$extracted = ['data' => [$doc]];
-		break;
-	}
+    if( (string)($doc['id'] ?? '') === (string)$id_medflex ) {
+        $extracted = ['data' => [$doc]];
+        break;
+    }
 }
 
 if( $extracted === null ) {
-	// Doctor not found in full list — return empty result
-	$extracted = ['data' => []];
+    // Doctor not found in full list — return empty result
+    $extracted = ['data' => []];
 }
 
-medflex_cache_set($singleKey, $extracted, 12 * 3600);
+Medflex::cacheSet($singleKey, $extracted, 12 * 3600);
 return $extracted;

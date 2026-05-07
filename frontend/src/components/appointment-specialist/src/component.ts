@@ -13,19 +13,12 @@ import { renderHeader } from "./views/header";
 import { renderPatientForm } from "./views/patientForm";
 import { renderServices } from "./views/services";
 
-declare const __API_BASE__: string;
-const DEFAULT_API_BASE = typeof __API_BASE__ === "string" ? __API_BASE__ : "";
-
 export class AppointmentSpecialist extends HTMLElement {
   private _store!: Store;
   private _abort?: AbortController;
 
-  static get observedAttributes(): string[] {
-    return ["api_base"];
-  }
-
   connectedCallback(): void {
-    const apiBase = this.getAttribute("api_base") || DEFAULT_API_BASE;
+    const apiBase = `${window.location.origin}/api/medflex`;
 
     this._store = new Store(createInitial(apiBase));
     this._renderShell();
