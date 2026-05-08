@@ -42,7 +42,7 @@ export function renderDaySlots(
     h("h6", {}, "Выберите время"),
     h(
       "div",
-      { class: "as-slot-grid" },
+      { class: "as-slot-flex" },
       ...all.map((s) => {
         let cls = "as-slot";
         if (!s.free) cls += " as-slot--disabled";

@@ -178,10 +178,11 @@ appointment-specialist {
     align-items: center;
     justify-content: center;
   }
-  .as-slot-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
-    gap: 0.375rem;
+  .as-slot-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
   }
   .as-slot {
     text-align: center;
