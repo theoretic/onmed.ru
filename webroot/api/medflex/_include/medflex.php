@@ -34,6 +34,8 @@ class Medflex {
         header("Access-Control-Allow-Origin: $origin");
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
         header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        header("Cache-Control: no-store, no-cache, must-revalidate");
+        header("Pragma: no-cache");
         if( ($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS' ) { http_response_code(204); exit; }
     }
 

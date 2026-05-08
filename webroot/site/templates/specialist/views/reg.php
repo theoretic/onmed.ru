@@ -3,7 +3,7 @@
 Specialist template
 appointment view
 AT
-05.05.26
+08.05.26
 */
 
 $page->lastname = $page->title;
@@ -26,11 +26,11 @@ $js[] = '/site/assets/js/components/appointment-specialist.js';
 <section class="padded container block">
 
 
-		<div class="flex flex-between flex-middle gap">
-			<div>
-				<img data-src="<?=$image?>" data-aspect="1:1" class="avatar L">
+		<div class="padded flex flex-center flex-middle gap centered">
+			<div class="min-w-16r">
+				<img data-src="<?=$image?>" class="margin-L rounded height-M">
 			</div>
-			<div class="margin-auto centered">
+			<div class="min-w-16r">
 				<h2>
 					Запись на приём
 				</h2>

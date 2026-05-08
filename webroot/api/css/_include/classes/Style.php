@@ -1,7 +1,9 @@
 <?
 /*
 AT
-30.05.23
+08.06.26
+
+better eTag-based cache handling
 
 extra css removal
 
@@ -723,16 +725,42 @@ class Style
 
 //output
 
-	function output(){
-		header('Content-Type: text/css; charset=UTF-8');
-		header('Cache-Control: public,max-age=86400');
-		if( is_file($this->cacheFile) ){
-			//header('last-modified:Fri, 27 Jan 2017 18:32:10 GMT');
-			header('Content-Length: '.filesize($this->cacheFile));
-			header('ETag: '.md5_file($this->cacheFile));
-			readfile($this->cacheFile);
+	function output() {
+
+		// ----------------------------------------------------------
+		// Compute ETag from content (md5 of cache file, or of raw css)
+		// Quoted string is required by RFC 7232
+		// ----------------------------------------------------------
+
+		$eTag = is_file($this->cacheFile)? '"' . md5_file($this->cacheFile) . '"' : '"' . md5($this->css) . '"';
+
+		// ----------------------------------------------------------
+		// 304 Not Modified — return early, no body needed
+		// $_SERVER key is always uppercase, hyphens become underscores
+		// ----------------------------------------------------------
+
+		$clientEtag = $_SERVER['HTTP_IF_NONE_MATCH'] ?? null;
+		if ( $clientEtag && $clientEtag === $etag ) {
+			http_response_code(304);
+			header('ETag: ' . $etag);        // recommended to repeat on 304
+			header('Cache-Control: no-cache');
 			return;
 		}
-	echo $this->css;
+
+		// ----------------------------------------------------------
+		// 200 — send full response
+		// ----------------------------------------------------------
+		header('Content-Type: text/css; charset=UTF-8');
+		header('Cache-Control: no-cache');   // always revalidate
+		header('ETag: ' . $etag);
+
+		if ( is_file($this->cacheFile) ) {
+			header('Content-Length: ' . filesize($this->cacheFile));
+			readfile($this->cacheFile);
+		} else {
+			echo $this->css;
+		}
+
 	}
+
 }

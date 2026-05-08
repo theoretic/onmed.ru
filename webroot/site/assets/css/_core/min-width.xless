@@ -1,0 +1,11 @@
+.min-w-16r{
+min-width:15rem;
+}
+
+.min-w-20r{
+min-width:20rem;
+}
+
+.min-w-24r{
+min-width:24rem;
+}

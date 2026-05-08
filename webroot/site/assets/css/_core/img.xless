@@ -1,0 +1,11 @@
+img{
+
+	&.height-S{
+		height:4rem;
+	}
+
+	&.height-M{
+		height:8rem;
+	}
+
+}
