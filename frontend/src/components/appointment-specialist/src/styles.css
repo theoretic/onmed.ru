@@ -37,6 +37,7 @@ appointment-specialist {
     gap: var(--as-gap);
   }
   .as-muted {
+    text-align:center;
     color: var(--as-c-muted);
   }
   .as-skeleton {
@@ -80,7 +81,7 @@ appointment-specialist {
     margin: 0.75rem 0;
   }
   .as-srv {
-    width:24rem;
+    width:16rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -92,7 +93,6 @@ appointment-specialist {
     }
     .as-price {
       font-weight: 600;
-      white-space: nowrap;
       margin-left: 0.75rem;
     }
   }
@@ -100,11 +100,9 @@ appointment-specialist {
   /* calendar + slots row */
   .as-cal-row {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--as-gap);
     align-items: stretch;
-    > * {
-      flex: 1;
-    }
   }
   .as-cal,
   .as-slots {
@@ -165,6 +163,7 @@ appointment-specialist {
     opacity: 0.3;
   }
   .as-day--available {
+    border: 1px solid var(--as-c-tertiary);
     background: var(--as-c-tertiary);
   }
   .as-day--partial {
@@ -204,10 +203,8 @@ appointment-specialist {
   }
   .as-form-row {
     display: flex;
+    flex-wrap:wrap;
     gap: var(--as-gap);
-    .as-field {
-      flex: 1;
-    }
   }
 
   .as-error-banner {
@@ -226,5 +223,15 @@ appointment-specialist {
     border: 1px solid #fde68a;
     border-radius: var(--as-r);
     font-size: 0.875rem;
+  }
+
+  input:not([type="checkbox"]):not([type="submit"]):not([type="radio"]) {
+    min-width:16rem;
+  }
+
+  h6{
+    width:100%;
+    text-align:center;
+    font-weight:400;
   }
 }

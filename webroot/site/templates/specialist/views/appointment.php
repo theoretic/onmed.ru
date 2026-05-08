@@ -24,6 +24,19 @@ $js[] = '/site/assets/js/components/appointment-specialist.js';
 <? include 'specialist/title.php' ?>
 
 <section class="padded container block">
+
+
+		<div class="flex flex-between flex-middle gap">
+			<div>
+				<img data-src="<?=$image?>" data-aspect="1:1" class="avatar L">
+			</div>
+			<div class="margin-auto centered">
+				<h2>
+					Запись на приём
+				</h2>
+			</div>
+		</div>
+
 	<appointment-specialist></appointment-specialist>
 </section>
 

@@ -1,7 +1,8 @@
 h1,h2,h3,h4,h5,h6{
 //font-family: 'Days One', sans-serif;
 color:@grey;
-font-weight:600;
+font-weight:500;
+letter-spacing:-2;
 .hyphenate();
 //text-transform:uppercase;
 }

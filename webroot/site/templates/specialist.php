@@ -7,6 +7,8 @@ AT
 
 namespace ProcessWire;
 
+$image = $page->image->url? : '/site/assets/files/images/defaults/medical-service.jpg';
+
 switch( true ) {
 	case $input->urlSegments[1] == 'appointment' && $page->id_medflex:
 		include 'specialist/views/appointment.php';

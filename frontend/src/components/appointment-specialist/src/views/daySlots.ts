@@ -31,14 +31,15 @@ export function renderDaySlots(
   if (!all.length) {
     return h(
       "div",
-      { class: "as-slots" },
-      h("h4", {}, "Время приёма"),
+      { class: "as-slots flex-1" },
+      h("h6", {}, "Выберите время"),
       h("div", { class: "as-muted" }, "Нет свободных интервалов."),
     );
   }
   return h(
     "div",
-    { class: "as-slots" },
+    { class: "as-slots flex-1" },
+    h("h6", {}, "Выберите время"),
     h(
       "div",
       { class: "as-slot-grid" },

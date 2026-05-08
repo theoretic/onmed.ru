@@ -59,7 +59,8 @@ export function renderCalendar(opts: CalendarOpts): HTMLElement {
 
   return h(
     "div",
-    { class: "as-cal" },
+    { class: "as-cal flex-1" },
+    h("h6", {}, "Выберите дату"),
     h(
       "div",
       { class: "as-cal-wrapper" },

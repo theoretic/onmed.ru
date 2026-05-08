@@ -58,13 +58,12 @@ Approximate sizes (production): **~9.8 kB JS / ~5.6 kB CSS** (gzip: 4 / 1.3 kB).
 $js[] = '/site/assets/js/components/appointment-specialist.js';
 ```
 ```html
-<appointment-specialist
-  api_base=<?=$apiBase?>
-></appointment-specialist>
+<appointment-specialist></appointment-specialist>
 ```
-Attributes: `api_base` (defaults to `.env.production` value). `doctor_id` removed — widget fetches doctor ID from `/doctor/` API response (`data[0].id`).
+No attributes. `apiBase` derived at runtime: `window.location.origin + "/api/medflex"`. `doctor_id` removed — widget fetches doctor ID from `/doctor/` API response (`data[0].id`).
 
 ## API
+- `apiBase` = `window.location.origin + "/api/medflex"` (runtime, no build-time env var)
 - Fetch order: `fetchDoctor` first → then `fetchSpecialities?doctor_id=X` + `fetchSchedule?doctor_id=X` in parallel
 - `doctor.specialityIds` used to filter+name schedule services (strict: services not in specialityIds removed); fallback: if empty, kept as-is
 - `fetchSchedule` returns `ScheduleResult { schedule, warning? }` — `warning` set when HTTP 206 (partial data)
@@ -88,5 +87,5 @@ Submit button: `class="ML"`
 CSS: `.as-form-row { display:flex; gap }` + `.as-form-row .as-field { flex:1 }`
 
 ## Environment
-- `.env.production` — `VITE_API_BASE=https://proxy.onmed.example/medflex`
-- `__API_BASE__` injected at build time; overridable at runtime via `api_base` attribute
+- No `.env` files. No build-time API base.
+- `apiBase` computed at runtime from `window.location.origin`.

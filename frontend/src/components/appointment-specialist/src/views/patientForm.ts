@@ -9,7 +9,7 @@ export interface PatientFormOpts {
 }
 
 function field(label: string, input: HTMLElement, required = false): HTMLElement {
-  return h("label", { class: "as-field" },
+  return h("label", { class: "field" },
     label + (required ? " *" : ""),
     h("span", { class: "error" }),
     input,
@@ -41,13 +41,18 @@ export function renderPatientForm(opts: PatientFormOpts): HTMLElement {
       return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     })() }),
     h("div", { class: "hidden message" }),
+    h("h6", {}, "Введите личные данные"),
     h("div", { class: "as-form-row" },
       field("Фамилия", h("input", { name: "last_name", type: "text", required: "", autocomplete: "family-name", placeholder: "Иванов" }), true),
       field("Имя", h("input", { name: "first_name", type: "text", required: "", autocomplete: "given-name", placeholder: "Иван" }), true),
       field("Отчество", h("input", { name: "second_name", type: "text", required: "", autocomplete: "additional-name", placeholder: "Иванович" }), true),
     ),
     h("div", { class: "as-form-row" },
-      field("Телефон", h("input", { name: "mobile_phone", type: "tel", required: "", autocomplete: "tel", placeholder: "7XXXXXXXXXX" }), true),
+      field("Телефон", (() => {
+        const el = h("input", { name: "mobile_phone", type: "tel", required: "", autocomplete: "tel", placeholder: "7XXXXXXXXXX" }) as HTMLInputElement;
+        el.addEventListener("input", () => { el.value = el.value.replace(/\D/g, "").slice(0, 11); });
+        return el;
+      })(), true),
       field("Дата рождения", (() => {
         const el = h("input", { name: "birthday", type: "text", required: "", autocomplete: "bday", placeholder: "ДД.ММ.ГГГГ" }) as HTMLInputElement;
         el.addEventListener("input", () => {

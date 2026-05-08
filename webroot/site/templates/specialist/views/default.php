@@ -25,8 +25,6 @@ $feedbackPages->filter("start=$start,limit=$perPage");
 
 $page->lastname = $page->title;
 
-$image = $page->image->url? : '/site/assets/files/images/defaults/medical-service.jpg';
-
 //
 
 $css[] = '/site/assets/css/specialist.css';

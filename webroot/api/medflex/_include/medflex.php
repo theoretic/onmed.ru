@@ -70,7 +70,7 @@ class Medflex {
         if (!is_dir($dir)) mkdir($dir, 0755, true);
         file_put_contents(
             self::cachePath($key),
-            json_encode(['expires_at' => time() + $ttl, 'data' => $data])
+            json_encode(['expires_at' => time() + $ttl, 'data' => $data], JSON_UNESCAPED_UNICODE)
         );
     }
 

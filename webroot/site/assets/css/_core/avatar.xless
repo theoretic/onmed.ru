@@ -1,0 +1,11 @@
+.avatar{
+	width:4rem;
+	height:4rem;
+	.rounded(20rem);
+
+	&.L{
+	width:8rem;
+	height:8rem;
+	}
+
+}

@@ -21,6 +21,7 @@ export function renderServices(
   return h(
     "div",
     { class: "as-srv-list" },
+    h("h6", {}, "Выберите специализацию"),
     ...services.map((s) =>
       h(
         "div",
@@ -34,7 +35,7 @@ export function renderServices(
           h("div", {}, s.name),
           h("div", { class: "as-meta" }, formatDuration(s.durationMin)),
         ),
-        h("div", { class: "as-price" }, `${FMT.format(s.price)} ₽`),
+        h("div", { class: "as-price nowrap" }, `${FMT.format(s.price)} ₽`),
       ),
     ),
   );
