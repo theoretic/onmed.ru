@@ -12,7 +12,7 @@ $js = [
 ]
 
 AT
-18.11.23
+13.05.26
 */
 
 $jsDefaultMarkupRegion = 'end';
@@ -36,10 +36,11 @@ foreach($js as $index=>$value) {
 	$deferred = isset($jsOptions['deferred'])? 'deferred' : '';
 
 	$src = $jsFile;
+/*
 	if( $settings->caching->disableJsCache ){
 		$hash = md5_file( DOCUMENT_ROOT.$jsFile );
 		$src = "$jsFile?$hash";
 	}
-
+*/
 	echo "<script $async $deferred src='$src'></script>";
 }

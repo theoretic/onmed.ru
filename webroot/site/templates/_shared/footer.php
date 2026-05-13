@@ -58,7 +58,7 @@ AT
 					<?=$settings->contacts->phone?>
 				</a>
 				<div id="footer-buttons" class="flex">
-					<? include '_shared/buttons/reg-button.php' ?>
+					<? //include '_shared/buttons/reg-button.php' ?>
 					<? //include '_shared/buttons/call-doctor-button.php' ?>
 				</div>
 				<? include '_shared/icons-links.php' ?>

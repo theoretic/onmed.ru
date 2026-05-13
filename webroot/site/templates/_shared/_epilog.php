@@ -1,7 +1,7 @@
 <?
 /*
 AT
-02.12.24
+13.05.26
 */
 
 ?>
@@ -26,6 +26,11 @@ AT
 	</body>
 
 	<? if(IS_WINTER_HOLIDAYS) include '_shared/snow.php' ?>
+	<? if( !in_array($page->template->name, ['specialists', 'specialist']) ){
+		include '_shared/floating-reg-button.php';
+		include '_shared/modal-reg.php';
+	}
+	?>
 
 </html>
 

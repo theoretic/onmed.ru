@@ -1,61 +1,38 @@
-# Appointment widget
+# Appointment widget — appointment-specialists-all
 
 Built on native web components. No inline css, only external css from holding page will be used.
 
-## API endpoints and VITE_API_BASE
+## API endpoints
 
-All endpoints are given relative to VITE_API_BASE defined in .env file for Vite build.
+All endpoints proxied server-side. `apiBase` = `window.location.origin + "/api/medflex"` (runtime).
 
-## Rendering pipeline
+## i18n
 
-before first render the component should fetch:
-* doctor/ API endpoint
-* schedule/ API endpoint
-if any of that endpoints return non-200 http code, display error message, otherwise proceed to render.
+All UI messages hard-coded in Russian.
 
-##i18n
+## UX flow
 
-All UI messages should be hard-coded in Russian.
+### Step 1 — Specialization select
+On mount: parallel fetch `fetchAllSpecialities()` + `fetchAllDoctors()`.
+Specializations select filters to those with ≥1 matching doctor (client-side).
+Select wrapped in `<label class="as-select-label">Специализация</label>`, blank first option.
 
-## Sub-components
+### Step 2 — Doctor select
+Shown after specialization chosen. Doctors filtered client-side by `specialityIds.includes(selectedSpecialityId)`.
+Select wrapped in `<label class="as-select-label">Врач</label>`, blank first option.
+Selected doctor option shows `"Name — Price ₽, Duration"` once schedule loaded.
 
-###Services
+On doctor pick: `fetchDoctor?doctor_id=X` → parallel `fetchSpecialities?doctor_id=X` + `fetchSchedule?doctor_id=X`.
+Service auto-selected: matches `selectedSpecialityId` or falls back to `services[0]`.
+No service selection step (as-srv-list removed).
 
-Displayed immediately after successful API data fetch. A list of this specialist's services with the cost and duration of the appointment for each service (taken from the API response).
-Displayed as clickable tags. Click on tag selects the service. Only one service can be selected.
+### Calendar
+Displayed immediately after doctor picked. 1-month grid (Mon-first). Prev/next month nav.
+Day states: `disabled` (no slots), `free` (available), `partial` (some booked). Past dates not clickable.
 
-###Calendar
+### Time slots
+Clickable tags for each free interval slot. Disabled if overlaps booked interval.
 
-Displayed if a service is selected, hidden otherwise. A 1-month calendar with dates. Can display next month and back.
-
-* The display of days in the calendar depends on the specialist's schedule:
-- Days when appointments are NOT available (the specialist is not working or is booked by other patients): opacity 50%, not clickable
-- Days when appointments are available: opacity 100%, clickable
-- Days when appointments are already booked with the specialist but appointments are still available: opacity 100%, yellow background, clickable
-
-* Clicking on any day for which an appointment is available displays the schedule sub-component
-
-###Schedule
-Clickable tags, each representing possible appointment start time fetched from API.
-
-* The display of schedule tags depends on existing appointments:
-- Appointment slots for which appointments are NOT available (the specialist is unavailable or booked by other patients): opacity 50%, not clickable
-- Appointment slots for which appointments are available: opacity 100%, clickable
-
-* Clicking on any appointment slot for which an appointment is available:
-- The slot is highlighted in green
-- The "Book Now" button appears
-
-* Clicking on the "Book Now" button displays the Form
-
-###Form
-
-Handled by a 3rd-party javascript library. Mock:
-
-<form
-	data-action="/api/medflex/appointment-specialist"
-	data-validator="/api/validator/medflex/appointment-specialist"
-	data-method="post"
->
-	...
-</form>
+### Form
+`<appointment-form doctor-id=... service-id=... price=... start-time=... duration-min=... [age-min=... age-max=...]>`
+Handled by `appointment-form` web component (must be loaded first).

@@ -44,7 +44,7 @@ Hidden: `doctor_id`, `service_id`, `price`, `start_time`, `end_time`
 Row 1 (flex): `last_name`, `first_name`, `second_name` — all required
 Row 2 (flex): `mobile_phone` (tel), `birthday` (text `ДД.ММ.ГГГГ`) — both required
 Single: `comment` textarea (optional), `consent` checkbox (required)
-Submit: `<button type="submit" class="ML">Записаться</button>`
+Submit: `<button type="submit" class="ML float-right">Записаться</button>`
 
 Form attrs: `data-action="/api/medflex/appointment-specialist"`, `data-method="post"`, `data-validator="/api/validator/medflex/appointment-specialist"`, `data-messaging="html"`, `novalidate`
 

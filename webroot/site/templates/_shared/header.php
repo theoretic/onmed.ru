@@ -2,7 +2,7 @@
 /*
 header
 AT
-03.09.25
+13.05.26
 */
 
 $isHome = $page->url == $homePage->url;
@@ -40,7 +40,7 @@ $homeUnhref = ($isHome)? '' : '</a>';
 				<?=$settings->contacts->phone?>
 			</a>
 			<div id="header1-buttons" class="flex flex-middle">
-				<? include '_shared/buttons/reg-button.php' ?>
+				<? //include '_shared/buttons/reg-button.php' ?>
 				<? include '_shared/icons-links.php' ?>
 				<? //include '_shared/buttons/call-doctor-button.php' ?>
 			</div>
