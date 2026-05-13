@@ -95,7 +95,7 @@ function buildForm(el: AppointmentForm): HTMLElement {
       h("input", { type: "checkbox", name: "consent", required: "", checked: "checked" }),
       h("span", {}, "Отсылая эту форму, я соглашаюсь на ", h("a", { href: "/personal-data-consent", target: "_blank" }, "обработку персональных данных"), " *"),
     ),
-    h("button", { type: "submit", class: "ML" }, "Записаться"),
+    h("button", { type: "submit", class: "ML float-right" }, "Записать"),
   );
 
   if (ageLimit) {

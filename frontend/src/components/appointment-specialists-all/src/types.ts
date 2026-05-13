@@ -47,6 +47,8 @@ export interface AppState {
   errorMsg?: string;
   partialWarning?: string;
   apiBase: string;
+  specialities?: Speciality[];  // all specialities (initial fetch)
+  selectedSpecialityId?: number;
   doctors?: Doctor[];       // all doctors list (initial fetch)
   selectedDoctorId?: string;
   schedule?: Schedule;

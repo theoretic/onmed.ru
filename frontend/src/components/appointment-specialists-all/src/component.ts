@@ -2,7 +2,7 @@ import "./styles.css";
 import { ApiError } from "./api/client";
 import { fetchAllDoctors, fetchDoctor } from "./api/doctor";
 import { fetchSchedule } from "./api/schedule";
-import { fetchSpecialities } from "./api/speciality";
+import { fetchAllSpecialities, fetchSpecialities } from "./api/speciality";
 import { addMonths } from "./lib/date";
 import { h, mount } from "./lib/dom";
 import { Store, createInitial } from "./state";
@@ -10,7 +10,7 @@ import type { AppState } from "./types";
 import { renderCalendar } from "./views/calendar";
 import { renderDaySlots } from "./views/daySlots";
 import { renderHeader } from "./views/header";
-import { renderServices } from "./views/services";
+
 
 export class AppointmentSpecialistsAll extends HTMLElement {
   private _store!: Store;
@@ -21,7 +21,7 @@ export class AppointmentSpecialistsAll extends HTMLElement {
     this._store = new Store(createInitial(apiBase));
     this._renderShell();
     this._store.subscribe(() => this._renderAll());
-    this._loadAllDoctors();
+    this._loadInitialData();
   }
 
   disconnectedCallback(): void {
@@ -33,13 +33,17 @@ export class AppointmentSpecialistsAll extends HTMLElement {
     this._renderAll();
   }
 
-  private async _loadAllDoctors(): Promise<void> {
+  private async _loadInitialData(): Promise<void> {
     this._abort?.abort();
     this._abort = new AbortController();
     this._store.set({ phase: "loading" });
     try {
-      const doctors = await fetchAllDoctors(this._store.state.apiBase, this._abort.signal);
-      this._store.set({ phase: "ready", doctors });
+      const signal = this._abort.signal;
+      const [specialities, doctors] = await Promise.all([
+        fetchAllSpecialities(this._store.state.apiBase, signal),
+        fetchAllDoctors(this._store.state.apiBase, signal),
+      ]);
+      this._store.set({ phase: "ready", specialities, doctors });
     } catch (err) {
       if ((err as { name?: string }).name === "AbortError") return;
       const msg = err instanceof ApiError ? `Ошибка ${err.status}` : "Ошибка загрузки";
@@ -68,7 +72,12 @@ export class AppointmentSpecialistsAll extends HTMLElement {
           .map((svc) => ({ ...svc, name: specMap.get(Number(svc.id)) ?? svc.name }));
       }
 
-      this._store.set({ phase: "ready", schedule, partialWarning: scheduleResult.warning });
+      // Auto-select service matching selected speciality (or first available)
+      const specId = this._store.state.selectedSpecialityId;
+      const autoService = specId
+        ? schedule.services.find((svc) => Number(svc.id) === specId)
+        : schedule.services[0];
+      this._store.set({ phase: "ready", schedule, partialWarning: scheduleResult.warning, selectedServiceId: autoService?.id });
     } catch (err) {
       if ((err as { name?: string }).name === "AbortError") return;
       const msg = err instanceof ApiError ? `Ошибка ${err.status}` : "Ошибка загрузки";
@@ -82,7 +91,7 @@ export class AppointmentSpecialistsAll extends HTMLElement {
     const bodySlot = this.querySelector('[data-slot="body"]');
     if (!headerSlot || !bodySlot) return;
 
-    if (s.phase === "loading" && !s.doctors) {
+    if (s.phase === "loading" && !s.specialities) {
       mount(headerSlot, null);
       mount(bodySlot, h("div", { class: "as-skeleton loading" }, "Загрузка..."));
       return;
@@ -100,22 +109,71 @@ export class AppointmentSpecialistsAll extends HTMLElement {
   private _renderBody(s: AppState): HTMLElement {
     const body = h("div", { class: "as-col" });
 
-    // Doctor dropdown — always shown once doctors list is loaded
-    if (s.doctors) {
-      const select = h("select", { class: "as-doctor-select" }) as HTMLSelectElement;
-      const placeholder = h("option", { value: "" }, "— Выберите врача —") as HTMLOptionElement;
-      placeholder.disabled = true;
-      placeholder.selected = !s.selectedDoctorId;
-      select.append(placeholder);
+    // Step 1: Specialization select
+    if (s.specialities && s.doctors) {
+      const doctorSpecIds = new Set(s.doctors.flatMap((d) => d.specialityIds));
+      const availableSpecialities = s.specialities.filter((sp) => doctorSpecIds.has(sp.id));
+      const specLabel = h("label", { class: "as-select-label" }, "Специализация");
+      const specSelect = h("select", { class: "as-doctor-select" }) as HTMLSelectElement;
+      const specPlaceholder = h("option", { value: "" }, "") as HTMLOptionElement;
+      specPlaceholder.disabled = true;
+      specPlaceholder.selected = !s.selectedSpecialityId;
+      specSelect.append(specPlaceholder);
+      specLabel.append(specSelect);
 
-      for (const doc of s.doctors) {
-        const opt = h("option", { value: doc.id }, doc.name) as HTMLOptionElement;
-        if (doc.id === s.selectedDoctorId) opt.selected = true;
-        select.append(opt);
+      for (const sp of availableSpecialities) {
+        const opt = h("option", { value: String(sp.id) }, sp.name) as HTMLOptionElement;
+        if (sp.id === s.selectedSpecialityId) opt.selected = true;
+        specSelect.append(opt);
       }
 
-      select.addEventListener("change", () => {
-        const id = select.value;
+      specSelect.addEventListener("change", () => {
+        const id = Number(specSelect.value);
+        if (!id) return;
+        this._store.set({
+          selectedSpecialityId: id,
+          selectedDoctorId: undefined,
+          selectedServiceId: undefined,
+          selectedDate: undefined,
+          selectedSlotISO: undefined,
+          schedule: undefined,
+          partialWarning: undefined,
+        });
+      });
+
+      body.append(specLabel);
+    }
+
+    if (!s.selectedSpecialityId) return body;
+
+    // Step 2: Doctor select filtered by selected speciality
+    if (s.doctors) {
+      const filtered = s.doctors.filter((d) => d.specialityIds.includes(s.selectedSpecialityId!));
+      const docLabel = h("label", { class: "as-select-label" }, "Врач");
+      const docSelect = h("select", { class: "as-doctor-select" }) as HTMLSelectElement;
+      const placeholder = h("option", { value: "" }, "") as HTMLOptionElement;
+      placeholder.disabled = true;
+      placeholder.selected = !s.selectedDoctorId;
+      docSelect.append(placeholder);
+      docLabel.append(docSelect);
+
+      const FMT = new Intl.NumberFormat("ru-RU");
+      const formatDur = (min: number) => min < 60 ? `${min} мин` : `${Math.floor(min / 60)} ч${min % 60 ? ` ${min % 60} мин` : ''}`;
+      for (const doc of filtered) {
+        let label = doc.name;
+        if (doc.id === s.selectedDoctorId && s.schedule) {
+          const svc = s.selectedSpecialityId
+            ? s.schedule.services.find((sv) => Number(sv.id) === s.selectedSpecialityId)
+            : s.schedule.services[0];
+          if (svc) label = `${doc.name} — ${FMT.format(svc.price)} ₽, ${formatDur(svc.durationMin)}`;
+        }
+        const opt = h("option", { value: doc.id }, label) as HTMLOptionElement;
+        if (doc.id === s.selectedDoctorId) opt.selected = true;
+        docSelect.append(opt);
+      }
+
+      docSelect.addEventListener("change", () => {
+        const id = docSelect.value;
         if (!id) return;
         this._store.set({
           selectedDoctorId: id,
@@ -128,10 +186,10 @@ export class AppointmentSpecialistsAll extends HTMLElement {
         this._loadDoctorData(id);
       });
 
-      body.append(select);
+      body.append(docLabel);
     }
 
-    // Loading spinner while fetching doctor data (after selection)
+    // Loading spinner while fetching doctor data (after doctor selection)
     if (s.phase === "loading" && s.doctors) {
       body.append(h("div", { class: "as-skeleton loading" }, "Загрузка..."));
       return body;
@@ -144,16 +202,6 @@ export class AppointmentSpecialistsAll extends HTMLElement {
     if (s.partialWarning) {
       body.append(h("div", { class: "as-warning" }, s.partialWarning));
     }
-
-    body.append(
-      renderServices(sched.services, s.selectedServiceId, (id) => {
-        this._store.set({
-          selectedServiceId: id,
-          selectedDate: undefined,
-          selectedSlotISO: undefined,
-        });
-      }),
-    );
 
     if (!s.selectedServiceId) return body;
     const service = sched.services.find((x) => x.id === s.selectedServiceId);

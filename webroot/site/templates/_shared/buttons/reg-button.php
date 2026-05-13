@@ -11,11 +11,9 @@ $regButtonConfig = $regButtonConfig? : (Object)[
 
 ?>
 
-<!--
-<a href="//reg.onmed.ru/" target=_blank class="<?=$regButtonConfig->css?>" >
+<a href="#reg" class="<?=$regButtonConfig->css?>" >
 	<? //$svgSprite=(Object)['symbol'=>'reception', 'css'=>'XL padded icon']; include '_shared/svg-sprite.php' ?>
 	Запись на приём
 </a>
--->
 
 <? unset($regButtonConfig) ?>
