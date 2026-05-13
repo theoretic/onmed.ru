@@ -3,7 +3,7 @@
 Specialist template
 appointment view
 AT
-08.05.26
+12.05.26
 */
 
 $page->lastname = $page->title;
@@ -14,7 +14,9 @@ $image = $page->image->url? : '/site/assets/files/images/defaults/medical-servic
 
 //$css[] = '/site/assets/css/specialist.css';
 $css[] = '/site/assets/css/appointment-specialist.css';
+$css[] = '/site/assets/css/appointment-form.css';
 $js[] = '/site/assets/js/components/appointment-specialist.js';
+$js[] = '/site/assets/js/components/appointment-form.js';
 
 ?>
 
@@ -24,7 +26,6 @@ $js[] = '/site/assets/js/components/appointment-specialist.js';
 <? include 'specialist/title.php' ?>
 
 <section class="padded container block">
-
 
 		<div class="padded flex flex-center flex-middle gap centered">
 			<div class="min-w-16r">
@@ -38,6 +39,7 @@ $js[] = '/site/assets/js/components/appointment-specialist.js';
 		</div>
 
 	<appointment-specialist></appointment-specialist>
+	<appointment-form></appointment-form>
 </section>
 
 <? include '_shared/layout-sidebars/epilog.php' ?>

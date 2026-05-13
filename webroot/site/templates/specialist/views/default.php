@@ -3,7 +3,7 @@
 Specialist template
 default view
 AT
-05.05.26
+13.05.26
 */
 
 include_once '_shared/functions/Field.php';
@@ -82,9 +82,11 @@ $js[] = '/site/assets/js/form.js';
 				</div>
 */?>
 				<br>
-				<a href="<?=$page->archimedURL?>" target=_blank class="XL button">
-					Запись на приём
-				</a>
+				<? if($page->id_medflex): ?>
+					<a href="<?=$page->url?>reg" class="XL button">
+						Запись на приём
+					</a>
+				<? endif ?>
 
 			</div>
 		</div>

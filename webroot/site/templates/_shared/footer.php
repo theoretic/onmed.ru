@@ -2,7 +2,7 @@
 /*
 footer
 AT
-01.09.25
+13.05.26
 */
 
 ?>
@@ -76,7 +76,7 @@ AT
 */?>
 				<div id="footer-vendor">
 					<a href="//atis.pro/" target="_blank" title="Made in atis.pro">
-						<img src="//atis.pro/logo/atispro-white.svg" width=60>
+						<img src="//atis.pro/logo/atispro-white.svg" loading=lazy width=60>
 					</a>
 				</div>
 			</div>

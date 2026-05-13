@@ -10,7 +10,6 @@ import type { AppState } from "./types";
 import { renderCalendar } from "./views/calendar";
 import { renderDaySlots } from "./views/daySlots";
 import { renderHeader } from "./views/header";
-import { renderPatientForm } from "./views/patientForm";
 import { renderServices } from "./views/services";
 
 export class AppointmentSpecialist extends HTMLElement {
@@ -168,15 +167,18 @@ export class AppointmentSpecialist extends HTMLElement {
 
     if (!s.selectedSlotISO) return body;
 
-    body.append(
-      renderPatientForm({
-        doctorId: sched.doctor.id,
-        serviceId: s.selectedServiceId,
-        servicePrice: service?.price ?? 0,
-        serviceDurationMin: service?.durationMin ?? 30,
-        startISO: s.selectedSlotISO,
-      }),
-    );
+    const formAttrs: Record<string, string> = {
+      "doctor-id": sched.doctor.id,
+      "service-id": s.selectedServiceId,
+      "price": String(service?.price ?? 0),
+      "start-time": s.selectedSlotISO,
+      "duration-min": String(service?.durationMin ?? 30),
+    };
+    if (service?.ageLimit) {
+      formAttrs["age-min"] = String(service.ageLimit.min);
+      formAttrs["age-max"] = String(service.ageLimit.max);
+    }
+    body.append(h("appointment-form", formAttrs));
 
     return body;
   }

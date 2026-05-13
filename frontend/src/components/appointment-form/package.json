@@ -1,0 +1,23 @@
+{
+  "name": "appointment-form",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Native Web Component for patient booking form — reusable across pages",
+  "scripts": {
+    "dev": "vite",
+    "build:dev": "vite build --mode development",
+    "build": "vite build --mode production",
+    "preview": "vite preview",
+    "lint": "biome check src",
+    "format": "biome format --write src"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@types/node": "^22.10.2",
+    "terser": "^5.36.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
+  }
+}

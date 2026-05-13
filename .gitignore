@@ -1,6 +1,8 @@
 #AT
 #10.06.25
 
+.ai/memory/
+
 *.~
 *~
 *.[0-9]+
@@ -21,6 +23,11 @@ frontend/**
 !frontend/src
 !frontend/src/*
 !frontend/src/**
+frontend/src/components/*/node_modules
+frontend/src/components/*/node_modules/**
+frontend/src/components/*/package-lock.json
+frontend/src/components/*/dist
+frontend/src/components/*/dist/**
 
 src/*
 src/**

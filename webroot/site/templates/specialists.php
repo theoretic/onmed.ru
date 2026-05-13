@@ -2,7 +2,7 @@
 /*
 Specialists template
 AT
-22.09.25
+12.05.26
 */
 
 //include_once '_shared/functions/Field.php';
@@ -50,6 +50,9 @@ $noAsideBanners = 1;
 //
 
 $css[] = '/site/assets/css/specialists.css';
+$css[] = '/site/assets/css/appointment-specialists-all.css';
+
+$js[] = '/site/assets/js/components/appointment-specialists-all.js';
 
 ?>
 
@@ -65,4 +68,5 @@ $css[] = '/site/assets/css/specialists.css';
 	</section>
 
 <? include '_shared/layout-sidebars/epilog.php' ?>
+<? include '_shared/specialists/modal-appointment-specialists-all.php' ?>
 <? include '_shared/_epilog.php' ?>

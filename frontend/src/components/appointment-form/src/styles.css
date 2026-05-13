@@ -1,0 +1,60 @@
+/* appointment-form web component styles. Light DOM. Scoped under `appointment-form` element. */
+
+appointment-form {
+  --as-c-bg: #fff;
+  --as-c-fg: #1a1a1a;
+  --as-c-muted: #6b7280;
+  --as-c-border: #e5e7eb;
+  --as-c-primary: rgb(var(--color));
+  --as-c-secondary: color-mix(in srgb, var(--as-c-primary) 35%, transparent);
+  --as-c-error: #dc2626;
+  --as-c-disabled: #f3f4f6;
+  --as-r: 0.5rem;
+  --as-gap: 1rem;
+
+  display: block;
+
+  .as-form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .as-age-warning {
+    padding: 0.625rem 0.75rem;
+    background: #fee2e2;
+    color: var(--as-c-error);
+    border: 1px solid #fca5a5;
+    border-radius: var(--as-r);
+    font-size: 0.875rem;
+  }
+
+  .as-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--as-gap);
+  }
+
+  .as-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--as-c-muted);
+    cursor: pointer;
+    a {
+      color: inherit;
+    }
+  }
+
+  input:not([type="checkbox"]):not([type="submit"]):not([type="radio"]) {
+    min-width: 16rem;
+  }
+
+  h6 {
+    width: 100%;
+    text-align: center;
+    font-weight: 400;
+  }
+}

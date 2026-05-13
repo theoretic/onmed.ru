@@ -42,9 +42,11 @@ $image = $specialistPage->image->url? : '/site/assets/files/images/defaults/medi
 				<? include 'specialist/prices.php' ?>
 			</div>
 		<? endif ?>
-		<a href="<?=$specialistPage->archimedURL?>" class="small button" target=_blank>
-			записаться
-		</a>
+		<? if($specialistPage->id_medflex): ?>
+			<a href="<?=$specialistPage->url?>reg" class="small button" target=_blank>
+				записаться
+			</a>
+		<? endif ?>
 	</div>
 
 </div>

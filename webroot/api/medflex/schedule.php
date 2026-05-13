@@ -7,10 +7,9 @@ Medflex API schedule endpoint documentation:
 https://developer.medflex.ru/clinic-site/tag/schedule/get_doctors_schedule_v2
 
 Proxies: GET https://api.medflex.ru/schedule/?doctor_ids={id_medflex}
-Doctor ID sourced from $referer->page->id_medflex (set by ProcessWire specialist page).
-
-Cache: filesystem, TTL 1h, key: schedule_{id_medflex}_{dateStart}_{dateEnd}
-Stale cache served on API error.
+Doctor ID sourced from ?doctor_id param or $referer->page->id_medflex.
+Always fetches live from Medflex API.
+Response written to cache file as a log (never read back).
 
 AT
 07.05.26
@@ -49,24 +48,22 @@ Medflex::corsHeaders();
 $apiKey = $settings->medflex->api_key;
 $dateStart = date('Y-m-d');
 $dateEnd = date('Y-m-d', strtotime('+1 month'));
-$cacheKey = "schedule_{$doctorId}_{$dateStart}_{$dateEnd}";
-
-$cached = Medflex::cacheGet($cacheKey);
-if( $cached !== null ) return $cached;
 
 $apiUrl = "https://api.medflex.ru/schedule/?town_id=1261&doctor_ids=$doctorId&date_start=$dateStart&date_end=$dateEnd";
 $warnings = [];
 $result = Medflex::fetchAllPages($apiUrl, $apiKey, $warnings);
 
 if( $result === null ) {
-    $stale = Medflex::cacheGetStale($cacheKey);
-    if( $stale !== null ) return $stale;
     header("HTTP/1.1 502 Bad Gateway");
     return [
         'error' => 'API Error',
         'message' => 'Failed to fetch schedule from Medflex API'
     ];
 }
+
+// Write to cache as log — never read back
+$cacheKey = "schedule_{$doctorId}_{$dateStart}_{$dateEnd}";
+Medflex::cacheSet($cacheKey, $result, 0);
 
 if( !empty($warnings) ) {
     header("HTTP/1.1 206 Partial Content");
@@ -75,5 +72,4 @@ if( !empty($warnings) ) {
     ]);
 }
 
-Medflex::cacheSet($cacheKey, $result, 3600);
 return $result;

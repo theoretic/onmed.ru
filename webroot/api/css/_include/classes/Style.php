@@ -1,7 +1,7 @@
 <?
 /*
 AT
-08.06.26
+08.05.26
 
 better eTag-based cache handling
 

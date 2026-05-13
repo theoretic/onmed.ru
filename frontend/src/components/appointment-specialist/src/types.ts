@@ -1,5 +1,7 @@
 // API DTOs (loose) and domain types.
 
+export type { AgeLimit } from '../../../js/lib/types';
+
 export interface Speciality {
   id: number;
   name: string;
@@ -17,6 +19,7 @@ export interface Service {
   price: number;
   durationMin: number; // step in minutes
   currency?: string;
+  ageLimit?: AgeLimit;
 }
 
 export type DayState = "disabled" | "free" | "partial";

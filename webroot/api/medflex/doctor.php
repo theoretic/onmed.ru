@@ -49,6 +49,13 @@ $apiKey = $settings->medflex->api_key;
 
 if( !$id_medflex ) {
     $allKey = 'doctor_all';
+
+    // ?cached=1 — serve from filesystem cache immediately, skip live fetch; fall through on miss
+    if( isset($_GET['cached']) ) {
+        $cached = Medflex::cacheGet($allKey);
+        if( $cached !== null ) return $cached;
+    }
+
     $cached = Medflex::cacheGet($allKey);
     if( $cached !== null ) return $cached;
 

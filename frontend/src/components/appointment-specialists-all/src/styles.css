@@ -1,0 +1,238 @@
+/* All widget styles. Light DOM. Scoped under `appointment-specialists-all` element. */
+/* Imported as a CSS asset by Vite (separate .css output). */
+
+appointment-specialists-all {
+  --as-c-bg: #fff;
+  --as-c-fg: #1a1a1a;
+  --as-c-muted: #6b7280;
+  --as-c-border: #e5e7eb;
+  /* --as-c-primary: #2563eb; */
+  --as-c-primary: rgb(var(--color));
+  --as-c-secondary: color-mix(in srgb, var(--as-c-primary) 35%, transparent);
+  --as-c-tertiary: color-mix(in srgb, var(--as-c-primary) 12.5%, transparent);
+  --as-c-primary-hover: #1d4ed8;
+  --as-c-partial: #fef3c7;
+  --as-c-partial-fg: #92400e;
+  --as-c-error: #dc2626;
+  --as-c-disabled: #f3f4f6;
+  --as-r: 0.5rem;
+  --as-gap: 1rem;
+  font-size: 1rem;
+  color: var(--as-c-fg);
+  display: block;
+  background: var(--as-c-bg);
+  border: 1px solid var(--as-c-border);
+  border-radius: var(--as-r);
+  padding: 1rem;
+/* max-width: 45rem; */
+
+  .as-row {
+    display: flex;
+    gap: var(--as-gap);
+    align-items: center;
+  }
+  .as-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--as-gap);
+  }
+  .as-muted {
+    text-align:center;
+    color: var(--as-c-muted);
+  }
+  .as-skeleton {
+    color: var(--as-c-muted);
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  /* universal interactive tile */
+  .as-item {
+    cursor: pointer;
+    border: 1px solid var(--as-c-border);
+    border-radius: var(--as-r);
+    /* background: var(--as-c-secondary); */
+    transition: border-color .1s, background .1s;
+    user-select: none;
+    &:hover {
+      border-color: var(--as-c-primary);
+    }
+  }
+  .as-item--selected {
+    border-color: var(--as-c-primary);
+    background: var(--as-c-secondary) !important;
+  }
+
+  /* header */
+  .as-hdr {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  /* services */
+  .as-srv-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content:center;
+    gap: 1rem;
+    margin: 0.75rem 0;
+  }
+  .as-srv {
+    width:16rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    .as-meta {
+      color: var(--as-c-muted);
+      font-size: 0.75rem;
+      margin-top: 0.125rem;
+    }
+    .as-price {
+      font-weight: 600;
+      margin-left: 0.75rem;
+    }
+  }
+
+  /* calendar + slots row */
+  .as-cal-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--as-gap);
+    align-items: stretch;
+  }
+  .as-cal,
+  .as-slots {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* calendar */
+  .as-cal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .as-cal-wrapper {
+    width: 16.8rem;
+  }
+  .as-cal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    button {
+      background: none;
+      border: 1px solid var(--as-c-border);
+      border-radius: var(--as-r);
+      padding: 0.25rem 0.625rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: inherit;
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+  .as-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 2rem);
+    gap: 0.5rem;
+  }
+  .as-cal-wd {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--as-c-muted);
+    padding: 0.25rem 0;
+  }
+  .as-day {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+  }
+  .as-day--out {
+    color: var(--as-c-muted);
+    opacity: 0.3;
+  }
+  .as-day--available {
+    border: 1px solid var(--as-c-tertiary);
+    background: var(--as-c-tertiary);
+  }
+  .as-day--partial {
+    background: var(--as-c-partial);
+    color: var(--as-c-partial-fg);
+  }
+
+  /* slots */
+  .as-slots {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .as-slot-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+  .as-slot {
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.8125rem;
+  }
+  .as-slot--disabled {
+    opacity: 0.35;
+    pointer-events: none;
+    background: var(--as-c-disabled);
+  }
+
+  .as-error-banner {
+    text-align: center;
+    padding: 0.75rem;
+    background: #fee2e2;
+    color: var(--as-c-error);
+    border-radius: var(--as-r);
+    margin-top: 0.75rem;
+  }
+
+  .as-warning {
+    padding: 0.625rem 0.75rem;
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: var(--as-r);
+    font-size: 0.875rem;
+  }
+
+  h6{
+    width:100%;
+    text-align:center;
+    font-weight:400;
+  }
+
+  /* doctor dropdown */
+  .as-doctor-select {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--as-c-border);
+    border-radius: var(--as-r);
+    background: var(--as-c-bg);
+    color: var(--as-c-fg);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color .1s;
+    &:hover, &:focus {
+      border-color: var(--as-c-primary);
+      outline: none;
+    }
+  }
+}
