@@ -42,7 +42,7 @@ Medflex API response structure:
 }
 
 AT
-06.05.26
+14.05.26
 */
 
 namespace ProcessWire;
@@ -66,6 +66,7 @@ $validation = $validator->validate();
 if( !$validation['success'] )
 	return [ 'error' => 'Некоторые поля заполнены неверно.' ];
 
+/*
 //can be called only from specialist page with valid id_medflex
 if( !$referer->page || $referer->page->template != 'specialist' || !$referer->page->id_medflex ) {
 	header("HTTP/1.1 403 Forbidden");
@@ -74,6 +75,7 @@ if( !$referer->page || $referer->page->template != 'specialist' || !$referer->pa
 		'message' => 'This endpoint can only be accessed from the specialist page'
 	];
 }
+*/
 
 ////
 

@@ -2,7 +2,7 @@
 /*
 3rd party code
 AT
-23.09.25
+13.05.26
 */
 ?>
 
@@ -35,17 +35,6 @@ AT
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/15012085" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
-
-<!-- ArchiWidget -->
-<script>
-     (function (w, d, s, h, i, js, fjs) {
-         js = d.createElement(s), fjs = d.getElementsByTagName(s)[0],
-js.src = h + i, js.async = 1, fjs.parentNode.insertBefore(js, fjs);
-     }(window, document, 'script',
-'https://widget.archimed-soft.ru/init/',
-'39be706eb4f90c84b436b611be3d5f2f'));
-</script>
-<!-- ArchiWidget -->
 
 <? if($page->name!=='sitemap'): ?>
 <!-- UIS -->

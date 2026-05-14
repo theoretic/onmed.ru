@@ -1,7 +1,7 @@
 <?
 /*
 AT
-08.05.26
+14.05.26
 
 better eTag-based cache handling
 
@@ -732,7 +732,8 @@ class Style
 		// Quoted string is required by RFC 7232
 		// ----------------------------------------------------------
 
-		$eTag = is_file($this->cacheFile)? '"' . md5_file($this->cacheFile) . '"' : '"' . md5($this->css) . '"';
+		$eTag = is_file($this->cacheFile)? md5_file($this->cacheFile) : md5($this->css);
+		$eTag = '"' . $eTag . '"';
 
 		// ----------------------------------------------------------
 		// 304 Not Modified — return early, no body needed
@@ -740,9 +741,9 @@ class Style
 		// ----------------------------------------------------------
 
 		$clientEtag = $_SERVER['HTTP_IF_NONE_MATCH'] ?? null;
-		if ( $clientEtag && $clientEtag === $etag ) {
+		if ( $clientEtag && $clientEtag === $eTag ) {
 			http_response_code(304);
-			header('ETag: ' . $etag);        // recommended to repeat on 304
+			header('ETag: ' . $eTag); // recommended to repeat on 304
 			header('Cache-Control: no-cache');
 			return;
 		}
@@ -752,7 +753,7 @@ class Style
 		// ----------------------------------------------------------
 		header('Content-Type: text/css; charset=UTF-8');
 		header('Cache-Control: no-cache');   // always revalidate
-		header('ETag: ' . $etag);
+		header('ETag: ' . $eTag);
 
 		if ( is_file($this->cacheFile) ) {
 			header('Content-Length: ' . filesize($this->cacheFile));
