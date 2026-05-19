@@ -2,7 +2,7 @@
 /*
 API
 AT
-05.10.23
+18.05.26
 */
 
 namespace ProcessWire;
@@ -21,6 +21,9 @@ if( $referer->page && $referer->language ) $user->language = $referer->language;
 //echo '$referer->language: ', var_dump($referer->language);
 
 //controller
+// Strip trailing slash so URLs like /api/validator/medflex/appointment-specialist/
+// (with trailing slash) resolve the same model file as without the slash.
+$_REQUEST['request'] = rtrim( $_REQUEST['request'], '/' );
 $parts = explode( '/', $_REQUEST['request'] );
 $controller = $parts[0].'.php';
 
@@ -77,6 +80,9 @@ switch($outputFormat)
 
 	default: //JSON
 		//$response = (object)$response;
+		// Prevent Safari from caching API responses (POST or otherwise).
+		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+		header("Pragma: no-cache");
 		header("Content-Type: application/json");
 		echo json_encode($response, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 	}

@@ -2,12 +2,14 @@
 /*
 class AbstractThumb
 
+caching updated
+
 php8
 path/to/file.jpg -> path/to/100x100/file.jpg.webp
 Other than original output formats (webp) added
 
 AT
-16.11.23
+15.05.26
 */
 
 abstract class AbstractThumb {
@@ -356,19 +358,28 @@ echo '$properties: ', var_dump($properties);//
 */
 			$stat = stat($_file);
 
-			//$now = gmdate("D, d M Y H:i:s",time());
-			//header("Expires: $now GMT");
-			//header("Last-Modified: $now");
-			//header("Cache-Control: no-store, no-cache, must-revalidate");
-			//header("Cache-Control: post-check=0, pre-check=0",false);
-			//header("Pragma: no-cache");
+			$etag = '"' . md5_file($_file) . '"';
+			$lastModified = gmdate('D, d M Y H:i:s', $stat['mtime']) . ' GMT';
 
-//echo var_dump(mime_content_type($_file));
+			// Conditional request short-circuit -> 304 Not Modified
+			$ifNoneMatch = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? trim($_SERVER['HTTP_IF_NONE_MATCH']) : null;
+			$ifModifiedSince = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) : 0;
+
+			if (
+				($ifNoneMatch !== null && $ifNoneMatch === $etag) ||
+				($ifModifiedSince > 0 && $ifModifiedSince >= $stat['mtime'])
+			) {
+				header('HTTP/1.1 304 Not Modified');
+				header('ETag: ' . $etag);
+				header('Cache-Control: public, max-age=604800, must-revalidate');
+				return;
+			}
 
 			header("Keep-Alive: timeout=15, max=99");
-			header('ETag: '.md5_file($_file));
-			//header("Content-Type: {$properties['mime']}");
-			header("Content-Type: ".mime_content_type($_file));
+			header('ETag: ' . $etag);
+			header('Last-Modified: ' . $lastModified);
+			header('Cache-Control: public, max-age=604800, must-revalidate');
+			header("Content-Type: " . mime_content_type($_file));
 			header("Content-Length: {$stat['size']}");
 			readfile($_file);
 

@@ -42,7 +42,9 @@ if( !$id_medflex && $referer->page ) {
 ////
 
 require_once __DIR__ . '/_include/medflex.php';
+require_once __DIR__ . '/_include/logger.php';
 Medflex::corsHeaders();
+MedflexLogger::log('doctor', $_GET);
 $apiKey = $settings->medflex->api_key;
 
 // --- No id: return all doctors ---

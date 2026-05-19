@@ -132,10 +132,14 @@ class Medflex {
      * @param string $url      Full endpoint URL.
      * @param string $apiKey   Medflex API token.
      * @param array  $payload  Data to JSON-encode and send as request body.
+     * @param array  $meta     Output — populated with debug metadata when provided:
+     *                         ['http_code', 'response_headers', 'response_body'].
      * @return array|null      Decoded response array, or null on HTTP error / curl failure.
      */
-    public static function apiPost(string $url, string $apiKey, array $payload): array|null {
+    public static function apiPost(string $url, string $apiKey, array $payload, array &$meta = []): array|null {
         $body = json_encode($payload);
+
+        $responseHeaders = [];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -146,9 +150,30 @@ class Medflex {
             "Content-Type: application/json",
             "Accept: application/json",
         ]);
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($ch, $header) use (&$responseHeaders) {
+            $len = strlen($header);
+            $parts = explode(':', $header, 2);
+            if (count($parts) === 2) {
+                $responseHeaders[trim($parts[0])] = trim($parts[1]);
+            }
+            return $len;
+        });
+        // Hard timeouts so a stalled Medflex endpoint can't hang PHP past
+        // max_execution_time and leave the client (especially iOS Safari)
+        // staring at a spinner forever with no log entry.
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
+
+        $meta = [
+            'http_code'        => $httpCode,
+            'response_headers' => $responseHeaders,
+            'response_body'    => $response,
+            'curl_error'       => $curlError,
+        ];
 
         if( $httpCode < 200 || $httpCode >= 300 ) return null;
         return json_decode($response, true);

@@ -1,3 +1,14 @@
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-s
 RewriteRule ^(.*)$ index.php?request=$1 [L,QSA]
+
+# Static phase only (thumb already exists). PHP phase sets its own headers.
+FileETag MTime Size
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpe?g|png|webp|avif|gif)$">
+    # 7 days fresh, then revalidate via ETag/Last-Modified -> 304
+    Header set Cache-Control "public, max-age=604800, must-revalidate"
+    Header unset Pragma
+  </FilesMatch>
+</IfModule>
