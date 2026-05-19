@@ -3,7 +3,7 @@ Form helper
 dependences:
 	cash or jquery
 AT
-06.05.26
+15.05.26
 */
 
 class FormHelper{
@@ -71,13 +71,32 @@ class FormHelper{
 
 		_field.addClass('loading')
 
-		fetch(validatorUrl)
-		.then(function(data) { return data.json() })
-		.then(function(json) {
-			_field.removeClass('loading')
-			self.setFieldValidity(_field,json)
-		})
+		// Always clear loading state, no matter what fails. Without the
+		// .catch() the field stayed in the `loading` CSS state forever
+		// (visible as constant blinking) whenever the validator endpoint
+		// returned non-JSON (PHP warning prepended), HTTP 5xx, or any
+		// network failure — symptom reported on iOS Safari.
+		const clearLoading = () => { _field.removeClass('loading') }
 
+		fetch(validatorUrl)
+			.then(async function(response) {
+				const text = await response.text()
+				try { return JSON.parse(text) }
+				catch (e) {
+					throw new Error('Validator returned non-JSON (HTTP ' + response.status + ')')
+				}
+			})
+			.then(function(json) {
+				clearLoading()
+				self.setFieldValidity(_field, json)
+			})
+			.catch(function(err) {
+				clearLoading()
+				console.error('FormHelper.validateField() failed:', err)
+				// Leave field neutral — don't flip to invalid on transient
+				// network/server hiccup. Full-form validate() before submit
+				// is authoritative.
+			})
 	}
 
 	// form validation
@@ -122,6 +141,16 @@ class FormHelper{
 			_form.removeClass('loading')
 				resolve(json)
 			})
+			.catch(function(err) {
+				// Validator request failed (network error, non-JSON response, etc.).
+				// Without this, the form stays in the "loading" state forever.
+				console.error('FormHelper.validate() failed:', err)
+				_form.removeClass('loading')
+				self.updateMessaging(_form, {
+					error: 'Не удалось проверить форму. Проверьте интернет-соединение и попробуйте ещё раз.'
+				})
+				resolve({ success: false })
+			})
 		})
 	}
 
@@ -147,7 +176,7 @@ class FormHelper{
 				data = new FormData( _form[0] )
 //console.log('data: ',data)
 				//params = { method: 'POST', body: data, headers: {'Content-Type': 'application/x-www-form-urlencoded'} }
-				params = { method: 'POST', body: data }
+				params = { method: 'POST', body: data, credentials: 'same-origin' }
 			break
 
 			//get
@@ -155,20 +184,50 @@ class FormHelper{
 				//url += '?' + Object.keys(data).map( k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) ).join('&')
 				data = _form.serialize() //query string
 				url += '?' + data
+				params = { credentials: 'same-origin' }
 			}
 
 //console.log( 'FormHelper.ajaxSubmit(): _form, data:', _form, data )
 
 		_form.addClass('loading')
 		btn.attr('disabled','disabled')
+
+		// Always clear loading state and surface a message, no matter what
+		// fails (network error, non-JSON response, HTTP 4xx/5xx). Without
+		// this, an iOS Safari fetch failure leaves the form stuck in the
+		// "loading" animation indefinitely with no feedback to the user.
+		const clearLoading = () => {
+			btn.removeAttr('disabled')
+			_form.removeClass('loading')
+		}
+
 		fetch( url, params )
-			.then( response => response.json() )
+			.then( async response => {
+				const text = await response.text()
+				let json
+				try { json = JSON.parse(text) }
+				catch (e) {
+					throw new Error('Сервер вернул некорректный ответ (HTTP ' + response.status + ').')
+				}
+				if( !response.ok && !json.error ) {
+					json.error = 'Ошибка отправки (HTTP ' + response.status + '). Попробуйте ещё раз.'
+				}
+				return json
+			})
 			.then( json => {
-				btn.removeAttr('disabled')
-				_form.removeClass('loading')
+				clearLoading()
 				self.updateMessaging(_form,json)
 				if( event ) window.dispatchEvent( new CustomEvent(event, {detail:json}) )
 				return json
+			})
+			.catch( err => {
+				clearLoading()
+				console.error('FormHelper.ajaxSubmit() failed:', err)
+				self.updateMessaging(_form, {
+					error: err && err.message
+						? err.message
+						: 'Не удалось отправить форму. Проверьте интернет-соединение и попробуйте ещё раз.'
+				})
 			})
 	}
 

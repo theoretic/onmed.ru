@@ -259,8 +259,14 @@ export class AppointmentSpecialistsAll extends HTMLElement {
 
     if (!s.selectedSlotISO) return body;
 
+    // Resolve doctor name from the loaded doctors list by selectedDoctorId
+    // so the coupon shows the canonical name, not the API schedule name.
+    const doctorInList = s.doctors?.find((d) => d.id === s.selectedDoctorId);
+    const specialityInList = s.specialities?.find((sp) => sp.id === s.selectedSpecialityId);
     const formAttrs: Record<string, string> = {
       "doctor-id": sched.doctor.id,
+      "doctor-name": doctorInList?.name ?? sched.doctor.name,
+      "doctor-speciality": specialityInList?.name ?? "",
       "service-id": s.selectedServiceId,
       "price": String(service?.price ?? 0),
       "start-time": s.selectedSlotISO,

@@ -1,6 +1,6 @@
 // API DTOs (loose) and domain types.
 
-export type { AgeLimit } from '../../../js/lib/types';
+export type { AgeLimit } from '../../../_shared/lib/types';
 
 export interface Speciality {
   id: number;

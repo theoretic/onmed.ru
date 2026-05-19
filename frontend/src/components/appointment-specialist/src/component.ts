@@ -169,6 +169,8 @@ export class AppointmentSpecialist extends HTMLElement {
 
     const formAttrs: Record<string, string> = {
       "doctor-id": sched.doctor.id,
+      "doctor-name": sched.doctor.name,
+      "doctor-speciality": service?.name ?? "",
       "service-id": s.selectedServiceId,
       "price": String(service?.price ?? 0),
       "start-time": s.selectedSlotISO,

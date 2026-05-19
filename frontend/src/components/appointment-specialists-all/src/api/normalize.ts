@@ -1,7 +1,7 @@
 // Map raw Medflex API response into domain Schedule.
 // API shape is loosely defined; we accept several common shapes and degrade gracefully.
 
-import { isoDate } from "../lib/date";
+import { isoDate, parseLocalMs } from "../lib/date";
 import type { AgeLimit, DaySchedule, DayState, Schedule, Service } from "../types";
 
 export interface RawDoctor {
@@ -154,7 +154,7 @@ function normalizeNewFormat(
       const startISO = cell.dt_start.replace(" ", "T");
       const endISO = cell.dt_end.replace(" ", "T");
       if (cellDurationMin === 0) {
-        const diffMin = (new Date(endISO).getTime() - new Date(startISO).getTime()) / 60_000;
+        const diffMin = (parseLocalMs(endISO) - parseLocalMs(startISO)) / 60_000;
         if (diffMin > 0) cellDurationMin = diffMin;
       }
       if (!dayMap.has(date)) dayMap.set(date, []);

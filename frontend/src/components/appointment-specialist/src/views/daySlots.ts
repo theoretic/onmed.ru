@@ -1,12 +1,12 @@
-import { buildSlots, timeHM } from "../lib/date";
+import { buildSlots, timeHM, parseLocalMs } from "../lib/date";
 import { h } from "../lib/dom";
 import type { DaySchedule, Service } from "../types";
 
 function intersectsBooked(startISO: string, endMs: number, booked: [string, string][]): boolean {
-  const startMs = new Date(startISO.replace(" ", "T")).getTime();
+  const startMs = parseLocalMs(startISO);
   for (const [bs, be] of booked) {
-    const bsMs = new Date(bs).getTime();
-    const beMs = new Date(be).getTime();
+    const bsMs = parseLocalMs(bs);
+    const beMs = parseLocalMs(be);
     if (startMs < beMs && endMs > bsMs) return true;
   }
   return false;
@@ -23,7 +23,7 @@ export function renderDaySlots(
   const all: { iso: string; free: boolean }[] = [];
   for (const [s, e] of day.freeIntervals) {
     for (const iso of buildSlots(s, e, step)) {
-      const endMs = new Date(iso.replace(" ", "T")).getTime() + stepMs;
+      const endMs = parseLocalMs(iso) + stepMs;
       const free = !intersectsBooked(iso, endMs, day.bookedIntervals);
       all.push({ iso, free });
     }
