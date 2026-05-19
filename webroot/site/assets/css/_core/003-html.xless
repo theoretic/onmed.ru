@@ -10,6 +10,7 @@ html{
 	font-family: 'Stem', sans-serif;
 	font-weight:100;
 	color:@black;
+
 }
 
 ////
@@ -18,6 +19,7 @@ html{
 @media(max-width:440px){
 	html{
 		font-size:12px;
+		overflow-x:hidden;
 	}
 }
 */

@@ -10,3 +10,17 @@
   </IfModule>
 </FilesMatch>
 # End ProcessWire:pwbphp
+
+# Cache validators for static assets served from /site/assets/
+# Originals get long cache (PW renames on upload, so URLs are effectively unique).
+# Fonts are immutable.
+FileETag MTime Size
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpe?g|png|webp|avif|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(woff2?|ttf|eot|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>

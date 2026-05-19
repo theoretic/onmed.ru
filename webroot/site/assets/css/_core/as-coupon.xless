@@ -1,0 +1,23 @@
+.as-coupon{
+	.rounded();
+	.shadow(0,0,1rem,rgba(0,0,0,.1));
+}
+
+@media print {
+	/* Hide every direct child of <body> while printing the coupon.
+	   display:none (not visibility:hidden) eliminates layout space entirely,
+	   so there is no blank space before the coupon on the printed sheet. */
+	body.as-printing-coupon > *:not(.as-coupon-print-portal) {
+		display: none !important;
+	}
+
+	body.as-printing-coupon > .as-coupon-print-portal {
+		display: block;
+		margin: 2rem auto;
+		max-width: 480px;
+	}
+
+	body.as-printing-coupon .as-coupon-print {
+		display: none !important;
+	}
+}
