@@ -27,7 +27,7 @@ return [
 	'birthday'=>[
 		//'validate-if'=>'nonempty',
 		'validate-as'=>'birthdate',
-		//'format'=>'dd.mm.yyyy',
+		//'format'=>'dd.mm.yyyy', // default
 	],
 	'comment'=>[
 		'validate-if'=>'nonempty',

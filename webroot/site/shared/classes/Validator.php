@@ -18,10 +18,10 @@ class Validator{
 
 	private function checkCondition($condition) {
 		$mismatch = false;
-		switch( $condition['condition'] ) {
+		switch( $condition['condition'] ?? null ) {
 			default: //if
-				foreach( $condition['fields'] as $fieldname_ => $value_ ) {
-					if ( $this->input->$fieldname_ == $value_ ) continue;
+				foreach( ($condition['fields'] ?? []) as $fieldname_ => $value_ ) {
+					if ( ($this->input->$fieldname_ ?? null) == $value_ ) continue;
 					$mismatch = true;
 					break;
 				}
@@ -41,38 +41,47 @@ class Validator{
 	}
 
 	public function validateField($fieldname, $value) {
-		$value = $value? : $this->input->$fieldname;
-		$field = $this->model[$fieldname];
+		// Use !=="" / !==null instead of truthy check so the
+		// fallback to $this->input doesn't trigger on legitimate empty
+		// strings. And guard against $this->input being null (single-field
+		// mode in /api/validator.php never sets it) — PHP 8 raises a
+		// warning on null property access, which corrupts the JSON
+		// response and traps the client field in `loading` state.
+		if( $value === null || $value === '' )
+			$value = is_object($this->input) ? ($this->input->$fieldname ?? null) : null;
+		$field = $this->model[$fieldname] ?? null;
 
 		if(!$field) return ['result'=>'success'];
-		if( $field['validate-if']=='nonempty' && !$value ) return ['success'=>1];
-		if( !$field['validate-as'] || $field['validate-as']=='' ) return ['success'=>1];
+		// All model-array accesses use `??` to avoid PHP 8.1+ "Undefined
+		// array key" warnings, which would otherwise be echoed before the
+		// JSON body and break JSON.parse on the client.
+		$validateIf = $field['validate-if'] ?? null;
+		$validateAs = $field['validate-as'] ?? null;
+
+		if( $validateIf === 'nonempty' && !$value ) return ['success'=>1];
+		if( !$validateAs ) return ['success'=>1];
 
 		//conditional validation
-		if( is_array($field['validate-if']) ) {
-			//var_dump($field['validate-if']);
-			if ( !$this->checkConditions($field['validate-if']) )
+		if( is_array($validateIf) ) {
+			if ( !$this->checkConditions($validateIf) )
 				return ['success'=>1];
 		}
 
-		//echo "-$fieldname- -$value- -".$field['validate-if']."-<br>";//
+		$validatorCandidate = "{$_SERVER['DOCUMENT_ROOT']}/site/shared/validators/{$validateAs}.php";
 
-		$validatorCandidate = "{$_SERVER['DOCUMENT_ROOT']}/site/shared/validators/{$field['validate-as']}.php";
-
-//echo "\$validatorCandidate for $fieldname: ", var_dump($validatorCandidate);
-
+		// Guard the include — previously `include` ran unconditionally even
+		// when the file was missing, emitting a PHP warning that
+		// corrupted the JSON response.
 		if( !is_file($validatorCandidate) )
-			$validation['error'] = defined('I18N_VALIDATOR')? __('no validation rule',I18N_VALIDATOR) : 'не определён валидатор';
+			return ['error' => defined('I18N_VALIDATOR') ? __('no validation rule',I18N_VALIDATOR) : 'не определён валидатор'];
 
 		$validation = include $validatorCandidate;
 
-		if( !$validation || $validation == NULL)
-			$validation['error'] = defined('I18N_VALIDATOR')? __('validation error',I18N_VALIDATOR) : 'ошибка вадидации';
-
-//echo '$validation: ', var_dump($validation);
-
 		//empty output from validator php file means success
-		if( $validation == 1 ) $validation = ['success'=>1];
+		if( $validation === 1 || $validation === true ) $validation = ['success'=>1];
+
+		if( !is_array($validation) )
+			$validation = ['error' => defined('I18N_VALIDATOR') ? __('validation error',I18N_VALIDATOR) : 'ошибка валидации'];
 
 		return $validation;
 	}
@@ -81,38 +90,30 @@ class Validator{
 		$input = $input? : $this->input;
 		$model = $model? : $this->model;
 
+		$validation = ['errors' => []];
+
 		foreach($this->model as $fieldname=>$field) {
-			$validation_ = $this->validateField($fieldname,$this->input->$fieldname);
-			if($validation_['error'])
+			$fieldValue = is_object($this->input) ? ($this->input->$fieldname ?? null) : null;
+			$validation_ = $this->validateField($fieldname, $fieldValue);
+			if( !empty($validation_['error']) )
 				$validation['errors'][$fieldname] = $validation_['error'];
 		}
-/*
-		//special cases like conditions, one-or-another etc.
-		foreach($this->model as $fieldname=>$field) {
-			if($field['one-or-another']) {
-				$fieldnameAnother = $field['one-or-another'];
-				if( $validation['errors'][$fieldname] && $validation['errors'][$fieldnameAnother])
-					unset($validation['errors'][$fieldnameAnother]);
-			}
-		}
-*/
+
 		///field group validations
-		//model ]fields may contain group attribute meaning that at least one field belonging to a group should be nonempty
+		//model fields may contain group attribute meaning that at least one field belonging to a group should be nonempty
 
 		//getting groups
 		$groups = [];
 		foreach($this->model as $fieldname=>$field) {
-			if( !$field['group'] ) continue;
+			if( empty($field['group']) ) continue;
 			$groups[] = $field['group'];
 		}
 		$groups = array_unique($groups);
 
-//echo '$groups: ', var_dump($groups);
-
 		foreach( $groups as $group ) {
 			$groupIsValid = false;
 			foreach($this->model as $fieldname=>$field) {
-				if( $field['group'] == $group && $this->input->$fieldname ){
+				if( ($field['group'] ?? null) === $group && is_object($this->input) && !empty($this->input->$fieldname) ){
 					$groupIsValid = true;
 					break;
 				}
@@ -120,9 +121,7 @@ class Validator{
 			if( !$groupIsValid ) $validation['errors'][] = "Хотя бы одно поле в группе '{$group}' должно быть заполнено.";
 		}
 
-//echo '$input: ', var_dump($input);
-//echo '$validation: ', var_dump($validation);
-		if( $validation['errors'] )
+		if( !empty($validation['errors']) )
 			$validation['error'] = defined('I18N_VALIDATOR')? __('Some fields are filled incorrectly',I18N_VALIDATOR) : 'Некоторые поля заполнены неверно';
 		else
 			$validation = ['success'=>1];
