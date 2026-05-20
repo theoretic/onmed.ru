@@ -1,32 +1,36 @@
 <?php
 /*
-Medflex request/response logger
+General API request/response logger.
+
+Usage:
+    ApiLogger::log('medflex/appointment/make', $_POST);
+    ApiLogger::log('medflex/schedule', $_GET, null, $apiMeta);
 
 Toggle:
-    MedflexLogger::ENABLED = true  → write logs
-    MedflexLogger::ENABLED = false → silent no-op
+    ApiLogger::ENABLED = true  → write logs
+    ApiLogger::ENABLED = false → silent no-op
 
-Log location: {site}/assets/logs/medflex/YYYY-MM-DD.log
-              One file per day, each entry separated by ════ divider.
+Log location: {site}/assets/logs/api_{endpoint_slug}.YYYY-MM-DD.log
+              Endpoint slug: '/' and '-' replaced with '_'.
+              One file per endpoint per day, entries separated by ════ divider.
 
 AT
-17.05.26
+20.05.26
 */
 
-namespace ProcessWire;
-
-class MedflexLogger {
+class ApiLogger {
 
     // ── Toggle ─────────────────────────────────────────────────────────────
     const ENABLED = true;
     // ───────────────────────────────────────────────────────────────────────
 
     private static function logDir(): string {
-        return wire('config')->paths->assets . 'logs/medflex/';
+        return wire('config')->paths->assets . 'logs/';
     }
 
-    private static function logFile(): string {
-        return self::logDir() . date('Y-m-d') . '.log';
+    private static function logFile(string $endpoint): string {
+        $slug = preg_replace('/[\/\-]+/', '_', trim($endpoint, '/'));
+        return self::logDir() . 'api_' . $slug . '.' . date('Y-m-d') . '.log';
     }
 
     // Parse OS + browser from UA string (good-enough for debug).
@@ -74,17 +78,17 @@ class MedflexLogger {
     }
 
     /**
-     * Log a request + optional Medflex API exchange.
+     * Log a request + optional external API exchange.
      *
-     * @param string $endpoint  Short name, e.g. 'appointment-specialist'
-     * @param array  $post      Raw $_POST / $input->post as array
-     * @param array|null $payload  Payload sent to Medflex API (appointment only)
-     * @param array|null $apiMeta  ['http_code', 'response_headers', 'response_body']
-     *                             Returned by Medflex::apiPost() via $meta param
+     * @param string     $endpoint  Slash-separated endpoint path, e.g. 'medflex/appointment/make'
+     * @param array      $input     Raw request data ($_POST / $_GET / $input->post as array)
+     * @param array|null $payload   Payload sent to an external API (optional)
+     * @param array|null $apiMeta   ['http_code', 'response_headers', 'response_body', 'curl_error']
+     *                              Returned by Medflex::apiPost() via $meta param, or built inline
      */
     public static function log(
         string $endpoint,
-        array  $post,
+        array  $input,
         ?array $payload  = null,
         ?array $apiMeta  = null
     ): void {
@@ -93,12 +97,12 @@ class MedflexLogger {
         $dir = self::logDir();
         if (!is_dir($dir)) @mkdir($dir, 0750, true);
 
-        $ua    = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $ua       = $_SERVER['HTTP_USER_AGENT'] ?? '';
         $uaParsed = self::parseUA($ua);
-        $ip    = $_SERVER['HTTP_X_FORWARDED_FOR']
-              ?? $_SERVER['HTTP_X_REAL_IP']
-              ?? $_SERVER['REMOTE_ADDR']
-              ?? '';
+        $ip       = $_SERVER['HTTP_X_FORWARDED_FOR']
+                 ?? $_SERVER['HTTP_X_REAL_IP']
+                 ?? $_SERVER['REMOTE_ADDR']
+                 ?? '';
         $method  = $_SERVER['REQUEST_METHOD'] ?? '';
         $referer = $_SERVER['HTTP_REFERER']   ?? '';
         $origin  = $_SERVER['HTTP_ORIGIN']    ?? '';
@@ -118,14 +122,14 @@ class MedflexLogger {
             }
         }
 
-        // ── Mask API key in payload ────────────────────────────────────────
-        $postSafe = $post;
+        // ── Mask sensitive fields ──────────────────────────────────────────
+        $inputSafe = $input;
         foreach (['api_key', 'password', 'token'] as $f) {
-            if (isset($postSafe[$f])) $postSafe[$f] = '***';
+            if (isset($inputSafe[$f])) $inputSafe[$f] = '***';
         }
 
-        $sep   = str_repeat('═', 64);
-        $thin  = str_repeat('─', 64);
+        $sep  = str_repeat('═', 64);
+        $thin = str_repeat('─', 64);
 
         $lines = [];
         $lines[] = "\n$sep";
@@ -146,19 +150,19 @@ class MedflexLogger {
         }
 
         $lines[] = "";
-        $lines[] = "── POST from client $thin";
-        $lines[] = json_encode($postSafe, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $lines[] = "── Input from client $thin";
+        $lines[] = json_encode($inputSafe, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
         if ($payload !== null) {
             $lines[] = "";
-            $lines[] = "── Payload → Medflex API $thin";
+            $lines[] = "── Payload → external API $thin";
             $lines[] = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         }
 
         if ($apiMeta !== null) {
             $code = $apiMeta['http_code'] ?? '?';
             $lines[] = "";
-            $lines[] = "── Response ← Medflex API  HTTP $code $thin";
+            $lines[] = "── Response ← external API  HTTP $code $thin";
 
             if (!empty($apiMeta['response_headers'])) {
                 $lines[] = "Response Headers:";
@@ -168,18 +172,15 @@ class MedflexLogger {
             }
 
             $lines[] = "Body:";
-            // Coerce to string explicitly: `$apiMeta['response_body']` is
-            // `false` when curl_exec() fails (timeout, TLS, DNS, etc.). The
-            // `??` operator does NOT fall back on `false`, and PHP 8+
-            // json_decode(false, true) raises a fatal TypeError. That
-            // exact crash was silently killing every iOS Safari appointment
-            // request after Medflex started timing out.
-            $body = (string)($apiMeta['response_body'] ?? '');
-            // Pretty-print if JSON
+            // Coerce to string: curl_exec() returns false on connection failure;
+            // `??` does NOT fall back on false, and json_decode(false) raises
+            // a fatal TypeError in PHP 8+.
+            $body    = (string)($apiMeta['response_body'] ?? '');
             $decoded = $body !== '' ? json_decode($body, true) : null;
             $lines[] = $decoded !== null
                 ? json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
                 : $body;
+
             if (!empty($apiMeta['curl_error'])) {
                 $lines[] = "cURL error: " . $apiMeta['curl_error'];
             }
@@ -187,7 +188,7 @@ class MedflexLogger {
 
         $lines[] = "";
 
-        file_put_contents(self::logFile(), implode("\n", $lines), FILE_APPEND | LOCK_EX);
+        file_put_contents(self::logFile($endpoint), implode("\n", $lines), FILE_APPEND | LOCK_EX);
     }
 
 }

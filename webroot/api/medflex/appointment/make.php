@@ -59,8 +59,7 @@ ignore_user_abort(true);
 // Logger first — must capture every POST attempt that reaches this file,
 // even if downstream model load / validation throws. Without this, an iOS
 // Safari user whose form silently fails will leave no trace at all.
-require_once __DIR__ . '/../_include/logger.php';
-MedflexLogger::log('appointment-make', (array)$input->post, null, [
+ApiLogger::log('medflex/appointment/make', (array)$input->post, null, [
 	'http_code'        => 'received',
 	'response_headers' => [],
 	'response_body'    => 'request received — processing',
@@ -72,7 +71,7 @@ $model = include "{$_SERVER['DOCUMENT_ROOT']}/site/shared/models/medflex/appoint
 
 // Checkpoint: model loaded. If this line is the LAST one in the log for a
 // given attempt, the validator class load / instantiation is what dies.
-MedflexLogger::log('appointment-make', [], null, [
+ApiLogger::log('medflex/appointment/make', [], null, [
 	'http_code'        => 'checkpoint',
 	'response_headers' => [],
 	'response_body'    => 'model loaded — instantiating validator',
@@ -87,7 +86,7 @@ $validation = $validator->validate();
 // Checkpoint: validation complete. Always log the result (success or failure)
 // so we can distinguish "validator returned false" from "PHP died inside the
 // validator".
-MedflexLogger::log('appointment-make', [], null, [
+ApiLogger::log('medflex/appointment/make', [], null, [
 	'http_code'        => 'checkpoint',
 	'response_headers' => [],
 	'response_body'    => 'validation done — ' . json_encode($validation, JSON_UNESCAPED_UNICODE),
@@ -97,7 +96,7 @@ MedflexLogger::log('appointment-make', [], null, [
 if( !$validation['success'] ) {
 	// Log raw POST even on validation failure — critical for catching
 	// malformed iOS Safari autofill values that never reach the API.
-	MedflexLogger::log('appointment-make', (array)$input->post, null, [
+	ApiLogger::log('medflex/appointment/make', (array)$input->post, null, [
 		'http_code'        => 'N/A — validation failed',
 		'response_headers' => [],
 		'response_body'    => json_encode($validation),
@@ -115,10 +114,10 @@ $apiUrl = "https://api.medflex.ru/direct_appointment/doctor/execute/";
 require_once __DIR__ . '/../_include/medflex.php';
 Medflex::corsHeaders();
 
-// Checkpoint: about to build payload and call Medflex. If this is the LAST
+// Checkpoint: about to build payload and call Medflex. If this is the LAST If this is the LAST
 // entry, the failure is in apiPost — most likely a stalled upstream now
 // caught by the new CURLOPT_TIMEOUT (15s).
-MedflexLogger::log('appointment-make', [], null, [
+ApiLogger::log('medflex/appointment/make', [], null, [
 	'http_code'        => 'checkpoint',
 	'response_headers' => [],
 	'response_body'    => 'validation OK — calling Medflex API',
@@ -166,7 +165,7 @@ $apiMeta = [];
 try {
 	$apiResponse = Medflex::apiPost($apiUrl, $apiKey, $payload, $apiMeta);
 } catch (\Throwable $e) {
-	MedflexLogger::log('appointment-make', [], null, [
+	ApiLogger::log('medflex/appointment/make', [], null, [
 		'http_code'        => 0,
 		'response_headers' => [],
 		'response_body'    => 'apiPost EXCEPTION: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine(),
@@ -179,7 +178,7 @@ try {
 // Minimal safe post-apiPost log: contains only scalars guaranteed not to
 // crash the logger. If the rich log below ever fails again, this still
 // proves apiPost returned and gives us the http_code + curl_error.
-MedflexLogger::log('appointment-make', [], null, [
+ApiLogger::log('medflex/appointment/make', [], null, [
 	'http_code'        => $apiMeta['http_code'] ?? 'null',
 	'response_headers' => [],
 	'response_body'    => 'apiPost returned (checkpoint) — curl_error="'
@@ -187,8 +186,8 @@ MedflexLogger::log('appointment-make', [], null, [
 	'curl_error'       => $apiMeta['curl_error'] ?? '',
 ]);
 
-MedflexLogger::log(
-    'appointment-make',
+ApiLogger::log(
+    'medflex/appointment/make',
     (array)$input->post,
     $payload,
     $apiMeta

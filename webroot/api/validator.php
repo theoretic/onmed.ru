@@ -16,6 +16,13 @@ $skipCSRF = 1;
 //model
 $model = $_REQUEST['request'];
 $model = str_replace( 'validator/', '', $model );
+
+// Log every validator request before any model load so even 404s are visible.
+ApiLogger::log(
+    'validator/' . $model,
+    array_merge((array)$_GET, (array)$_POST)
+);
+
 $model = DOCUMENT_ROOT . '/site/shared/models/' . $model . '.php';
 
 //echo '$model:', var_dump($model);

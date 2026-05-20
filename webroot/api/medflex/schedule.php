@@ -42,7 +42,6 @@ if( !$doctorId ) {
 }
 
 require_once __DIR__ . '/_include/medflex.php';
-require_once __DIR__ . '/_include/logger.php';
 Medflex::corsHeaders();
 
 // town_id is required by API, but we have only one town, so hardcoding it for now
@@ -55,7 +54,7 @@ $warnings = [];
 $result = Medflex::fetchAllPages($apiUrl, $apiKey, $warnings);
 
 $slotCount = $result !== null ? count($result['data'] ?? []) : null;
-MedflexLogger::log('schedule', $_GET, null, [
+ApiLogger::log('medflex/schedule', $_GET, null, [
     'http_code'        => $result !== null ? 200 : 502,
     'response_headers' => [],
     'response_body'    => $result !== null

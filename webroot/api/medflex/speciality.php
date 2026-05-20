@@ -29,9 +29,8 @@ namespace ProcessWire;
 $skipCSRF = true; // Disable CSRF protection for this endpoint
 
 require_once __DIR__ . '/_include/medflex.php';
-require_once __DIR__ . '/_include/logger.php';
 Medflex::corsHeaders();
-MedflexLogger::log('speciality', $_GET);
+ApiLogger::log('medflex/speciality', $_GET);
 
 $doctorId = isset($_GET['doctor_id']) ? trim($_GET['doctor_id']) : '';
 if( !$doctorId && $referer->page ) $doctorId = $referer->page->id_medflex;

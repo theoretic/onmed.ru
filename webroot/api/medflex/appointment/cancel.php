@@ -27,7 +27,6 @@ set_time_limit(0);
 ignore_user_abort(true);
 
 require_once __DIR__ . '/../_include/medflex.php';
-require_once __DIR__ . '/../_include/logger.php';
 
 Medflex::corsHeaders();
 
@@ -47,7 +46,7 @@ $apiMeta = [];
 try {
 	$apiResponse = Medflex::apiPost($apiUrl, $apiKey, $payload, $apiMeta);
 } catch (\Throwable $e) {
-	MedflexLogger::log('appointment-cancel', [], null, [
+	ApiLogger::log('medflex/appointment/cancel', [], null, [
 		'http_code'        => 0,
 		'response_headers' => [],
 		'response_body'    => 'apiPost EXCEPTION: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine(),
@@ -57,7 +56,7 @@ try {
 	return ['error' => 'Не удалось отменить запись. Пожалуйста, позвоните нам по телефону.'];
 }
 
-MedflexLogger::log('appointment-cancel', ['claim_id' => $claimId], $payload, $apiMeta);
+ApiLogger::log('medflex/appointment/cancel', ['claim_id' => $claimId], $payload, $apiMeta);
 
 if ($apiMeta['http_code'] < 200 || $apiMeta['http_code'] >= 300) {
 	header("HTTP/1.1 400 Bad Request");
