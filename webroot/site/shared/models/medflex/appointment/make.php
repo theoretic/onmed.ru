@@ -1,6 +1,6 @@
 <?
 /*
-appointment-specialist model
+appointment/make model (moved from medflex/appointment-specialist.php)
 AT
 06.05.26
 */
