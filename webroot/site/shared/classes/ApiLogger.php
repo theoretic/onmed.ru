@@ -22,10 +22,13 @@ class ApiLogger {
 
     // ── Toggle ─────────────────────────────────────────────────────────────
     const ENABLED = true;
+    // Endpoint prefixes to silently skip (production noise reduction).
+    // Match is "starts with" against the $endpoint arg of log().
+    const DISABLED_PREFIXES = ['medflex/'];
     // ───────────────────────────────────────────────────────────────────────
 
     private static function logDir(): string {
-        return wire('config')->paths->assets . 'logs/';
+        return \ProcessWire\wire('config')->paths->assets . 'logs/';
     }
 
     private static function logFile(string $endpoint): string {
@@ -93,6 +96,9 @@ class ApiLogger {
         ?array $apiMeta  = null
     ): void {
         if (!self::ENABLED) return;
+        foreach (self::DISABLED_PREFIXES as $prefix) {
+            if (strpos($endpoint, $prefix) === 0) return;
+        }
 
         $dir = self::logDir();
         if (!is_dir($dir)) @mkdir($dir, 0750, true);

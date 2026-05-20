@@ -6,7 +6,7 @@ expected URL:
 /api/validator/entity/discount
 
 AT
-31.07.23
+20.05.26
 */
 
 //echo __FILE__;//

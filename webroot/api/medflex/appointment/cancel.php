@@ -21,6 +21,8 @@ AT
 
 namespace ProcessWire;
 
+use ApiLogger;
+
 $skipCSRF = true;
 
 set_time_limit(0);

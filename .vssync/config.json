@@ -1,0 +1,46 @@
+{
+  "protocol": "sftp",
+  "host": "i92588et.beget.tech",
+  "port": 22,
+  "username": "i92588et_ftpu01",
+  "mappings": [
+    {
+      "local": "./webroot/",
+      "remote": "/onmed.ru/public_html/"
+    }
+  ],
+  "exclusions": [
+    "/vendor/",
+    "/wire/",
+    "/site/assets/files/",
+    "/site/assets/modules/",
+    "logs/**",
+    "sessions/**",
+    "**/cache/",
+    "**/.cache/",
+    "*.[0123456789]",
+    "*.bat",
+    "*.log",
+    "*.htm",
+    "*.html",
+    "*.md",
+    ".gitattributes",
+    ".hash"
+  ],
+  "conditionalRules": [
+    {
+      "name": "js",
+      "watchFolders": [
+        "/frontend/src/js"
+      ],
+      "syncMappings": [
+        {
+          "local": "./webroot/site/assets/js",
+          "remote": "/onmed.ru/public_html/site/assets/js"
+        }
+      ]
+    }
+  ],
+  "enabled": true,
+  "password": "33T%14fI"
+}

@@ -54,6 +54,18 @@ input[type="submit"],input[type="button"],button,.button{
 		background:~"rgb(var(--color))";
 		.no-shadow();
 		}
+
+	&.alert{
+		color:@white;
+		background:@red;
+		border:1px solid @red;
+		&:hover{
+			color:@white;
+			background:#ff0000;
+			.no-shadow();
+		}
+	}
+
 	&.inverted{
 		color:@white;
 		border-color:rgba(255,255,255,.5);

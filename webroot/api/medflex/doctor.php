@@ -30,6 +30,8 @@ AT
 
 namespace ProcessWire;
 
+use ApiLogger;
+
 $skipCSRF = true; // Disable CSRF protection for this endpoint
 
 // Resolve doctor ID: explicit param takes priority, then page field

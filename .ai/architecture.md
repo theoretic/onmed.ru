@@ -36,7 +36,7 @@ application/
     │   │   │   ├── data/       #   static data arrays
     │   │   │   ├── functions/  #   global functions
     │   │   │   └── hooks/      #   ProcessWire hook registrations
-    │   │   ├── classes/        #   utility classes (Request, Validator, Robokassa…)
+    │   ├── classes/        #   utility classes (Request, Validator, ApiLogger, Robokassa…)
     │   │   ├── models/         #   form validation schemas
     │   │   ├── hooks/          #   individual hook handler files
     │   │   └── functions/      #   reusable functions
@@ -68,7 +68,9 @@ application/
 ```
 Browser → POST /api/appointment.php
               ↓
-         api/index.php (router: include matching controller)
+         api/index.php (router: rtrim trailing slash, include matching controller)
+              ↓
+         ApiLogger::log(endpoint, input)  ← logged in validator.php + all medflex endpoints
               ↓
          Request::parse()  →  model schema (shared/models/)
               ↓
@@ -78,6 +80,30 @@ Browser → POST /api/appointment.php
               ↓
          JSON response { success, csrf_token }
 ```
+
+## Medflex Proxy Endpoints (`webroot/api/medflex/`)
+
+| File | Route | Purpose |
+|------|-------|---------|
+| `speciality.php` | `/api/medflex/speciality/` | List specialities |
+| `doctor.php` | `/api/medflex/doctor/` | Doctor detail / all doctors |
+| `schedule.php` | `/api/medflex/schedule/` | Available appointment slots |
+| `appointment/make.php` | `/api/medflex/appointment/make/` | Create booking → Medflex `POST /direct_appointment/doctor/execute/`; returns `claim_id` embedded in success HTML |
+| `appointment/cancel.php` | `/api/medflex/appointment/cancel/` | Cancel booking → Medflex `POST /direct_appointment/doctor/cancel/`; success = HTTP 204 (empty body) |
+
+All endpoints share `_include/medflex.php` (cURL wrapper: `CONNECTTIMEOUT=5`, `TIMEOUT=15`) and call `ApiLogger::log()` (`site/shared/classes/ApiLogger.php`, autoloaded). All endpoints are in `namespace ProcessWire` and import `ApiLogger` with `use ApiLogger;`. **In production, medflex logging is disabled** via `ApiLogger::DISABLED_PREFIXES = ['medflex/']` — the `log()` calls are still in place (zero overhead, early `return`) and can be re-enabled for debugging by clearing that constant. The validator log (`validator/...`) is still active.
+
+`appointment/make.php` specifics:
+- `set_time_limit(0)` + `ignore_user_abort(true)` to survive long cURL on shared hosting
+- Multiple `ApiLogger::log` checkpoints (received → model loaded → validation done → API called → result) — disabled in production via `DISABLED_PREFIXES`, but the call sites stay for fast re-enable on iOS regression
+- POST payloads passed to logger as `$input->post->getArray()` (NOT `(array)$input->post`, which exposes WireInputData object internals)
+- Server-side phone normalization: strips non-digits; 11-digit starting with `8` → replace with `7`
+- Returns `{ success: "Большое спасибо…<span class='as-claim-id' data-id='UUID' hidden></span>" }` on `claim_id` present; `{ error }` otherwise
+- try/catch `\Throwable` around `apiPost` call; exception logged and surfaced as `{ error }`
+
+`appointment/cancel.php` specifics:
+- Reads `claim_id` from form-encoded POST body (`$input->post->claim_id`)
+- Success detection via `$apiMeta['http_code']` 200–299 check (not null-check — Medflex returns HTTP 204 No Content, empty body)
 
 ## Medflex Data Sync Flow
 
@@ -109,16 +135,49 @@ Native Web Component bundles in `frontend/src/components/` are compiled to stand
 
 | Component | Element | Purpose |
 |---|---|---|
-| `appointment-specialist/` | `<appointment-specialist>` | Doctor booking widget (fetches data, orchestrates UI) |
-| `appointment-form/` | `<appointment-form>` | Patient booking form — reusable standalone |
+| `appointment-specialist/` | `<appointment-specialist>` | Single-doctor booking widget — fetches schedule, renders service + slot picker, passes attrs to `<appointment-form>`. Passes `doctor-name` (from `sched.doctor.name`) and `doctor-speciality` (from the selected service name). |
+| `appointment-specialists-all/` | `<appointment-specialists-all>` | Multi-doctor booking widget with inline speciality + doctor pickers. Resolves `doctor-name` from `s.doctors` array by `selectedDoctorId`; resolves `doctor-speciality` from `s.specialities` by `selectedSpecialityId`. Passes both to `<appointment-form>`. |
+| `appointment-form/` | `<appointment-form>` | Patient booking form — standalone, driven entirely by HTML attributes. **Observed attributes**: `doctor-id`, `doctor-name`, `doctor-speciality`, `service-id`, `price`, `start-time`, `duration-min`, `age-min`, `age-max`. On successful submit FormHelper adds `success` class to `.message` div; a `MutationObserver` watches for this, hides `.as-form-body`, reveals the **coupon card** (`.as-coupon`), and mounts a **cancel button** in `.as-cancel-wrapper`. The coupon shows Врач / Специализация (omitted if blank) / Дата / Время rows plus a print button. **Cancel flow**: `mountCancelButton(claimId, wrapper, couponDiv, messageDiv)` extracts `claim_id` from the `<span class="as-claim-id" data-id="...">` embedded in the success message HTML; POSTs form-encoded `claim_id` to `/api/medflex/appointment/cancel/`; on success swaps `messageDiv` to `message warning` with the cancel confirmation text, hides coupon + cancel wrapper; on error swaps `messageDiv` to `message error`, re-enables button for retry. **Print**: clicking print clones the coupon node to `<body>` as `.as-coupon-print-portal`, adds `as-printing-coupon` to `<body>`, calls `window.print()`, then removes clone + class in `afterprint`. Print isolation CSS in `webroot/site/assets/css/_core/as-coupon.xless`. |
 
 ### Shared frontend lib
 
-`frontend/src/js/lib/` — raw TypeScript files imported by relative path from any component. No dedicated package.
+`frontend/src/_shared/` — TypeScript modules shared across components. Each component bundles its own copy — no runtime sharing.
 
-| File | Exports |
-|---|---|
-| `dom.ts` | `h()`, `mount()`, `clear()`, `Attrs` |
-| `types.ts` | `AgeLimit` |
+| Path | File | Exports |
+|---|---|---|
+| `_shared/` | `date.ts` | `parseLocalMs()`, `buildSlots()`, `timeHM()`, `isoDate()`, `monthGrid()`, `addMonths()`, `startOfDay()`, `startOfMonth()`, `sameMonth()`, `RU_MONTHS`, `RU_WEEKDAYS_SHORT` |
+| `_shared/lib/` | `dom.ts` | `h()`, `mount()`, `clear()`, `Attrs` |
+| `_shared/lib/` | `types.ts` | `AgeLimit` |
 
-Components that import from shared lib use relative path e.g. `../../../js/lib/dom`. Each component bundles its own copy — no runtime sharing.
+Components do not import shared modules by full repo path. Instead each component has local re-export shims (e.g. `src/lib/dom.ts`, `src/lib/date.ts`) that forward to the shared location. This keeps internal imports short and makes the shared path a single change point.
+
+## Dynamic CSS Compilation (`/api/css/`)
+
+PHP-based on-demand LESS/CSS compiler at `webroot/api/css/`. Entry: `api/css/index.php` → `Style` class.
+
+- Source files in `webroot/site/assets/css/` — sorted, concat-compiled, cached
+- Extension `.xless` = LESS syntax (the `x` prefix is stripped before parsing); allows LESS files to coexist with plain `.css` in the same directory without a separate pipeline
+- Global Less partials in `webroot/site/assets/css/_core/*.xless` (e.g. `as-coupon.xless`)
+- Mixins defined in `_core/` (`.rounded()`, `.shadow()`, etc.)
+- Compiler: `Wolfcast/Less.php` bundled in `api/css/_include/`
+- Cache is invalidated automatically on file change; no manual step needed after deploying `.xless` files
+
+## Static Asset Caching
+
+HTTP cache headers are set at the Apache layer via per-directory `.htaccess` files. No PHP is involved for the static phase. Validators use `FileETag MTime Size` (stable across servers, unlike default INode).
+
+| Asset | Location | TTL | Strategy |
+|---|---|---|---|
+| JS bundles | `webroot/site/assets/js/.htaccess` | `no-cache` | Always revalidate; 304 via ETag |
+| Images (originals) | `webroot/site/assets/.htaccess` | 30 days | `public, max-age=2592000` — PW renames on upload so URLs are effectively unique |
+| Fonts | `webroot/site/assets/.htaccess` | 1 year | `public, max-age=31536000, immutable` |
+| Generated thumbs (static phase) | `webroot/api/img/.htaccess` | 7 days + revalidate | `public, max-age=604800, must-revalidate` |
+| Generated thumbs (PHP first response) | `AbstractThumb::output()` | 7 days + revalidate | Matches static phase headers; supports `If-None-Match` / `If-Modified-Since` → 304 |
+
+### Image generation pipeline (`/api/img/`)
+
+URL pattern: `/api/img/<sourcePath>/<WxH>/<file>.<ext>` (e.g. `/api/img/site/assets/files/123/photo.jpg/300x200/photo.jpg.webp`).
+
+`api/img/.htaccess` contains `RewriteCond %{REQUEST_FILENAME} !-s` — Apache rewrites to `index.php` only when the thumb file does not yet exist. After first generation Apache serves the file directly as static, never invoking PHP. Thumb URLs are content-addressed by dimensions; replacing a source image in-place will not regenerate existing thumbs (clear the thumb cache to force rebuild).
+
+JSON API responses (handled in `webroot/api/index.php`) send `Cache-Control: no-store, no-cache, must-revalidate` + `Pragma: no-cache` to prevent Safari ITP from caching mutating endpoints.

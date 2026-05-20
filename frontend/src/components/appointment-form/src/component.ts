@@ -30,6 +30,41 @@ function calcAge(ddmmyyyy: string): number | null {
   return age;
 }
 
+function mountCancelButton(claimId: string, wrapper: HTMLElement, couponDiv: HTMLElement, messageDiv: HTMLElement): void {
+  const btn = h("button", { type: "button", class: "as-cancel-btn alert" }, "\u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c") as HTMLButtonElement;
+  const errEl = h("span", { class: "as-cancel-err error hidden" });
+  const showError = (text: string) => {
+    errEl.textContent = text;
+    errEl.classList.remove("hidden");
+    btn.disabled = false;
+  };
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    errEl.classList.add("hidden");
+    try {
+      const body = new URLSearchParams({ claim_id: claimId });
+      const res = await fetch("/api/medflex/appointment/cancel/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      });
+      const json = await res.json() as { success?: string; error?: string };
+      if (json.success) {
+        messageDiv.className = "message warning";
+        messageDiv.textContent = json.success;
+        couponDiv.classList.add("hidden");
+        wrapper.classList.add("hidden");
+      } else {
+        showError(json.error ?? "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c.");
+      }
+    } catch {
+      showError("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c. \u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u043f\u043e\u0437\u0432\u043e\u043d\u0438\u0442\u0435 \u043d\u0430\u043c.");
+    }
+  });
+  wrapper.appendChild(btn);
+  wrapper.appendChild(errEl);
+}
+
 function buildForm(el: AppointmentForm): HTMLElement {
   const doctorId = el.getAttribute("doctor-id") ?? "";
   const serviceId = el.getAttribute("service-id") ?? "";
@@ -59,7 +94,7 @@ function buildForm(el: AppointmentForm): HTMLElement {
   const ageWarning = h("div", { class: "as-age-warning hidden" });
 
   // Plain text input with DD.MM.YYYY format. Backend
-  // (api/medflex/appointment-specialist.php) accepts DD.MM.YYYY and ISO and
+  // (api/medflex/appointment/make.php) accepts DD.MM.YYYY and ISO and
   // converts to ISO for Medflex. We still normalize client-side so common
   // autofill formats (ISO, US slashes) become DD.MM.YYYY before validation.
   const birthdayEl = h("input", {
@@ -141,6 +176,8 @@ function buildForm(el: AppointmentForm): HTMLElement {
     h("button", { type: "button", class: "as-coupon-print" }, "\u0420\u0430\u0441\u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0442\u0430\u043b\u043e\u043d"),
   );
 
+  const cancelWrapper = h("div", { class: "as-cancel-wrapper padded centered hidden" });
+
   // Print only the coupon: clone it to <body> so CSS can hide all other direct
   // body children with display:none — the only reliable way to avoid whitespace
   // from invisible ancestor elements that still occupy space in print layout.
@@ -203,9 +240,9 @@ function buildForm(el: AppointmentForm): HTMLElement {
       // endpoints (/schedule/, /doctor/, /speciality/). Apache's rewrite
       // accepts both forms, but keeping the convention consistent avoids
       // any chance of a mod_dir 301 dropping the POST body on iOS Safari.
-      "data-action": "/api/medflex/appointment-specialist/",
+      "data-action": "/api/medflex/appointment/make/",
       "data-method": "post",
-      "data-validator": "/api/validator/medflex/appointment-specialist/",
+      "data-validator": "/api/validator/medflex/appointment/make/",
       "data-messaging": "html",
       novalidate: "",
     },
@@ -216,6 +253,7 @@ function buildForm(el: AppointmentForm): HTMLElement {
     h("input", { type: "hidden", name: "end_time", value: endTime }),
     messageDiv,
     formBody,
+    cancelWrapper,
     couponDiv,
   );
 
@@ -226,6 +264,15 @@ function buildForm(el: AppointmentForm): HTMLElement {
       formBody.classList.add("hidden");
       couponDiv.classList.remove("hidden");
       observer.disconnect();
+
+      // Extract claim_id embedded by make.php as a hidden <span data-id="...">.
+      // If present, mount the cancel button in the pre-created wrapper.
+      const claimSpan = messageDiv.querySelector<HTMLElement>(".as-claim-id[data-id]");
+      const claimId = claimSpan?.dataset.id ?? "";
+      if (claimId) {
+        mountCancelButton(claimId, cancelWrapper, couponDiv, messageDiv);
+        cancelWrapper.classList.remove("hidden");
+      }
     }
   });
   observer.observe(messageDiv, { attributes: true, attributeFilter: ["class"] });

@@ -1,0 +1,34 @@
+{
+  "files": {
+    "frontend/src/components/appointment-specialist/dist/appointment-specialist.js": {
+      "hash": "9d7d1b03fc6c1010b9235f703ad9517b",
+      "synced": 1779205014082,
+      "mtime": 1779203469915.6685,
+      "size": 11216
+    },
+    "frontend/src/_shared/date.ts": {
+      "hash": "f580a3e8205a64e3a806440cb30f1bc1",
+      "synced": 1779205099495,
+      "mtime": 1778838725800.8835,
+      "size": 3164
+    },
+    "frontend/src/_shared/lib/dom.ts": {
+      "hash": "b3c63007b98c6330e95b1bdb78a57b0f",
+      "synced": 1779205099571,
+      "mtime": 1778597946844.287,
+      "size": 1169
+    },
+    "frontend/src/_shared/lib/types.ts": {
+      "hash": "7806012dc837ea98ebcbc0612a07a533",
+      "synced": 1779205099606,
+      "mtime": 1778597958184.8796,
+      "size": 114
+    },
+    "frontend/src/components/appointment-form/src/component.ts": {
+      "hash": "52ec17843fc1a0ffa02978eec47e48b3",
+      "synced": 1779205099790,
+      "mtime": 1779196568288.0764,
+      "size": 13529
+    }
+  }
+}

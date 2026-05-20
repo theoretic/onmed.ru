@@ -1,0 +1,19 @@
+{
+  "name": "onmed-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E2E tests for OnMed appointment booking — iPhone Safari emulation via Playwright/WebKit",
+  "scripts": {
+    "test": "playwright test",
+    "test:local": "BASE_URL=https://onme.d playwright test",
+    "test:prod": "BASE_URL=https://onmed.ru playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report",
+    "install:webkit": "playwright install webkit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^20.0.0"
+  }
+}

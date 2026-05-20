@@ -47,6 +47,8 @@ AT
 
 namespace ProcessWire;
 
+use ApiLogger;
+
 $skipCSRF = true; // Disable CSRF protection for this endpoint
 
 // Prevent Beget's max_execution_time from killing PHP mid-cURL.
@@ -59,7 +61,7 @@ ignore_user_abort(true);
 // Logger first — must capture every POST attempt that reaches this file,
 // even if downstream model load / validation throws. Without this, an iOS
 // Safari user whose form silently fails will leave no trace at all.
-ApiLogger::log('medflex/appointment/make', (array)$input->post, null, [
+ApiLogger::log('medflex/appointment/make', $input->post->getArray(), null, [
 	'http_code'        => 'received',
 	'response_headers' => [],
 	'response_body'    => 'request received — processing',
@@ -96,7 +98,7 @@ ApiLogger::log('medflex/appointment/make', [], null, [
 if( !$validation['success'] ) {
 	// Log raw POST even on validation failure — critical for catching
 	// malformed iOS Safari autofill values that never reach the API.
-	ApiLogger::log('medflex/appointment/make', (array)$input->post, null, [
+	ApiLogger::log('medflex/appointment/make', $input->post->getArray(), null, [
 		'http_code'        => 'N/A — validation failed',
 		'response_headers' => [],
 		'response_body'    => json_encode($validation),
@@ -188,7 +190,7 @@ ApiLogger::log('medflex/appointment/make', [], null, [
 
 ApiLogger::log(
     'medflex/appointment/make',
-    (array)$input->post,
+    $input->post->getArray(),
     $payload,
     $apiMeta
 );

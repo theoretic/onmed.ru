@@ -26,6 +26,8 @@ AT
 
 namespace ProcessWire;
 
+use ApiLogger;
+
 $skipCSRF = true; // Disable CSRF protection for this endpoint
 
 require_once __DIR__ . '/_include/medflex.php';
