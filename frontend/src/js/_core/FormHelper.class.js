@@ -3,7 +3,7 @@ Form helper
 dependences:
 	cash or jquery
 AT
-15.05.26
+21.05.26
 */
 
 class FormHelper{
@@ -23,11 +23,14 @@ class FormHelper{
 
 //console.log('FormHelper.updateMessaging(): messageEL: ', messageEL)
 
-				messageEL.addClass('hidden')
+				messageEL
+					.removeClass('error warning success')
+					.addClass('hidden')
 
-				if( _json.error ) messageEL.removeClass('hidden warning success').addClass('error').html( _json.error )
-				if( _json.success ) messageEL.removeClass('hidden error warning').addClass('success').html( _json.success )
-				if( _json.message ) messageEL.removeClass('hidden error warning success').html( _json.message )
+				if( _json.error ) messageEL.addClass('error').html( _json.error )
+				if( _json.warning ) messageEL.addClass('warning').html( _json.warning )
+				if( _json.success ) messageEL.addClass('success').html( _json.success )
+				if( _json.message ) messageEL.html( _json.message )
 			break
 
 			case 'alert':

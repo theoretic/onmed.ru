@@ -10,14 +10,18 @@
     }
   ],
   "exclusions": [
-    "/vendor/",
-    "/wire/",
-    "/site/assets/files/",
-    "/site/assets/modules/",
+    "/webroot/vendor/",
+    "/webroot/wire/",
+    "/webroot/site/assets/cache/",
+    "/webroot/site/assets/files/",
+    "/webroot/site/assets/logs/",
+    "/webroot/site/assets/sessions/",
+    "/webroot/site/modules/",
     "logs/**",
     "sessions/**",
     "**/cache/",
     "**/.cache/",
+    "*.*~",
     "*.[0123456789]",
     "*.bat",
     "*.log",
@@ -25,22 +29,10 @@
     "*.html",
     "*.md",
     ".gitattributes",
-    ".hash"
+    ".hash",
+    ".vssync"
   ],
-  "conditionalRules": [
-    {
-      "name": "js",
-      "watchFolders": [
-        "/frontend/src/js"
-      ],
-      "syncMappings": [
-        {
-          "local": "./webroot/site/assets/js",
-          "remote": "/onmed.ru/public_html/site/assets/js"
-        }
-      ]
-    }
-  ],
+  "conditionalRules": [],
   "enabled": true,
   "password": "33T%14fI"
 }

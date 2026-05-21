@@ -38,7 +38,7 @@ $js[] = '/site/assets/js/components/appointment-form.js';
 			</div>
 		</div>
 
-	<appointment-specialist></appointment-specialist>
+	<appointment-specialist doctor_id="<?=$page->id_medflex?>"></appointment-specialist>
 	<appointment-form></appointment-form>
 </section>
 

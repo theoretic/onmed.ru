@@ -18,11 +18,12 @@ export class AppointmentSpecialist extends HTMLElement {
 
   connectedCallback(): void {
     const apiBase = `${window.location.origin}/api/medflex`;
+    const doctorId = this.getAttribute("doctor_id") ?? undefined;
 
     this._store = new Store(createInitial(apiBase));
     this._renderShell();
     this._store.subscribe(() => this._renderAll());
-    this._loadData();
+    this._loadData(doctorId);
   }
 
   disconnectedCallback(): void {
@@ -34,14 +35,14 @@ export class AppointmentSpecialist extends HTMLElement {
     this._renderAll();
   }
 
-  private async _loadData(): Promise<void> {
+  private async _loadData(doctorId?: string): Promise<void> {
     this._abort?.abort();
     this._abort = new AbortController();
     this._store.set({ phase: "loading" });
     try {
       const s = this._store.state;
       const signal = this._abort.signal;
-      const doctor = await fetchDoctor(s.apiBase, signal);
+      const doctor = await fetchDoctor(s.apiBase, doctorId, signal);
       const [allSpecialities, scheduleResult] = await Promise.all([
         fetchSpecialities(s.apiBase, doctor.id, signal),
         fetchSchedule(s.apiBase, doctor.id, signal),

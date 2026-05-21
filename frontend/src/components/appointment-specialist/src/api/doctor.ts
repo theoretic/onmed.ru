@@ -14,9 +14,13 @@ interface RawDoctorResp {
 
 export async function fetchDoctor(
   base: string,
+  doctorId?: string,
   signal?: AbortSignal,
 ): Promise<Doctor> {
-  const raw = await request<RawDoctorResp>(base, "/doctor/", { signal });
+  const raw = await request<RawDoctorResp>(base, "/doctor/", {
+    query: doctorId ? { doctor_id: doctorId } : undefined,
+    signal,
+  });
   const entry = Array.isArray(raw.data) ? raw.data[0] : undefined;
   return {
     id: String(entry?.id ?? ""),
