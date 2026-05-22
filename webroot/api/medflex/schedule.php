@@ -12,7 +12,7 @@ Always fetches live from Medflex API.
 Response written to cache file as a log (never read back).
 
 AT
-07.05.26
+22.05.26
 */
 
 namespace ProcessWire;
@@ -48,10 +48,13 @@ Medflex::corsHeaders();
 
 // town_id is required by API, but we have only one town, so hardcoding it for now
 $apiKey = $settings->medflex->api_key;
+$days = 30;
+//$days = isset($_GET['days']) ? max(1, min(365, (int)$_GET['days'])) : 30;
 $dateStart = date('Y-m-d');
-$dateEnd = date('Y-m-d', strtotime('+1 month'));
+//$dateEnd = date('Y-m-d', strtotime("+$days days"));
 
-$apiUrl = "https://api.medflex.ru/schedule/?town_id=1261&doctor_ids=$doctorId&date_start=$dateStart&date_end=$dateEnd";
+$apiUrl = "https://api.medflex.ru/schedule/?town_id=1261&doctor_ids=$doctorId&date_start=$dateStart&days=$days";
+//$apiUrl = "https://api.medflex.ru/schedule/?town_id=1261&doctor_ids=$doctorId&date_start=$dateStart&date_end=$dateEnd";
 $warnings = [];
 $result = Medflex::fetchAllPages($apiUrl, $apiKey, $warnings);
 
@@ -74,7 +77,7 @@ if( $result === null ) {
 }
 
 // Write to cache as log — never read back
-$cacheKey = "schedule_{$doctorId}_{$dateStart}_{$dateEnd}";
+$cacheKey = "schedule_{$doctorId}_{$dateStart}_{$days}_" . time();
 Medflex::cacheSet($cacheKey, $result, 0);
 
 if( !empty($warnings) ) {
