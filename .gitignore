@@ -1,15 +1,13 @@
 #AT
-#10.06.25
+#21.05.26
 
 .ai/memory/
+.osp/
+.vssync/
 
-*.~
 *~
-*.[0-9]+
-*.*.[0-9]+
-*.*.0
-*.*.1
-*.*.2
+**/*~
+**/*~/**
 *.7z
 *.gz
 *.bat
@@ -18,44 +16,36 @@
 *.pdf
 *.sql
 *.txt
+*.[0-9]*
 
-frontend/*
 frontend/**
-!frontend/src
-!frontend/src/*
+!frontend/src/
 !frontend/src/**
-frontend/src/components/*/node_modules
-frontend/src/components/*/node_modules/**
+frontend/src/components/*/node_modules/
 frontend/src/components/*/package-lock.json
-frontend/src/components/*/dist
-frontend/src/components/*/dist/**
+frontend/src/components/*/dist/
 
-src/*
 src/**
 src/dropzone/dropzone-min.js
 src/dropzone/dropzone.css
-tmp
+tmp/
 
 webroot/api/img/.time
 webroot/api/img/.batch
 
-webroot/site/assets/cache
+webroot/site/assets/cache/
 webroot/site/assets/css/**/.cache
-webroot/site/assets/files
-webroot/site/assets/js
-webroot/site/assets/js/*
-webroot/site/assets/js/**
-webroot/site/assets/sessions
+webroot/site/assets/files/
+webroot/site/assets/js/
+webroot/site/assets/sessions/
 webroot/site/assets/svg/sprite.symbol.svg
 
 webroot/site/modules/*
-!webroot/site/modules/AdminPageTool
-!webroot/site/modules/OutputFilter
+!webroot/site/modules/AdminPageTool/
+!webroot/site/modules/OutputFilter/
 
-webroot/vendor
-webroot/wire
-webroot/tools
+webroot/vendor/
+webroot/wire/
+webroot/tools/
 webroot/site/templates/.hash
-.osp/project.ini
-.osp/project.ini
-frontend/src/svg/max.svg.0
+
