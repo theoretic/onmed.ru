@@ -20,11 +20,115 @@ appointment-specialists-all {
   font-size: 1rem;
   color: var(--as-c-fg);
   display: block;
+  position: relative;
   background: var(--as-c-bg);
   border: 1px solid var(--as-c-border);
   border-radius: var(--as-r);
   padding: 1rem;
 /* max-width: 45rem; */
+
+  /* custom combobox (replaces SlimSelect for the speciality picker) */
+  .as-combo {
+    position: relative;
+    width: 100%;
+    display: block;
+  }
+  .as-combo-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.625rem 2.25rem 0.625rem 0.75rem;
+    border: 1px solid var(--as-c-border);
+    border-radius: var(--as-r);
+    background: var(--as-c-bg);
+    color: var(--as-c-fg);
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.2;
+    outline: none;
+    margin: 0;
+    transition: border-color .1s;
+  }
+  .as-combo-input:hover,
+  .as-combo-input:focus {
+    border-color: var(--as-c-primary);
+    outline: none;
+  }
+  .as-combo-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.25rem;
+    transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    background: transparent center / 0.85rem 0.85rem no-repeat;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 4.5 L6 8.5 L10 4.5' fill='none' stroke='%236b7280' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    line-height: 1;
+    font-size: 0;
+    color: transparent;
+    transition: transform .15s, opacity .1s;
+  }
+  .as-combo-toggle:hover { opacity: 0.7; }
+  .as-combo[aria-expanded="true"] .as-combo-toggle {
+    transform: translateY(-50%) rotate(180deg);
+  }
+  .as-combo-list {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    max-height: 18rem;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0.25rem 0;
+    list-style: none;
+    background: var(--as-c-bg);
+    border: 1px solid var(--as-c-border);
+    border-radius: var(--as-r);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .as-combo-list[hidden] { display: none; }
+  .as-combo-opt {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+    color: var(--as-c-fg);
+  }
+  .as-combo-opt.is-highlighted {
+    background: var(--as-c-tertiary);
+  }
+  .as-combo-opt.is-selected {
+    font-weight: 600;
+  }
+  .as-combo-opt mark {
+    background: transparent;
+    color: var(--as-c-primary);
+    font-weight: 600;
+    padding: 0;
+  }
+  .as-combo-empty {
+    padding: 0.5rem 0.75rem;
+    color: var(--as-c-muted);
+    font-size: 0.875rem;
+    list-style: none;
+  }
+  .as-combo-native {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 
   .as-row {
     display: flex;

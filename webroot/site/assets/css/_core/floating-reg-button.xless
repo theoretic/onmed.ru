@@ -1,12 +1,12 @@
 #floating-reg-button{
 	top: 50vh;
-	right:-8rem;
+	right:.5rem;
 	z-index:10000;
 	.transition();
+
 	&:hover{
 		right:1rem;
 	}
-
 
 	a{
 		background: ~"rgba(var(--color), .9)";
@@ -21,14 +21,5 @@
 			//.opacity(1);
 			//padding:1.8rem;
 		}
-	}
-}
-
-////
-
-@media(max-width:800px){
-	#floating-reg-button{
-		top: 80vh;
-		right:0rem;
 	}
 }

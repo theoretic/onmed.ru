@@ -136,8 +136,42 @@ Native Web Component bundles in `frontend/src/components/` are compiled to stand
 | Component | Element | Purpose |
 |---|---|---|
 | `appointment-specialist/` | `<appointment-specialist>` | Single-doctor booking widget — fetches schedule, renders service + slot picker, passes attrs to `<appointment-form>`. Passes `doctor-name` (from `sched.doctor.name`) and `doctor-speciality` (from the selected service name). |
-| `appointment-specialists-all/` | `<appointment-specialists-all>` | Multi-doctor booking widget with inline speciality + doctor pickers. Resolves `doctor-name` from `s.doctors` array by `selectedDoctorId`; resolves `doctor-speciality` from `s.specialities` by `selectedSpecialityId`. Passes both to `<appointment-form>`. |
-| `appointment-form/` | `<appointment-form>` | Patient booking form — standalone, driven entirely by HTML attributes. **Observed attributes**: `doctor-id`, `doctor-name`, `doctor-speciality`, `service-id`, `price`, `start-time`, `duration-min`, `age-min`, `age-max`. On successful submit FormHelper adds `success` class to `.message` div; a `MutationObserver` watches for this, hides `.as-form-body`, reveals the **coupon card** (`.as-coupon`), and mounts a **cancel button** in `.as-cancel-wrapper`. The coupon shows Врач / Специализация (omitted if blank) / Дата / Время rows plus a print button. **Cancel flow**: `mountCancelButton(claimId, wrapper, couponDiv, messageDiv)` extracts `claim_id` from the `<span class="as-claim-id" data-id="...">` embedded in the success message HTML; POSTs form-encoded `claim_id` to `/api/medflex/appointment/cancel/`; on success swaps `messageDiv` to `message warning` with the cancel confirmation text, hides coupon + cancel wrapper; on error swaps `messageDiv` to `message error`, re-enables button for retry. **Print**: clicking print clones the coupon node to `<body>` as `.as-coupon-print-portal`, adds `as-printing-coupon` to `<body>`, calls `window.print()`, then removes clone + class in `afterprint`. Print isolation CSS in `webroot/site/assets/css/_core/as-coupon.xless`. |
+| `appointment-specialists-all/` | `<appointment-specialists-all>` | Multi-doctor booking widget with **custom combobox** speciality picker + native `<select>` doctor picker. Resolves `doctor-name` from `s.doctors` array by `selectedDoctorId`; resolves `doctor-speciality` from `s.specialities` by `selectedSpecialityId`. Passes both to `<appointment-form>`. |
+| `appointment-form/` | `<appointment-form>` | Patient booking form — standalone, driven entirely by HTML attributes. **Observed attributes**: `doctor-id`, `doctor-name`, `doctor-speciality`, `service-id`, `price`, `start-time`, `duration-min`, `age-min`, `age-max`. On successful submit FormHelper adds `success` class to `.message` div; a `MutationObserver` watches for this, hides `.as-form-body`, reveals the **coupon card** (`.as-coupon`), and mounts a **cancel button** in `.as-cancel-wrapper`. The coupon shows Врач / Специализация (omitted if blank) / Дата / Время rows plus a print button. **Cancel flow**: `mountCancelButton(claimId, wrapper, couponDiv, messageDiv)` extracts `claim_id` from the `<span class="as-claim-id" data-id="...">` embedded in the success message HTML; POSTs form-encoded `claim_id` to `/api/medflex/appointment/cancel/`; on success swaps `messageDiv` to `message warning` with the cancel confirmation text, hides coupon + cancel wrapper; on error swaps `messageDiv` to `message error`, re-enables button for retry. **Print**: clicking print clones the coupon node to `<body>` as `.as-coupon-print-portal`, adds `as-printing-coupon` to `<body>`, calls `window.print()`, then removes clone + class in `afterprint`. Print isolation CSS in `webroot/site/assets/css/_core/as-coupon.xless` |
+
+#### Custom Combobox (`appointment-specialists-all`)
+
+The `appointment-specialists-all` component includes a custom combobox (replacing SlimSelect) for the speciality picker. Key features:
+
+- **Element**: `<div class="as-combo" role="combobox">` containing:
+  - `<input class="as-combo-input" type="text" aria-autocomplete="list">` — searchable text field
+  - `<button class="as-combo-toggle">` — toggles full list (SVG chevron, matches site-wide select icon)
+  - `<ul class="as-combo-list" role="listbox">` — rendered dynamically; hidden by default
+  - `<select class="as-combo-native" aria-hidden>` — visually hidden, for a11y / form fallback
+
+- **Behavior**:
+  - Type to filter (case-insensitive substring match; matches highlighted in `<mark>`)
+  - Arrow keys (↑/↓) move highlight; Home/End jump to bounds; Enter commits; Esc/Tab closes
+  - Click toggle button → opens full list without stealing focus (prevents mobile keyboard pop)
+  - Focus input + type → opens list with input value selected
+  - List click/whitespace → closes list cleanly
+  - `e.preventDefault()` on list click prevents wrapping `<label>` from refocusing input
+
+- **State management**: All UI state (open/query/highlight) is local; combobox commits only on selection → Store.set() with cascade reset (selectedSpeciality, doctor, service, date, slot all cleared)
+
+- **Styling**: Scoped CSS in component; chevron SVG (0.85rem, stroke #6b7280) matches site-wide `<select>` styling
+
+#### Site-wide Select Styling
+
+All `<select>` elements use a custom SVG chevron (defined in `webroot/site/assets/css/_core/select.xless`):
+- `appearance: none` to hide browser arrow
+- Background SVG: 12×12 chevron, right-aligned, no-repeat
+- Padding-right 2.25rem to avoid overlap
+- `::-ms-expand` hidden for IE/Edge
+
+Identical styling applied in combobox toggle (SVG data-URI inline).
+
+### Components
 
 ### Shared frontend lib
 

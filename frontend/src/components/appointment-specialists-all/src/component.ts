@@ -3,18 +3,19 @@ import { ApiError } from "./api/client";
 import { fetchAllDoctors, fetchDoctor } from "./api/doctor";
 import { fetchSchedule } from "./api/schedule";
 import { fetchAllSpecialities, fetchSpecialities } from "./api/speciality";
-import { addMonths } from "./lib/date";
+import { addMonths, hasAvailableDayInMonth } from "./lib/date";
 import { h, mount } from "./lib/dom";
 import { Store, createInitial } from "./state";
 import type { AppState } from "./types";
 import { renderCalendar } from "./views/calendar";
 import { renderDaySlots } from "./views/daySlots";
 import { renderHeader } from "./views/header";
-
+import { createSpecCombo, type SpecCombo } from "./views/specCombo";
 
 export class AppointmentSpecialistsAll extends HTMLElement {
   private _store!: Store;
   private _abort?: AbortController;
+  private _specCombo?: SpecCombo;
 
   connectedCallback(): void {
     const apiBase = `${window.location.origin}/api/medflex`;
@@ -26,10 +27,18 @@ export class AppointmentSpecialistsAll extends HTMLElement {
 
   disconnectedCallback(): void {
     this._abort?.abort();
+    this._specCombo?.destroy();
+    this._specCombo = undefined;
   }
 
   private _renderShell(): void {
-    this.replaceChildren(h("div", { "data-slot": "header" }), h("div", { "data-slot": "body" }));
+    // combo slot lives outside body so re-rendering body doesn't detach the
+    // combobox (which would lose focus/typing state).
+    this.replaceChildren(
+      h("div", { "data-slot": "header" }),
+      h("div", { "data-slot": "combo" }),
+      h("div", { "data-slot": "body" }),
+    );
     this._renderAll();
   }
 
@@ -78,6 +87,14 @@ export class AppointmentSpecialistsAll extends HTMLElement {
         ? schedule.services.find((svc) => Number(svc.id) === specId)
         : schedule.services[0];
       this._store.set({ phase: "ready", schedule, partialWarning: scheduleResult.warning, selectedServiceId: autoService?.id });
+
+      // If current visible month has no free days but the next month does,
+      // jump the calendar forward once so the user lands on a useful view.
+      const cur = this._store.state.visibleMonth;
+      const next = addMonths(cur, 1);
+      if (!hasAvailableDayInMonth(schedule.days, cur) && hasAvailableDayInMonth(schedule.days, next)) {
+        this._store.set({ visibleMonth: next });
+      }
     } catch (err) {
       if ((err as { name?: string }).name === "AbortError") return;
       const msg = err instanceof ApiError ? `Ошибка ${err.status}` : "Ошибка загрузки";
@@ -93,44 +110,30 @@ export class AppointmentSpecialistsAll extends HTMLElement {
 
     if (s.phase === "loading" && !s.specialities) {
       mount(headerSlot, null);
+      mount(this.querySelector('[data-slot="combo"]'), null);
       mount(bodySlot, h("div", { class: "as-skeleton loading" }, "Загрузка..."));
       return;
     }
     if (s.phase === "error") {
       mount(headerSlot, null);
+      mount(this.querySelector('[data-slot="combo"]'), null);
       mount(bodySlot, h("div", { class: "as-error-banner" }, s.errorMsg || "Ошибка"));
       return;
     }
 
     mount(headerSlot, s.schedule ? renderHeader(s.schedule.doctor) : null);
+    this._renderCombo(s);
     mount(bodySlot, this._renderBody(s));
   }
 
-  private _renderBody(s: AppState): HTMLElement {
-    const body = h("div", { class: "as-col" });
-
-    // Step 1: Specialization select
-    if (s.specialities && s.doctors) {
-      const doctorSpecIds = new Set(s.doctors.flatMap((d) => d.specialityIds));
-      const availableSpecialities = s.specialities.filter((sp) => doctorSpecIds.has(sp.id));
-      const specLabel = h("label", { class: "as-select-label" }, "Специализация");
-      const specSelect = h("select", { class: "as-doctor-select" }) as HTMLSelectElement;
-      const specPlaceholder = h("option", { value: "" }, "") as HTMLOptionElement;
-      specPlaceholder.disabled = true;
-      specPlaceholder.selected = !s.selectedSpecialityId;
-      specSelect.append(specPlaceholder);
-      specLabel.append(specSelect);
-
-      for (const sp of availableSpecialities) {
-        const opt = h("option", { value: String(sp.id) }, sp.name) as HTMLOptionElement;
-        if (sp.id === s.selectedSpecialityId) opt.selected = true;
-        specSelect.append(opt);
-      }
-
-      specSelect.addEventListener("change", () => {
-        const id = Number(specSelect.value);
-        if (!id) return;
-        this._store.set({
+  private _renderCombo(s: AppState): void {
+    const slot = this.querySelector('[data-slot="combo"]');
+    if (!slot || !s.specialities || !s.doctors) return;
+    const doctorSpecIds = new Set(s.doctors.flatMap((d) => d.specialityIds));
+    const available = s.specialities.filter((sp) => doctorSpecIds.has(sp.id));
+    if (!this._specCombo) {
+      this._specCombo = createSpecCombo({
+        onSelect: (id) => this._store.set({
           selectedSpecialityId: id,
           selectedDoctorId: undefined,
           selectedServiceId: undefined,
@@ -138,11 +141,17 @@ export class AppointmentSpecialistsAll extends HTMLElement {
           selectedSlotISO: undefined,
           schedule: undefined,
           partialWarning: undefined,
-        });
+        }),
       });
-
-      body.append(specLabel);
+      const label = h("label", { class: "as-select-label" }, "Специализация");
+      label.append(this._specCombo.el);
+      mount(slot, label);
     }
+    this._specCombo.update(available, s.selectedSpecialityId);
+  }
+
+  private _renderBody(s: AppState): HTMLElement {
+    const body = h("div", { class: "as-col" });
 
     if (!s.selectedSpecialityId) return body;
 

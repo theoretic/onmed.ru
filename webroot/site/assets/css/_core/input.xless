@@ -51,12 +51,6 @@ input,textarea,select,input[type="select"]{
 	}
 }
 
-input[type="checkbox"], input[type="radio"]{
-width:1rem;
-//height:1rem;
-padding:0px;
-}
-
 ::placeholder{
 	.opacity(.3);
-	}
+}

@@ -1,0 +1,9 @@
+// Custom chevron for all selects (matches appointment-specialists-all)
+select {
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	background: @white url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 4.5 L6 8.5 L10 4.5' fill='none' stroke='%236b7280' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 0.75rem center / 0.85rem 0.85rem !important;
+	padding-right: 2.25rem;
+	&::-ms-expand { display: none; }
+}

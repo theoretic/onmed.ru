@@ -89,3 +89,18 @@ export function timeHM(iso: string): string {
   const d = new Date(parseLocalMs(iso));
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
+
+// True if any schedule day in `month` has a state other than "disabled".
+export function hasAvailableDayInMonth(
+  days: { date: string; state: string }[],
+  month: Date,
+): boolean {
+  const y = month.getFullYear();
+  const m = month.getMonth();
+  for (const d of days) {
+    if (d.state === "disabled") continue;
+    const dt = new Date(parseLocalMs(d.date));
+    if (dt.getFullYear() === y && dt.getMonth() === m) return true;
+  }
+  return false;
+}

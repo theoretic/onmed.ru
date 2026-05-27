@@ -3,7 +3,7 @@ import { ApiError } from "./api/client";
 import { fetchDoctor } from "./api/doctor";
 import { fetchSchedule } from "./api/schedule";
 import { fetchSpecialities } from "./api/speciality";
-import { addMonths } from "./lib/date";
+import { addMonths, hasAvailableDayInMonth } from "./lib/date";
 import { h, mount } from "./lib/dom";
 import { Store, createInitial } from "./state";
 import type { AppState } from "./types";
@@ -58,6 +58,14 @@ export class AppointmentSpecialist extends HTMLElement {
       }
 
       this._store.set({ phase: "ready", schedule, partialWarning: scheduleResult.warning });
+
+      // If current visible month has no free days but the next month does,
+      // jump the calendar forward once so the user lands on a useful view.
+      const cur = this._store.state.visibleMonth;
+      const next = addMonths(cur, 1);
+      if (!hasAvailableDayInMonth(schedule.days, cur) && hasAvailableDayInMonth(schedule.days, next)) {
+        this._store.set({ visibleMonth: next });
+      }
     } catch (err) {
       if ((err as { name?: string }).name === "AbortError") return;
       const msg = err instanceof ApiError ? `Ошибка ${err.status}` : "Ошибка загрузки";
