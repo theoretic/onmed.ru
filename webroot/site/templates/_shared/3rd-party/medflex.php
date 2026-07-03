@@ -1,0 +1,2 @@
+<div id="medflexMedtochkaWidgetButton" data-src="https://booking.medflex.ru/?user=8b6a902e074e5c2df3c31b7baaa49c9a"></div>
+<script defer src="https://booking.medflex.ru/components/medtochka-button/medtochka-widget-button.js" charset="utf-8"></script>

@@ -42,6 +42,7 @@ $homeUnhref = ($isHome)? '' : '</a>';
 			<div id="header1-buttons" class="flex flex-middle">
 				<? //include '_shared/buttons/reg-button.php' ?>
 				<? include '_shared/icons-links.php' ?>
+				<? include '_shared/3rd-party/medflex.php' ?>
 				<? //include '_shared/buttons/call-doctor-button.php' ?>
 			</div>
 		</div>

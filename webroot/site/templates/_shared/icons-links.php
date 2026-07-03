@@ -3,7 +3,7 @@
 Icons with links
 not only socials!
 AT
-18.11.23
+03.07.26
 */
 ?>
 
@@ -15,7 +15,9 @@ AT
 		</a>
 	<? endif ?>
 	<? include '_shared/socials.php' ?>
+	<?/*
 	<a href="//lk.onmed.ru" title='Личный кабинет' target="_blank" class="quarter-padded">
 		<? $svgSprite=(Object)[ 'symbol'=>'user-hand-up', 'title'=>'Личный кабинет', 'css'=>'L icon' ]; include '_shared/svg-sprite.php' ?>
 	</a>
+	*/?>
 </div>
