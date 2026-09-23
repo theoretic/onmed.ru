@@ -53,6 +53,7 @@ $config->debug = false;
 //openserver6
 $config->dbHost = 'MariaDB-11.8';
 $config->dbPort = '3306';
+$config->dbEngine = 'InnoDB';
 
 $config->dbUser = 'mysql';
 $config->dbPass = 'mysql';
