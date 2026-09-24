@@ -10,6 +10,8 @@ https://developer.medflex.ru/clinic-site/tag/models/get_doctors
 - `_include/medflex.php` — shared helper: `class Medflex` in `namespace ProcessWire`
   - `Medflex::corsHeaders()` — CORS; prod allows onmed.ru + www.onmed.ru only; dev allows *
   - `Medflex::cacheGet/cacheGetStale/cacheSet` — filesystem cache
+  - `Medflex::specialities($apiKey = null)` — global speciality list (`speciality_global`, 12h): cache → API → stale; without key cache only
+  - `Medflex::matchSpeciality($title, $list)` / `normaliseSpecialityName()` — site specialization title → Medflex speciality ID (ё→е, brackets and "врач" removed, "X детский" → "детский X", `SPECIALITY_ALIASES`)
   - `Medflex::fetchAllPages($url, $apiKey, &$warnings)` — paginated GET, merges data[]
   - `Medflex::apiPost($url, $apiKey, $payload, &$meta)` — single POST; returns null on non-2xx or empty body; $meta carries http_code, curl_error, response_body
 - `doctor.php` — proxies /models/doctor/; TTL 12h

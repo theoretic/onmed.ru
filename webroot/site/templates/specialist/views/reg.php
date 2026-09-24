@@ -10,6 +10,11 @@ $page->lastname = $page->title;
 
 $image = $page->image->url? : '/site/assets/files/images/defaults/medical-service.jpg';
 
+//Medflex speciality IDs in the order of specializations: defines the order of services
+$serviceOrder = implode(',', array_unique(array_filter(
+	array_map('intval', $page->specializations->explode('medflex_speciality_id'))
+)));
+
 //
 
 //$css[] = '/site/assets/css/specialist.css';
@@ -38,7 +43,7 @@ $js[] = '/site/assets/js/components/appointment-form.js';
 			</div>
 		</div>
 
-	<appointment-specialist doctor_id="<?=$page->id_medflex?>"></appointment-specialist>
+	<appointment-specialist doctor_id="<?=$page->id_medflex?>"<?=$serviceOrder? " service-order=\"$serviceOrder\"" : ''?>></appointment-specialist>
 	<appointment-form></appointment-form>
 </section>
 

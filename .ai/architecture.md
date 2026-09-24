@@ -50,7 +50,8 @@ application/
 
 | Template | Description |
 |----------|-------------|
-| `specialist` | Doctor/specialist profile. Key fields: `medflex_id`, `rating`, `archimedURL` |
+| `specialist` | Doctor/specialist profile. Key fields: `id_medflex`, `specializations` (drag-sortable; order = service order in `<appointment-specialist>`), `rating`, `archimedURL` |
+| `specialization` | Data-only page (no template file), duplicated per branch with the same title. Key field: `medflex_speciality_id` (Medflex speciality ID; filled by hook `specialization.medflexSpecialityId.php` and script `tools/import/medflex/assign_medflex_speciality_id.php`) |
 | `appointment-specialist` | Appointment booking page |
 | `offer` / `offers` | Service offerings |
 | `feedback` | Patient review (child page under specialist) |
@@ -115,7 +116,7 @@ CLI: php tools/import/medflex/get_doctors.php
 CLI: php tools/import/medflex/assign_id_medflex.php
       → reads doctors.json
       → matches by name to ProcessWire specialist pages
-      → writes medflex_id field to matched pages
+      → writes id_medflex field to matched pages
 ```
 
 ## ProcessWire Hook System
@@ -135,7 +136,7 @@ Native Web Component bundles in `frontend/src/components/` are compiled to stand
 
 | Component | Element | Purpose |
 |---|---|---|
-| `appointment-specialist/` | `<appointment-specialist>` | Single-doctor booking widget — fetches schedule, renders service + slot picker, passes attrs to `<appointment-form>`. Passes `doctor-name` (from `sched.doctor.name`) and `doctor-speciality` (from the selected service name). |
+| `appointment-specialist/` | `<appointment-specialist>` | Single-doctor booking widget — fetches schedule, renders service + slot picker, passes attrs to `<appointment-form>`. Passes `doctor-name` (from `sched.doctor.name`) and `doctor-speciality` (from the selected service name). Optional attribute `service-order` (comma-separated Medflex speciality IDs, rendered by `specialist/views/reg.php` from the specialist's `specializations` order) sorts services via `lib/orderServices.ts`; unlisted services go last in API order. |
 | `appointment-specialists-all/` | `<appointment-specialists-all>` | Multi-doctor booking widget with **custom combobox** speciality picker + native `<select>` doctor picker. Resolves `doctor-name` from `s.doctors` array by `selectedDoctorId`; resolves `doctor-speciality` from `s.specialities` by `selectedSpecialityId`. Passes both to `<appointment-form>`. |
 | `appointment-form/` | `<appointment-form>` | Patient booking form — standalone, driven entirely by HTML attributes. **Observed attributes**: `doctor-id`, `doctor-name`, `doctor-speciality`, `service-id`, `price`, `start-time`, `duration-min`, `age-min`, `age-max`. On successful submit FormHelper adds `success` class to `.message` div; a `MutationObserver` watches for this, hides `.as-form-body`, reveals the **coupon card** (`.as-coupon`), and mounts a **cancel button** in `.as-cancel-wrapper`. The coupon shows Врач / Специализация (omitted if blank) / Дата / Время rows plus a print button. **Cancel flow**: `mountCancelButton(claimId, wrapper, couponDiv, messageDiv)` extracts `claim_id` from the `<span class="as-claim-id" data-id="...">` embedded in the success message HTML; POSTs form-encoded `claim_id` to `/api/medflex/appointment/cancel/`; on success swaps `messageDiv` to `message warning` with the cancel confirmation text, hides coupon + cancel wrapper; on error swaps `messageDiv` to `message error`, re-enables button for retry. **Print**: clicking print clones the coupon node to `<body>` as `.as-coupon-print-portal`, adds `as-printing-coupon` to `<body>`, calls `window.print()`, then removes clone + class in `afterprint`. Print isolation CSS in `webroot/site/assets/css/_core/as-coupon.xless` |
 

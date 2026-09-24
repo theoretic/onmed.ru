@@ -13,6 +13,9 @@ Usage (call from ProcessWire namespace context):
   Medflex::fetchAllPages($url, $apiKey, $warnings)
   Medflex::apiPost($url, $apiKey, $payload)
   Medflex::normaliseName($name)
+  Medflex::specialities($apiKey)
+  Medflex::normaliseSpecialityName($name)
+  Medflex::matchSpeciality($title, $specialities)
 
 AT
 07.05.26
@@ -199,6 +202,82 @@ class Medflex {
         ];
         $name = strtr($name, $latToCyr);
         return mb_strtolower(preg_replace('/\s+/u', ' ', trim($name)));
+    }
+
+    // -------------------------------------------------------------------------
+    // Specialities
+    // -------------------------------------------------------------------------
+
+    const SPECIALITY_CACHE_KEY = 'speciality_global';
+    const SPECIALITY_CACHE_TTL = 12 * 3600;
+
+    /**
+     * Site specialization names (normalised) whose wording differs from Medflex → Medflex name (normalised).
+     */
+    const SPECIALITY_ALIASES = [
+        'узи-специалист'                => 'узи',
+        'детский узд'                   => 'детский узи',
+        'парадонтолог'                  => 'пародонтолог',
+        'стоматолог-терапевт'           => 'стоматолог',
+        'детский стоматолог-ортодонт'   => 'детский ортодонт',
+        'сердечно-сосудистый хирург'    => 'сосудистый хирург',
+        'медицинская сестра'            => 'медсестра',
+        'функциональной диагностики'    => 'функциональный диагност',
+    ];
+
+    /**
+     * Global Medflex speciality list: fresh cache → external API → stale cache.
+     * Without $apiKey the cache only is used (no API call).
+     *
+     * @return array|null  ['data' => [['id' => int, 'name' => string], ...]] or null if unavailable.
+     */
+    public static function specialities(?string $apiKey = null): array|null {
+        $data = self::cacheGet(self::SPECIALITY_CACHE_KEY);
+        if( $data !== null ) return $data;
+
+        if( $apiKey ) {
+            $warnings = [];
+            $data = self::fetchAllPages('https://api.medflex.ru/models/speciality/', $apiKey, $warnings);
+            if( $data !== null ) {
+                self::cacheSet(self::SPECIALITY_CACHE_KEY, $data, self::SPECIALITY_CACHE_TTL);
+                return $data;
+            }
+        }
+
+        return self::cacheGetStale(self::SPECIALITY_CACHE_KEY);
+    }
+
+    /**
+     * Normalises a speciality name for matching site specializations against Medflex specialities:
+     * ё → е, bracketed text removed, the word "врач" removed, trailing "детский" moved to the front.
+     * "ЛОР (отоларинголог) детский" → "детский лор", "Врач УЗИ" → "узи".
+     */
+    public static function normaliseSpecialityName(string $name): string {
+        $name = str_replace('ё', 'е', self::normaliseName($name));
+        $name = preg_replace('/\([^)]*\)/u', ' ', $name);
+        $name = preg_replace('/(^|\s)врач(-|\s|$)/u', ' ', $name);
+        $name = trim(preg_replace('/\s+/u', ' ', $name), " -");
+        if( preg_match('/^(.+) детский$/u', $name, $m) ) $name = "детский {$m[1]}";
+        return $name;
+    }
+
+    /**
+     * Finds the Medflex speciality ID for a site specialization title.
+     *
+     * @param array $specialities  Medflex list items: [['id' => int, 'name' => string], ...]
+     * @return int|null            The ID if exactly one speciality matches, null otherwise.
+     */
+    public static function matchSpeciality(string $title, array $specialities): int|null {
+        $idsByName = [];
+        foreach( $specialities as $speciality ) {
+            $idsByName[ self::normaliseSpecialityName($speciality['name'] ?? '') ][] = (int) $speciality['id'];
+        }
+
+        $key = self::normaliseSpecialityName($title);
+        $key = self::SPECIALITY_ALIASES[$key] ?? $key;
+        $ids = array_unique($idsByName[$key] ?? []);
+
+        return count($ids) === 1 ? reset($ids) : null;
     }
 
 }

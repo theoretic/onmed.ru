@@ -49,28 +49,14 @@ if( $doctorId ) {
 
 // --- Global speciality list: cache → external API ---
 
-$globalKey = 'speciality_global';
-$globalData = Medflex::cacheGet($globalKey);
+$globalData = Medflex::specialities($apiKey);
 
 if( $globalData === null ) {
-    $warnings = [];
-    $result = Medflex::fetchAllPages('https://api.medflex.ru/models/speciality/', $apiKey, $warnings);
-
-    if( $result === null ) {
-        $stale = Medflex::cacheGetStale($globalKey);
-        if( $stale !== null ) {
-            $globalData = $stale;
-        } else {
-            header("HTTP/1.1 502 Bad Gateway");
-            return [
-                'error' => 'API Error',
-                'message' => 'Failed to fetch specialities from Medflex API'
-            ];
-        }
-    } else {
-        Medflex::cacheSet($globalKey, $result, 12 * 3600);
-        $globalData = $result;
-    }
+    header("HTTP/1.1 502 Bad Gateway");
+    return [
+        'error' => 'API Error',
+        'message' => 'Failed to fetch specialities from Medflex API'
+    ];
 }
 
 // --- No doctor_id: return global list ---

@@ -5,6 +5,7 @@ import { fetchSchedule } from "./api/schedule";
 import { fetchSpecialities } from "./api/speciality";
 import { addMonths, hasAvailableDayInMonth } from "./lib/date";
 import { h, mount } from "./lib/dom";
+import { orderServices, parseServiceOrder } from "./lib/orderServices";
 import { Store, createInitial } from "./state";
 import type { AppState } from "./types";
 import { renderCalendar } from "./views/calendar";
@@ -56,6 +57,9 @@ export class AppointmentSpecialist extends HTMLElement {
           .filter((svc) => doctor.specialityIds.includes(Number(svc.id)))
           .map((svc) => ({ ...svc, name: specMap.get(Number(svc.id)) ?? svc.name }));
       }
+
+      // CMS order: specialist's specializations order, rendered by PW as service-order
+      schedule.services = orderServices(schedule.services, parseServiceOrder(this.getAttribute("service-order")));
 
       this._store.set({ phase: "ready", schedule, partialWarning: scheduleResult.warning });
 
