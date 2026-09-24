@@ -53,7 +53,7 @@
 |------|------|
 | `webroot/index.php` | ProcessWire bootstrap |
 | `webroot/api/index.php` | API router |
-| `webroot/site/config.php` | Site config + DB credentials |
+| `webroot/site/config.php` | Site config + DB credentials (not synced by vssync; production copy edited by hand) |
 | `webroot/site/shared/autoload.php` | Autoloader for classes/functions/hooks |
 | `webroot/site/templates/_shared/__prepend.php` | Global template prepend |
 
@@ -62,4 +62,14 @@
 - Source: `frontend/src/`
 - Output: `webroot/site/assets/`
 - Run: `cd frontend && gulp` (or per-task: `gulp js`, `gulp svelte`, `gulp css`)
-- **Web Components** (`frontend/src/components/*/`) are built with Vite (each component has its own `package.json` + `vite.config.ts`). Run `npm run build` inside the component dir. Output goes to `dist/`, then manually copied to `webroot/site/assets/js/`.
+- **Web Components** (`frontend/src/components/*/`) are built with Vite (each component has its own `package.json` + `vite.config.ts`). `gulp` builds them and copies `dist/*.js` → `webroot/site/assets/js/components/`, `dist/*.css` → `webroot/site/assets/css/<component>/`. Unit tests: `npx vitest run` in the component dir (`tests/**/*.test.ts`).
+- Built JS (`assets/js/`) and the SVG sprite are gitignored; they reach production through vssync conditional rules (see Deployment).
+
+## Deployment
+
+- **vssync** (VS Code extension; config in `.vssync/config.json`, gitignored): on `git push` it uploads the pushed files over SFTP; `VSSync: Sync Now` uploads everything changed. Remote files are deleted only for files removed with `git rm`, on push.
+- Host: Beget. SFTP sees the real filesystem, so the remote root is `/home/i/i92588et/onmed.ru/public_html/` (FTP would see `/onmed.ru/public_html/`; that path over SFTP makes every upload fail).
+- Conditional rules upload gitignored build output when its sources are pushed: `frontend/src/js` → `assets/js/`; `frontend/src/components|_shared` → `assets/js/components/` + component CSS dirs; `frontend/src/svg` → `assets/svg/`. Run `gulp` before pushing.
+- **Never synced, deploy by hand**: `site/config.php` (production has its own copy; the repo copy's `dbHost` is the local OSPanel server), `tools/`, `site/modules/*` (incl. the StaticPages / OutputTransformer junctions), `vendor/` (after a Composer change upload the new package + `vendor/composer/`; don't run a full `composer install` on the server blindly, it removes undeclared packages).
+- After module updates: Modules → Refresh in the production admin.
+- See `decisions/005-deployment-vssync.md`.

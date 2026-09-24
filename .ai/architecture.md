@@ -119,14 +119,26 @@ CLI: php tools/import/medflex/assign_id_medflex.php
       → writes id_medflex field to matched pages
 ```
 
+`id_medflex` is also filled automatically: hook `specialist.idMedflex.php` (on saving a specialist with an empty value) fetches `/models/doctor/all/` and assigns IDs by normalised full name to that page and every other specialist still missing one.
+
+### Speciality IDs on specializations (service order)
+
+`<appointment-specialist>` orders its services by the specialist's `specializations` (drag-sortable in admin). The link between a site specialization and a Medflex service is `specialization.medflex_speciality_id`; `specialist/views/reg.php` renders the IDs in `specializations` order as the `service-order` attribute (unique, non-zero).
+
+- Matching: `Medflex::matchSpeciality()` / `normaliseSpecialityName()` in `api/medflex/_include/medflex.php` — ё→е, brackets and "врач" removed, "X детский" → "детский X", plus `Medflex::SPECIALITY_ALIASES` for this clinic's wording (e.g. Дерматолог and Венеролог → 315 Дерматовенеролог, the ID the clinic's doctors actually hold in Medflex).
+- The ID must be one the doctors really hold in Medflex: services are the doctor's speciality IDs, so a correct-looking but unused ID (Дерматолог 71) has no effect on the order.
+- Bulk fill: `tools/import/medflex/assign_medflex_speciality_id.php` (gitignored, upload by hand). Sources: existing value on a same-title copy → doctor evidence (single specialization ↔ single Medflex speciality) → name match. Dry run by default; marks `!` for IDs no linked doctor uses and `→ fix` where a used candidate exists. CLI: `--apply [--fix-unused]`. Browser: superuser only, one-time apply links (fill / fill + fix). Creates the field on first apply. Never overwrites values except with fix-unused. Delete from the server after use.
+- Save hook `specialization.medflexSpecialityId.php`: an empty value is taken from a same-title copy or matched by name, then copied to same-title copies (branches) that are still empty. Hook `specialization.medflexSpecialityNote.php` shows the Medflex name under the field (cache only).
+
 ## ProcessWire Hook System
 
-Hooks in `webroot/site/shared/hooks/` handle:
+Hooks in `webroot/site/shared/hooks/` (one file per hook, named `<template or scope>.<feature>.php`) handle:
 - Auto-generating page UIDs on save (`page.save.uid.php`)
 - Recalculating specialist ratings when feedbacks change (`specialist.rating.php`)
+- Medflex IDs: `specialist.idMedflex.php`, `specialization.medflexSpecialityId.php`, `specialization.medflexSpecialityNote.php` (see Medflex Data Sync Flow)
 - Field manipulation helpers (matrix fields, swatches, star ratings)
 
-Hooks are auto-loaded via `_autoload/hooks/` on every request.
+`site/ready.php` includes every `site/shared/hooks/*.php` on every request (web and CLI; `site/document_root.php` resolves `DOCUMENT_ROOT` in CLI).
 
 ## Frontend Component Model
 
@@ -216,3 +228,18 @@ URL pattern: `/api/img/<sourcePath>/<WxH>/<file>.<ext>` (e.g. `/api/img/site/ass
 `api/img/.htaccess` contains `RewriteCond %{REQUEST_FILENAME} !-s` — Apache rewrites to `index.php` only when the thumb file does not yet exist. After first generation Apache serves the file directly as static, never invoking PHP. Thumb URLs are content-addressed by dimensions; replacing a source image in-place will not regenerate existing thumbs (clear the thumb cache to force rebuild).
 
 JSON API responses (handled in `webroot/api/index.php`) send `Cache-Control: no-store, no-cache, must-revalidate` + `Pragma: no-cache` to prevent Safari ITP from caching mutating endpoints.
+
+## Static Pages (StaticPages module)
+
+`site/modules/StaticPages` is a junction to the module's own repo (`d:/work/projects/processwire/modules/StaticPages/`; gitignored here, deployed by hand). It caches rendered pages as `<page path>/index.html` under the web root and wipes the cache on page save/delete and on template/file changes; see its README.
+
+Root `.htaccess` section 17 serves the cache, as the module README prescribes:
+- `api/`, `favicon.ico`, `robots.txt` are never served from the cache.
+- Homepage: `/index.html` if present and no query string, else `index.php`.
+- A page directory with `index.html` and no query string → the static file.
+- A page directory with a query string or **without** `index.html` → `index.php`. Without this rule a directory left behind by a cache wipe is answered by `Options -Indexes` with **403** instead of the page (happened on `/doctors/`). `site|wire|vendor|tests|tools` are excluded and stay forbidden.
+- The 16A name-format condition and the `!-f` / `!-d` conditions sit directly on the final section 19 rule: a `RewriteCond` binds to the next `RewriteRule`, so the section 17 rules would otherwise take them over.
+
+## Output Transformation (OutputTransformer module)
+
+`site/modules/OutputTransformer` is a junction to `d:/work/projects/processwire/modules/OutputTransformer/` (replaces the old single-file `OutputFilter` module). `Page::render` hooks: whitespace/comment cleanup, typography, replacements. Russian typography needs Composer package `atispro/emt-php8` (`webroot/composer.json`); without it typography is silently skipped. Wrap markup in `<no-cleanup>`, `<no-typografy>`, `<no-replace>` to protect it.
