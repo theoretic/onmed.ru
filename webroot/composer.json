@@ -16,7 +16,8 @@
   "require": {
     "php": ">=5.5",
     "ext-gd": "*",
-    "imangazaliev/didom": "^2.0"
+    "imangazaliev/didom": "^2.0",
+    "atispro/emt-php8": "^3.0"
   },
   "autoload": {
     "files": [ "wire/core/ProcessWire.php" ]

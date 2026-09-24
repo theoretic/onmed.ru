@@ -4,8 +4,57 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6dd95838e827f6127564958a3a3e7a61",
+    "content-hash": "04191e6c384b58bac483a75cb46257fb",
     "packages": [
+        {
+            "name": "atispro/emt-php8",
+            "version": "3.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/theoretic/EMT-php8.git",
+                "reference": "143c36a409c9d02b54705a8381505447de7e14ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/theoretic/EMT-php8/zipball/143c36a409c9d02b54705a8381505447de7e14ef",
+                "reference": "143c36a409c9d02b54705a8381505447de7e14ef",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "EMT\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "atis.pro",
+                    "email": "info@atis.pro",
+                    "role": "Developer"
+                }
+            ],
+            "description": "EMT typograf compatible with php8+",
+            "keywords": [
+                "emt",
+                "typograf"
+            ],
+            "support": {
+                "issues": "https://github.com/theoretic/EMT-php8/issues",
+                "source": "https://github.com/theoretic/EMT-php8/tree/3.0.2"
+            },
+            "time": "2026-08-26T07:10:40+00:00"
+        },
         {
             "name": "imangazaliev/didom",
             "version": "2.0.1",
@@ -62,13 +111,13 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.5",
         "ext-gd": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

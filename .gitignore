@@ -43,7 +43,6 @@ webroot/site/assets/svg/sprite.symbol.svg
 
 webroot/site/modules/*
 !webroot/site/modules/AdminPageTool/
-!webroot/site/modules/OutputFilter/
 
 webroot/vendor/
 webroot/wire/
