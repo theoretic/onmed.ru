@@ -67,7 +67,8 @@ if(!strstr(PHP_OS,'WIN')){
 	$config->dbName = 'x92564o8_01';
 	*/
 
-	//production
+	//production\
+	$config->dbHost = 'localhost';
 	$config->dbUser = 'i92588et_onmed2';
 	$config->dbPass = 'CcUl%k8C';
 	$config->dbName = 'i92588et_onmed2';
