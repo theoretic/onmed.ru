@@ -362,10 +362,13 @@ DirectoryIndex index.php index.html index.htm
   # ----------------------------------------------------------------------------------------------- 
   # 16A. Ensure that the URL follows the name-format specification required by PW
   # See also directive 16b below, you should choose and use either 16a or 16b. 
-  # ----------------------------------------------------------------------------------------------- 
+  # -----------------------------------------------------------------------------------------------
 
-  RewriteCond %{REQUEST_URI} "^/~?[-_.a-zA-Z0-9/]*$"
-  
+  # NOTE: this condition now lives with the section 19 rule it has always gated.
+  # A RewriteCond binds to the next RewriteRule in the file, and section 17 below
+  # gained rules of its own (StaticPages), which would silently steal it.
+  # RewriteCond %{REQUEST_URI} "^/~?[-_.a-zA-Z0-9/]*$"
+
   # ----------------------------------------------------------------------------------------------- 
   # 16B. Alternative name-format specification for UTF8 page name support. (O)
   # If used, comment out section 16a above and uncomment the directive below. If you have updated 
@@ -378,11 +381,36 @@ DirectoryIndex index.php index.html index.htm
   # -----------------------------------------------------------------------------------------------
   # 17. If the request is for a file or directory that physically exists on the server,
   # then don't give control to ProcessWire, and instead load the file
-  # ----------------------------------------------------------------------------------------------- 
+  # -----------------------------------------------------------------------------------------------
 
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME} !(favicon\.ico|robots\.txt)
+  # StaticPages: pages are cached as <path>/index.html, so page URLs become physical directories.
+  # See d:/work/projects/processwire/modules/StaticPages/README.md
+
+  # --- Exceptions: never served from the static cache ---
+  RewriteRule ^api/ - [L]
+  RewriteRule ^(favicon\.ico|robots\.txt)$ - [L]
+
+  # --- Homepage: index.php sits in the web root and DirectoryIndex would prefer it ---
+  RewriteCond %{REQUEST_URI} ^/?$
+  RewriteCond %{QUERY_STRING} ^$
+  RewriteCond %{DOCUMENT_ROOT}/index.html -f
+  RewriteRule ^$ /index.html [L]
+
+  RewriteCond %{REQUEST_URI} ^/?$
+  RewriteRule ^$ /index.php [L,QSA]
+
+  # --- A directory holding a static file, requested without a query string: serve the file ---
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{QUERY_STRING} ^$
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.+)/$ /$1/index.html [L]
+
+  # --- A directory with a query string, or with no static file in it (yet): hand it to PW ---
+  # Without this, a page directory left without index.html is answered by Options -Indexes
+  # with 403 Forbidden instead of the page.
+  RewriteCond %{REQUEST_URI} !^/(site|wire|vendor|tests|tools)/
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^(.+)$ index.php?it=$1 [L,QSA]
 
   # -----------------------------------------------------------------------------------------------
   # 18. Optionally (O) prevent PW from attempting to serve images or anything in /site/assets/. 
@@ -401,8 +429,13 @@ DirectoryIndex index.php index.html index.htm
   # ----------------------------------------------------------------------------------------------- 
   # 19. Pass control to ProcessWire if all the above directives allow us to this point.
   # For regular VirtualHosts (most installs)
-  # ----------------------------------------------------------------------------------------------- 
-  
+  # -----------------------------------------------------------------------------------------------
+
+  # Conditions of sections 16A and 17, moved here so that they gate this rule (see note in 16A)
+  RewriteCond %{REQUEST_URI} "^/~?[-_.a-zA-Z0-9/]*$"
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !(favicon\.ico|robots\.txt)
   RewriteRule ^(.*)$ index.php?it=$1 [L,QSA]
 
   # ----------------------------------------------------------------------------------------------- 
