@@ -5,7 +5,8 @@ AT
 09.10.23
 */
 
-if( isset($_SERVER['DOCUMENT_ROOT']) ) define( 'DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT'] );
+//CLI sets $_SERVER['DOCUMENT_ROOT'] to an empty string
+if( !empty($_SERVER['DOCUMENT_ROOT']) ) define( 'DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT'] );
 
 else{
 	//CLI

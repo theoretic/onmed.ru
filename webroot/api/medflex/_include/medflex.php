@@ -12,6 +12,7 @@ Usage (call from ProcessWire namespace context):
   Medflex::cacheSet($key, $data, $ttl)
   Medflex::fetchAllPages($url, $apiKey, $warnings)
   Medflex::apiPost($url, $apiKey, $payload)
+  Medflex::normaliseName($name)
 
 AT
 07.05.26
@@ -98,6 +99,8 @@ class Medflex {
                 "Authorization: Token $apiKey",
                 "Accept: application/json"
             ]);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
@@ -177,6 +180,25 @@ class Medflex {
 
         if( $httpCode < 200 || $httpCode >= 300 ) return null;
         return json_decode($response, true);
+    }
+
+    // -------------------------------------------------------------------------
+    // Names
+    // -------------------------------------------------------------------------
+
+    /**
+     * Normalises a full name for matching against Medflex efio.
+     * Replaces Latin lookalike chars with Cyrillic, collapses spaces, lower-cases.
+     */
+    public static function normaliseName(string $name): string {
+        static $latToCyr = [
+            'a' => 'а', 'e' => 'е', 'o' => 'о', 'p' => 'р', 'c' => 'с',
+            'y' => 'у', 'x' => 'х', 'A' => 'А', 'B' => 'В', 'E' => 'Е',
+            'K' => 'К', 'M' => 'М', 'H' => 'Н', 'O' => 'О', 'P' => 'Р',
+            'C' => 'С', 'T' => 'Т', 'X' => 'Х',
+        ];
+        $name = strtr($name, $latToCyr);
+        return mb_strtolower(preg_replace('/\s+/u', ' ', trim($name)));
     }
 
 }
