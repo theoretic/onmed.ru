@@ -36,8 +36,6 @@ $specializations = implode( ',', $specializations );
 $specializations = trim($specializations);//
 
 //link
-//archimedURLs can be rejected by Yandex!
-//$link = $specialistPage->archimedURL? : "https://{$_SERVER['HTTP_HOST']}{$specialistPage->url}";
 $link = "https://{$_SERVER['HTTP_HOST']}{$specialistPage->url}";
 if( !strstr($link,'https://') ) $link = 'https:'.$link;
 $link = htmlspecialchars($link);

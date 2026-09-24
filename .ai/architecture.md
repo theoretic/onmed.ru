@@ -50,7 +50,7 @@ application/
 
 | Template | Description |
 |----------|-------------|
-| `specialist` | Doctor/specialist profile. Key fields: `id_medflex`, `specializations` (drag-sortable; order = service order in `<appointment-specialist>`), `rating`, `archimedURL` |
+| `specialist` | Doctor/specialist profile. Key fields: `id_medflex`, `specializations` (drag-sortable; order = service order in `<appointment-specialist>`), `rating` |
 | `specialization` | Data-only page (no template file), duplicated per branch with the same title. Key field: `medflex_speciality_id` (Medflex speciality ID; filled by hook `specialization.medflexSpecialityId.php` and script `tools/import/medflex/assign_medflex_speciality_id.php`) |
 | `appointment-specialist` | Appointment booking page |
 | `offer` / `offers` | Service offerings |

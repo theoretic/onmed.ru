@@ -1,17 +1,17 @@
 <?
 /*
+Opens Medflex appointment modal (#reg, see _shared/modal-reg.php)
 AT
-24.01.24
+24.09.26
 */
 
 namespace ProcessWire;
 
-$url = $url? : '//reg.onmed.ru/';
 $css = $css? : 'small button';
 $css = 'reg '.$css;
 $title = $title? : 'Записаться на приём';
 
 ?>
-<a href="<?=$url?>" target="_reg" class="<?=$css?>">
+<a href="#reg" class="<?=$css?>">
 	<?=$title?>
 </a>
