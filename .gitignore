@@ -12,6 +12,7 @@
 *.gz
 *.bat
 *.hash
+*.lock
 *.log
 *.pdf
 *.sql
