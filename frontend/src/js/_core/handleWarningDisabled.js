@@ -6,5 +6,5 @@ AT
 
 window.addEventListener('warningDisabled', function(e) {
 	if( !e.detail.success ) return
-	$("#header-warning").hide()
+	$("#header1-warning").hide()
 }, false)
