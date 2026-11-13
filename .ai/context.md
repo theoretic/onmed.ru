@@ -42,7 +42,7 @@
 - Proxy endpoints live in `webroot/api/medflex/` (`appointment/make.php`, `appointment/cancel.php`, `doctor.php`, `schedule.php`, `speciality.php`)
 - **Phone normalization**: server-side, `preg_replace('/\D/', '')` → 10-digit: prepend `7`; 11-digit starting with `8`: replace leading `8` with `7`
 - **ApiLogger**: `webroot/site/shared/classes/ApiLogger.php` — autoloaded class (global namespace); toggles `const ENABLED` (global) and `const DISABLED_PREFIXES` (per-endpoint allowlist; defaults to `['medflex/']` so medflex traffic is silent in production); one log file per endpoint per day at `site/assets/logs/api_{endpoint_slug}.YYYY-MM-DD.log` (e.g. `api_validator_medflex_appointment_make.2026-05-20.log`). Used by all medflex proxy endpoints and `api/validator.php`. To debug medflex flow, temporarily clear `DISABLED_PREFIXES`.
-- **Required PHP settings** on the booking endpoint: `set_time_limit(0)` + `ignore_user_abort(true)` (Beget shared hosting kills long cURL requests otherwise)
+- **Required PHP settings** on the booking endpoint: `set_time_limit(0)` + `ignore_user_abort(true)` (shared hosting kills long cURL requests otherwise; observed on Beget, kept on NetAngels)
 
 ### Email (WireMailSmtp)
 - Confirmation emails on appointment, feedback, callback form submissions
@@ -67,8 +67,10 @@
 
 ## Deployment
 
-- **vssync** (VS Code extension; config in `.vssync/config.json`, gitignored): on `git push` it uploads the pushed files over SFTP; `VSSync: Sync Now` uploads everything changed. Remote files are deleted only for files removed with `git rm`, on push.
-- Host: Beget. SFTP sees the real filesystem, so the remote root is `/home/i/i92588et/onmed.ru/public_html/` (FTP would see `/onmed.ru/public_html/`; that path over SFTP makes every upload fail).
+- **vssync** (VS Code extension; config in `.vssync/config.json`, gitignored): on `git push` it uploads the pushed files over FTP; `VSSync: Sync Now` uploads everything changed. Remote files are deleted only for files removed with `git rm`, on push.
+- Host: NetAngels, server `h71.netangels.ru`, FTP account `c504101_onmed_pro` (container `c504101`). The FTP root is the account root, so the site root (`webroot/`) maps to `/www`; every conditional-rule mapping must use `/www/...` too. Production domain is **onmed.pro**; onmed.ru and www.onmed.ru 301-redirect to it.
+- Before 2026-11 the site was on Beget (SFTP `i92588et.beget.tech`, root `/home/i/i92588et/onmed.ru/public_html/`). Those paths and that host are dead; don't reuse them.
+- vssync creates missing remote directories, so a wrong account or path does not fail: it builds a stray tree, uploads there and marks the files as synced. After changing the config, check a known file on production (e.g. `https://onmed.pro/site/assets/js/_core.js`) rather than trusting the sync report.
 - Conditional rules upload gitignored build output when its sources are pushed: `frontend/src/js` → `assets/js/`; `frontend/src/components|_shared` → `assets/js/components/` + component CSS dirs; `frontend/src/svg` → `assets/svg/`. Run `gulp` before pushing.
 - **Never synced, deploy by hand**: `site/config.php` (production has its own copy; the repo copy's `dbHost` is the local OSPanel server), `tools/`, `site/modules/*` (incl. the StaticPages / OutputTransformer junctions), `vendor/` (after a Composer change upload the new package + `vendor/composer/`; don't run a full `composer install` on the server blindly, it removes undeclared packages).
 - After module updates: Modules → Refresh in the production admin.
