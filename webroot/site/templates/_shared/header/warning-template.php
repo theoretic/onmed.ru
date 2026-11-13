@@ -6,7 +6,7 @@ AT
 */
 ?>
 
-<header id="header1-warning" class="relative padded fullscreen <?=$warningPage->warning_type->name?> message flex flex-center flex-middle">
+<header id="header1-warning" data-warning-id="<?=$warningPage->id?>" class="relative padded fullscreen <?=$warningPage->warning_type->name?> message flex flex-center flex-middle">
 
 	<div class="XL padded">
 		<?=$warningPage->title?>
@@ -29,3 +29,9 @@ AT
 		✖
 	</a>
 </header>
+
+<script>
+//removing the warning right away if this visitor has closed it (cookie set by handleWarningDisabled.js)
+if( document.cookie.split('; ').indexOf('disabledWarning=<?=$warningPage->id?>') > -1 )
+	document.getElementById('header1-warning').remove()
+</script>
