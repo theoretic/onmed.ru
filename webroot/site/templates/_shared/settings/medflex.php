@@ -17,4 +17,10 @@ return [
 		//'required' => true,
 		//'value' => '',
 	],
+	[
+		'name' => 'appointment_url',
+		'label' => 'Ссылка на запись на услугу',
+		'type' => 'InputfieldURL',
+		'value' => 'https://booking.medflex.ru/?user=8b6a902e074e5c2df3c31b7baaa49c9a',
+	],
 ];

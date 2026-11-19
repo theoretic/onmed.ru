@@ -75,6 +75,18 @@ input[type="submit"],input[type="button"],button,.button{
 			border-color:rgba(255,255,255,1);
 			}
 		}
+
+	// white filled button for colored backgrounds, e.g. header
+	&.white{
+		color:~"rgb(var(--color))";
+		background:@white;
+		border-color:@white;
+		&:hover{
+			color:@white !important;
+			background:none;
+			border-color:rgba(255,255,255,.5);
+			}
+		}
 	}
 
 }
